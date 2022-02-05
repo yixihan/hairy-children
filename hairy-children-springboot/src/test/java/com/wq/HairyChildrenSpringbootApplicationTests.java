@@ -1,0 +1,13 @@
+package com.wq;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class HairyChildrenSpringbootApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}
