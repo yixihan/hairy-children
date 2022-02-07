@@ -110,9 +110,9 @@ public class ShiroConfig {
         ruleMap.put("/druid/**/**", "anon");
 
         //静态资源放行
-        ruleMap.put("/md/**/**", "anon");
-        ruleMap.put("/dynamic/**/**", "anon");
-        ruleMap.put("/file/**/**", "anon");
+        ruleMap.put("/clue/**/**", "anon");
+        ruleMap.put("/adopt/**/**", "anon");
+        ruleMap.put("/title/**/**", "anon");
         ruleMap.put("/avatar/**/**", "anon");
 
         ruleMap.put("/favicon.ico**", "anon");

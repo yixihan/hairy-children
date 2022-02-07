@@ -2,4 +2,57 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wq.mapper.CommentRootMapper">
 
+    <select id="getAllRootCommentsByTitleId" resultType="com.wq.pojo.CommentRoot" parameterType="Long">
+        select *
+        from comment_root
+        where answer_id = #{titleId}
+          and is_deleted = 0;
+    </select>
+
+
+    <select id="getSonComments" resultType="com.wq.pojo.CommentReply" parameterType="Long">
+        select *
+        from comment_reply
+        where root_id = #{rootId}
+          and is_deleted = 0;
+    </select>
+
+
+    <select id="getAllUserRootComments" resultType="com.wq.pojo.UserComments" parameterType="Long">
+        select user_id userId,
+               answer_id answerId,
+               root_id commentId,
+               null rootId,
+               null replyContent,
+               content,
+               like_count likeCount,
+               reply_count replyCount,
+               1 type,
+               gmt_create gmtCreate
+        from comment_root
+        where user_id = 4
+          and is_deleted = 0;
+    </select>
+
+
+    <select id="getAllUserSonComments" resultType="com.wq.pojo.UserComments" parameterType="Long">
+        select ry.user_id userId,
+               answer_id answerId,
+               ry.reply_id commentId,
+               rt.root_id rootId,
+               rt.content replyContent,
+               ry.content,
+               null likeCount,
+               null replyCount,
+               1 type,
+               ry.gmt_create gmtCreate
+        from comment_reply ry
+                 left join comment_root rt on ry.root_id = rt.root_id
+        where rt.user_id = ry.user_id
+          and rt.user_id = 4
+          and rt.is_deleted = 0
+          and ry.is_deleted = 0;
+    </select>
+
+
 </mapper>

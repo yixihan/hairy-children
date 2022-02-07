@@ -101,7 +101,7 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:mapper/**Mapper.xml
-  type-aliases-package: com.yixihan.pojo
+  type-aliases-package: com.wq.pojo
 
   # 逻辑删除
   global-config:
@@ -110,6 +110,11 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
 
-
+upload:
+  paths: src/main/resources/static/photoDir/
+  adoptPaths: adopt/
+  avatarPaths: avatar/
+  cluePaths: clue/
+  titlePaths: title/
 
 

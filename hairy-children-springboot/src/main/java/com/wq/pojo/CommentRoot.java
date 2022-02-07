@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -62,6 +63,10 @@ public class CommentRoot implements Serializable {
     @ApiModelProperty(value = "逻辑删除")
     @TableLogic
     private Integer isDeleted;
+
+    @ApiModelProperty(value = "子评论")
+    @TableField(exist = false)
+    private List<CommentReply> commentReplyList;
 
 
 }

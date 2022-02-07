@@ -7,6 +7,7 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Swagger 配置类
@@ -14,25 +15,33 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @create : 2022-02-05-12:09
  */
 @Configuration
+@EnableSwagger2
 public class SwaggerConfig {
 
     /**
      * 配置 Swagger 的 Docket 实例
      */
     @Bean
-    public Docket getDocket () {
-        return new Docket (DocumentationType.OAS_30)
-                .apiInfo (apiInfo ());
+    public Docket docket () {
+        return new Docket(DocumentationType.OAS_30)
+                // 创建该 API 的基本信息
+                .apiInfo(apiInfo());
+
     }
 
 
     /**
-     * 设置 Swagger 接口文档信息
+     * 配置 Swagger 的信息
+     * @return apiInfo
      */
-    public ApiInfo apiInfo() {
+    private ApiInfo apiInfo () {
 
         // 作者信息
-        Contact authorInfo = new Contact("wq", "", "");
+        Contact authorInfo = new Contact(
+                "yixihan",
+                "https://github.com/yixihan",
+                "3113788997@qq.com"
+        );
 
         return new ApiInfoBuilder ()
                 // 设置标题

@@ -1,9 +1,8 @@
 package com.wq.config.shiro.realm;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.config.shiro.jwt.JwtToken;
 import com.wq.pojo.User;
-import com.wq.service.impl.UserServiceImpl;
+import com.wq.service.UserService;
 import com.wq.util.SpringUtils;
 import com.wq.util.shiro.JwtUtils;
 import org.apache.shiro.authc.*;
@@ -52,7 +51,8 @@ public class CustomRealm extends AuthorizingRealm {
         String userName = JwtUtils.getUserName(jwtToken);
 
         // 根据用户名, 从数据库中查询用户信息 (查询出多用户会抛出异常)
-        User user = getUserService().getOne(new QueryWrapper<User> ().eq("user_name", userName), true);
+        UserService userService = SpringUtils.getBean ("UserService");
+        User user = userService.getUserByName (userName);
 
         // 用户不存在
         if (user == null) {
@@ -75,10 +75,5 @@ public class CustomRealm extends AuthorizingRealm {
         jwtToken : credentials
          */
         return new SimpleAuthenticationInfo (user, jwtToken, this.getName());
-    }
-
-
-    private UserServiceImpl getUserService () {
-        return SpringUtils.getBean("UserService");
     }
 }

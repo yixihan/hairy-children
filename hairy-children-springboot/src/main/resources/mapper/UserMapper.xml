@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wq.mapper.UserMapper">
 
-    <select id="getUserByName" resultType="com.wq.pojo.User">
+    <select id="getUserByName" resultType="User">
         select *
         from user
         where is_deleted = 0

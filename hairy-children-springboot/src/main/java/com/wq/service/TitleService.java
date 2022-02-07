@@ -4,6 +4,8 @@ import com.wq.pojo.Title;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -22,13 +24,6 @@ public interface TitleService extends IService<Title> {
     Boolean createTitle (Title title);
 
     /**
-     * 更新文章
-     * @param title 文章
-     * @return true : 成功 | false : 失败
-     */
-    Boolean updateTitle (Title title);
-
-    /**
      * 上传文章图片
      * @param titleId 文章 id
      * @param file 图片
@@ -36,19 +31,13 @@ public interface TitleService extends IService<Title> {
      */
     String uploadTitleImg (Long titleId, MultipartFile file);
 
-    /**
-     * 删除文章
-     * @param titleId 文章 id
-     * @return true : 成功 | false : 失败
-     */
-    Boolean deleteTitle (Long titleId);
 
     /**
-     * 通过文章 id 获取文章
-     * @param titleId 文章 id
+     * 通过用户 id 获取文章
+     * @param userId 用户 id
      * @return 文章
      */
-    Title getTitleById (Long titleId);
+    List<Title> getTitleByUserId (Long userId);
 
 
 }

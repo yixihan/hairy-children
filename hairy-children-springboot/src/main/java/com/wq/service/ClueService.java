@@ -22,31 +22,18 @@ public interface ClueService extends IService<Clue> {
      */
     Boolean createClue (Clue clue);
 
-    /**
-     * 更新线索贴
-     * @param clue clue
-     * @return true : 成功 | false : 失败
-     */
-    Boolean updateClue (Clue clue);
 
     /**
-     * 删除线索贴
-     * @param clueId 线索贴 id
-     * @return true : 成功 | false : 失败
-     */
-    Boolean deleteClue (Long clueId);
-
-    /**
-     * 根据线索贴 id 获取线索贴内容
-     * @param clueId 线索贴 id
+     * 根据用户 id 获取用户发布的线索贴
+     * @param userId 用户 id
      * @return 线索贴内容
      */
-    Clue getClueByClueId (Long clueId);
+    List<Clue> getCluesByUserId (Long userId);
 
     /**
      * 根据文章 id 获取该文章下所有线索贴
      * @param titleId 文章 id
      * @return 该文章下所有线索贴
      */
-    List<Clue> getAllCluesByTitleId (Long titleId);
+    List<Clue> getCluesByTitleId (Long titleId);
 }

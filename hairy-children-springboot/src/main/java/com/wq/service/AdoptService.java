@@ -22,26 +22,13 @@ public interface AdoptService extends IService<Adopt> {
      */
     Boolean createAdopt (Adopt adopt);
 
-    /**
-     * 更新申请贴
-     * @param adopt adopt
-     * @return true : 成功 | false : 失败
-     */
-    Boolean updateAdopt (Adopt adopt);
 
     /**
-     * 删除申请贴
-     * @param adoptId 申请贴 id
-     * @return true : 成功 | false : 失败
+     * 根据用户 id 获取用户发布的申请贴
+     * @param userId 用户 id
+     * @return 线索贴内容
      */
-    Boolean deleteAdopt (Long adoptId);
-
-    /**
-     * 根据申请贴 id 获取申请贴内容
-     * @param adoptId 申请贴 id
-     * @return 申请贴内容
-     */
-    Adopt getAdoptByAdoptId (Long adoptId);
+    List<Adopt> getAdoptsByUserId (Long userId);
 
     /**
      * 根据文章 id 获取该文章下所有申请贴

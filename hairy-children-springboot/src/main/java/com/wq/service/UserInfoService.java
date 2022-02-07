@@ -21,12 +21,6 @@ public interface UserInfoService extends IService<UserInfo> {
      */
     UserInfo getUserInfoById (Long userId);
 
-    /**
-     * 更新用户信息
-     * @param userInfo 用户信息
-     * @return true : 成功 | false : 失败
-     */
-    Boolean updateUserInfo (UserInfo userInfo);
 
     /**
      * 上传用户头像

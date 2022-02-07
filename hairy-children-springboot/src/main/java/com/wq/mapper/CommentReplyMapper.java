@@ -1,7 +1,8 @@
 package com.wq.mapper;
 
-import com.wq.pojo.CommentReply;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.wq.pojo.CommentReply;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author wq
  * @since 2022-02-05
  */
+@Mapper
 public interface CommentReplyMapper extends BaseMapper<CommentReply> {
 
 }

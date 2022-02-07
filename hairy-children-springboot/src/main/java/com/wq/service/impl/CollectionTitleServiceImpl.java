@@ -1,11 +1,13 @@
 package com.wq.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.pojo.CollectionTitle;
 import com.wq.mapper.CollectionTitleMapper;
 import com.wq.service.CollectionTitleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -16,26 +18,17 @@ import java.util.List;
  * @author wq
  * @since 2022-02-05
  */
-@Service
+@Service("collectionTitleService")
 public class CollectionTitleServiceImpl extends ServiceImpl<CollectionTitleMapper, CollectionTitle> implements CollectionTitleService {
 
-    @Override
-    public Boolean createCollectionTitle(CollectionTitle collectionTitle) {
-        return null;
-    }
-
-    @Override
-    public Boolean deleteCollectionTitle(Long id) {
-        return null;
-    }
+    @Resource
+    private CollectionTitleMapper collectionTitleMapper;
 
     @Override
     public List<CollectionTitle> getAllCollectionTitle(Long userCollectionId) {
-        return null;
+        QueryWrapper<CollectionTitle> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("collection_id", userCollectionId);
+        return collectionTitleMapper.selectList (wrapper);
     }
 
-    @Override
-    public Integer getTitleCount(Long userCollectionId) {
-        return null;
-    }
 }

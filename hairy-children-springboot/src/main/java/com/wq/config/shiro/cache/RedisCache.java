@@ -32,18 +32,17 @@ public class RedisCache<K, V> implements Cache<K, V> {
     public V get(K k) throws CacheException {
         String val = (String) getRedisTemplate().opsForHash().get(this.cacheName, k.toString());
 
-        log.info (val);
         SimpleAuthenticationInfo info = JSONObject.parseObject(val, SimpleAuthenticationInfo.class);
 
-        log.info ("" + info);
+        log.info ("key : " + k.toString ());
+        log.info ("info : " + info);
+        log.info ("val : " + val);
 
         return (V) val;
     }
 
     @Override
     public V put(K k, V v) throws CacheException {
-        System.out.println(k.getClass());
-        System.out.println(v.getClass());
 
         String key = JSONObject.toJSONString(k);
         String value = JSONObject.toJSONString(v);

@@ -1,11 +1,16 @@
 package com.wq.service.impl;
 
-import com.wq.pojo.Clue;
-import com.wq.mapper.ClueMapper;
-import com.wq.service.ClueService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wq.common.PhotoProperties;
+import com.wq.mapper.ClueMapper;
+import com.wq.pojo.Clue;
+import com.wq.service.ClueService;
+import com.wq.util.FileUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -16,31 +21,43 @@ import java.util.List;
  * @author wq
  * @since 2022-02-05
  */
-@Service
+@Service("clueService")
 public class ClueServiceImpl extends ServiceImpl<ClueMapper, Clue> implements ClueService {
+
+    @Resource
+    private PhotoProperties photoProperties;
+
+    @Resource
+    private ClueMapper clueMapper;
 
     @Override
     public Boolean createClue(Clue clue) {
-        return null;
+        // 获取文件路径 以文章id - 用户id 作为目录
+        String fileName = clue.getTitleId () + "-" + clue.getUserId ();
+        File cluePath = new File (photoProperties.getCluePaths () + "/" + fileName);
+
+        // 生成图片目录
+        String imageName = String.format (FileUtils.TITLE_DIR, System.currentTimeMillis ());
+
+        // 创建图片上传路径 src/resources/static/photoDir/clue/titleId-userId/时间戳.assets
+        File imagePath = new File (photoProperties.getPaths () + "/" + cluePath + "/" + imageName);
+        FileUtils.isFileExists (imagePath);
+
+        clue.setClueDir (imagePath.toString ());
+        return clueMapper.insert (clue) == 1;
     }
 
     @Override
-    public Boolean updateClue(Clue clue) {
-        return null;
+    public List<Clue> getCluesByUserId(Long userId) {
+        QueryWrapper<Clue> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("user_id", userId);
+        return clueMapper.selectList (wrapper);
     }
 
     @Override
-    public Boolean deleteClue(Long clueId) {
-        return null;
-    }
-
-    @Override
-    public Clue getClueByClueId(Long clueId) {
-        return null;
-    }
-
-    @Override
-    public List<Clue> getAllCluesByTitleId(Long titleId) {
-        return null;
+    public List<Clue> getCluesByTitleId(Long titleId) {
+        QueryWrapper<Clue> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("title_id", titleId);
+        return clueMapper.selectList (wrapper);
     }
 }

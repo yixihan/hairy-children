@@ -1,5 +1,6 @@
 package com.wq.config;
 
+import com.wq.common.PhotoProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -9,12 +10,17 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import javax.annotation.Resource;
+
 /**
  * @author : yixihan
  * @create : 2022-02-05-12:14
  */
 @Configuration
 public class CorsConfig extends WebMvcConfigurationSupport {
+
+    @Resource
+    private PhotoProperties photoProperties;
 
     /**
      * 解决跨域问题
@@ -47,21 +53,18 @@ public class CorsConfig extends WebMvcConfigurationSupport {
                 .addResourceLocations("classpath:/META-INF/resources/webjars/**");
         registry.addResourceHandler("/druid/**")
                 .addResourceLocations("classpath:/META-INF/resources/**");
-//        // 头像储存位置
-//        registry.addResourceHandler("/avatar/**")
-//                .addResourceLocations("file:" + paths + avatarPath);
-//        // md 储存位置
-//        registry.addResourceHandler("/md/**")
-//                .addResourceLocations("file:" + paths + mdPath);
-//        // dynamic 储存位置
-//        registry.addResourceHandler("/dynamic/**")
-//                .addResourceLocations("file:" + paths + dynamicPath);
-//        // 文件 储存位置
-//        registry.addResourceHandler("/file/**")
-//                .addResourceLocations("file:" + paths + filePath);
-//        // 背景 存储位置
-//        registry.addResourceHandler("/background/**")
-//                .addResourceLocations("file:" + paths + filePath);
+        // 头像储存位置
+        registry.addResourceHandler("/avatar/**")
+                .addResourceLocations("file:" + photoProperties.getPaths () + photoProperties.getAvatarPaths ());
+        // 线索图片 储存位置
+        registry.addResourceHandler("/clue/**")
+                .addResourceLocations("file:" + photoProperties.getPaths () + photoProperties.getCluePaths ());
+        // 领养图片 储存位置
+        registry.addResourceHandler("/adopt/**")
+                .addResourceLocations("file:" + photoProperties.getPaths () + photoProperties.getAdoptPaths ());
+        // 文章图片 储存位置
+        registry.addResourceHandler("/title/**")
+                .addResourceLocations("file:" + photoProperties.getPaths () + photoProperties.getTitlePaths ());
     }
 
     @Bean

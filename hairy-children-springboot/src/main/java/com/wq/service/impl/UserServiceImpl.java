@@ -32,7 +32,7 @@ import java.util.Map;
  * @author wq
  * @since 2022-02-05
  */
-@Service
+@Service("UserService")
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
@@ -93,7 +93,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public JwtToken login(User user) throws AuthenticationException {
+    public Map<String, Object> login(User user) throws AuthenticationException {
 
         // 生成 JwtToken
         Map<String, String> payload = new HashMap<> (16);
@@ -111,7 +111,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         subject.login(jwtToken);
 
         // 登录成功
-        return jwtToken;
+        Map<String, Object> map = new HashMap<> (16);
+        map.put ("token", jwtToken.getToken ());
+        map.put ("userId", user.getUserId ());
+        return map;
     }
 
     @Override
@@ -163,8 +166,4 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userMapper.getUserByName (userName);
     }
 
-    @Override
-    public Boolean update(User user) {
-        return userMapper.updateById (user) > 0;
-    }
 }

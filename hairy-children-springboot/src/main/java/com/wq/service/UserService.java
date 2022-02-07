@@ -1,9 +1,10 @@
 package com.wq.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wq.config.shiro.jwt.JwtToken;
 import com.wq.pojo.User;
 import org.apache.shiro.authc.AuthenticationException;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -30,7 +31,7 @@ public interface UserService extends IService<User> {
      * @return JwtToken
      * @throws AuthenticationException 用户身份认证异常
      */
-    JwtToken login (User user) throws AuthenticationException;
+    Map<String, Object> login (User user) throws AuthenticationException;
 
     /**
      * 重置密码
@@ -54,11 +55,4 @@ public interface UserService extends IService<User> {
      * @return 用户信息
      */
     User getUserByName (String userName);
-
-    /**
-     * 更新用户信息
-     * @param user 用户信息
-     * @return true : 成功 | false : 失败
-     */
-    Boolean update (User user);
 }
