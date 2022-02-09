@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * @author wq
  * @since 2022-02-05
  */
-@Service("commentReplyService")
+@Service("CommentReplyService")
 public class CommentReplyServiceImpl extends ServiceImpl<CommentReplyMapper, CommentReply> implements CommentReplyService {
 
 }

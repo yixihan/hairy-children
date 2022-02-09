@@ -31,4 +31,7 @@ public class PhotoProperties {
     @Value ("${upload.titlePaths}")
     private String titlePaths;
 
+    @Value ("${upload.urlPaths}")
+    private String urlPaths;
+
 }

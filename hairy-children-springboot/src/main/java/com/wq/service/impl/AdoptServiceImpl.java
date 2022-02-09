@@ -21,7 +21,7 @@ import java.util.List;
  * @author wq
  * @since 2022-02-05
  */
-@Service("adoptService")
+@Service("AdoptService")
 public class AdoptServiceImpl extends ServiceImpl<AdoptMapper, Adopt> implements AdoptService {
 
     @Resource

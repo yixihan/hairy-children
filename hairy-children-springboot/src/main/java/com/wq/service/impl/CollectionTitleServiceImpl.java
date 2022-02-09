@@ -18,7 +18,7 @@ import java.util.List;
  * @author wq
  * @since 2022-02-05
  */
-@Service("collectionTitleService")
+@Service("CollectionTitleService")
 public class CollectionTitleServiceImpl extends ServiceImpl<CollectionTitleMapper, CollectionTitle> implements CollectionTitleService {
 
     @Resource

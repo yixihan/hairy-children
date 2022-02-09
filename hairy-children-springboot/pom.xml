@@ -148,6 +148,19 @@
             <version>5.7.20</version>
         </dependency>
 
+        <!-- 短信接口-->
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java</artifactId>
+            <version>3.1.322</version>
+        </dependency>
+
+        <!-- 实名认证 -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+        </dependency>
+
         <!--邮件发送-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

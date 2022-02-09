@@ -82,12 +82,12 @@ public class ShiroConfig {
         // 配置系统的受限资源以及对应的过滤器
         Map<String, String> ruleMap = new HashMap<>(64);
         // 登录路径、注册路径都需要放行不进行拦截
-        // 注册
+        // 登录注册
         ruleMap.put("/v/**", "anon");
         ruleMap.put("/register", "anon");
         ruleMap.put("/common/**","anon");
-        // 登录
-        ruleMap.put("/login","anon");
+        // 验证码
+        ruleMap.put ("/code/**", "anon");
 
         // 放行 Swagger 接口
         ruleMap.put("/favicon.ico", "anon");
@@ -178,9 +178,6 @@ public class ShiroConfig {
         realm.setAuthenticationCachingEnabled(true);
         realm.setAuthenticationCacheName("authenticationCache");
 
-        // 开启授权缓存
-        realm.setAuthorizationCachingEnabled(true);
-        realm.setAuthorizationCacheName("authorizationCache");
         return realm;
     }
 

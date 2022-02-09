@@ -1,10 +1,9 @@
 package com.wq.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wq.pojo.Result;
+import com.wq.common.pojo.Result;
 import com.wq.pojo.User;
 import com.wq.service.UserService;
-import com.wq.util.shiro.ShiroUtils;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.crypto.hash.Md5Hash;
-import org.apache.shiro.subject.Subject;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -174,7 +172,7 @@ public class LoginController {
 
         // 重置密码
         Boolean reset = userService.resetPassword (user.getUserId (), password);
-        return reset ? Result.success () : Result.fail ();
+        return reset ? Result.success ("密码重置成功, 请重新登录") : Result.fail ("密码重置失败, 请稍后再试");
     }
 
     /**
@@ -198,15 +196,8 @@ public class LoginController {
 
         // 重置密码
         Boolean reset = userService.resetPassword (user.getUserId (), password);
-        return reset ? Result.success () : Result.fail ();
+        return reset ? Result.success ("密码重置成功, 请重新登录") : Result.fail ("密码重置失败, 请稍后再试");
     }
 
-    @PostMapping("/logout")
-    public Result logout() {
-        Subject subject = ShiroUtils.getSubject ();
 
-        subject.logout ();
-
-        return Result.success ();
-    }
 }

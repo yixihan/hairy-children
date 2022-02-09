@@ -1,11 +1,13 @@
 package com.wq;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * @author : yixihan
  * @create : 2022-02-07-16:29
  */
+@SpringBootTest
 public class commonTest {
 
     @Test

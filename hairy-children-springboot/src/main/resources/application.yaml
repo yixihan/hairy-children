@@ -110,11 +110,23 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
 
+# 图片存储位置
 upload:
   paths: src/main/resources/static/photoDir/
   adoptPaths: adopt/
   avatarPaths: avatar/
   cluePaths: clue/
   titlePaths: title/
+  urlPaths: localhost:9001/
 
+customer:
+  # 实名认证
+  appCode: a490abf96cc442f79c4761d95e314fad
+  # 发送短信
+  phone:
+    secretId: AKIDxkIZZIkvoQqzrSmpb6KHxMUM0NTIAm8F
+    secretKey: tVquhETR9akdFafU2II0RbU7SWKr64k9
+    smsSdkAppId: 1400631199
+    signName: 我的专属摸鱼小屋个人网站
+    templateId: 1298576
 

@@ -3,7 +3,7 @@ package com.wq.controller;
 
 import com.wq.pojo.CommentReply;
 import com.wq.pojo.CommentRoot;
-import com.wq.pojo.Result;
+import com.wq.common.pojo.Result;
 import com.wq.pojo.UserComments;
 import com.wq.service.CommentRootService;
 import com.wq.util.shiro.ShiroUtils;

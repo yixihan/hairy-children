@@ -18,7 +18,7 @@ import java.util.List;
  * @author wq
  * @since 2022-02-05
  */
-@Service("userCollectionService")
+@Service("UserCollectionService")
 public class UserCollectionServiceImpl extends ServiceImpl<UserCollectionMapper, UserCollection> implements UserCollectionService {
 
     @Resource

@@ -21,7 +21,7 @@ import java.util.List;
  * @author wq
  * @since 2022-02-05
  */
-@Service("clueService")
+@Service("ClueService")
 public class ClueServiceImpl extends ServiceImpl<ClueMapper, Clue> implements ClueService {
 
     @Resource

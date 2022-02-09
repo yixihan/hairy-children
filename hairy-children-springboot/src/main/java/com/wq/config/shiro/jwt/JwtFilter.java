@@ -1,7 +1,7 @@
 package com.wq.config.shiro.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wq.pojo.Result;
+import com.wq.common.pojo.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.ShiroException;

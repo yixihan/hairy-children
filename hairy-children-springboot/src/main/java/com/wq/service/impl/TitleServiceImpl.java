@@ -23,7 +23,7 @@ import java.util.List;
  * @author wq
  * @since 2022-02-05
  */
-@Service("titleService")
+@Service("TitleService")
 public class TitleServiceImpl extends ServiceImpl<TitleMapper, Title> implements TitleService {
 
     @Resource

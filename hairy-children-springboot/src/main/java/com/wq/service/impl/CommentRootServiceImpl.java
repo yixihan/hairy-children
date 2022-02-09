@@ -26,7 +26,7 @@ import java.util.List;
  * @since 2022-02-05
  */
 @Slf4j
-@Service("commentRootService")
+@Service("CommentRootService")
 public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, CommentRoot> implements CommentRootService {
 
     

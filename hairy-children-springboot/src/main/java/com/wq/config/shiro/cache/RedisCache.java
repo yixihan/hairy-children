@@ -34,10 +34,6 @@ public class RedisCache<K, V> implements Cache<K, V> {
 
         SimpleAuthenticationInfo info = JSONObject.parseObject(val, SimpleAuthenticationInfo.class);
 
-        log.info ("key : " + k.toString ());
-        log.info ("info : " + info);
-        log.info ("val : " + val);
-
         return (V) val;
     }
 
@@ -46,9 +42,6 @@ public class RedisCache<K, V> implements Cache<K, V> {
 
         String key = JSONObject.toJSONString(k);
         String value = JSONObject.toJSONString(v);
-
-        log.info ("key : " + key);
-        log.info ("value : " + value);
 
         getRedisTemplate().opsForHash().put(this.cacheName,key, value);
         return null;

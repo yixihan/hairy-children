@@ -7,6 +7,7 @@ import com.wq.mapper.UserInfoMapper;
 import com.wq.pojo.UserInfo;
 import com.wq.service.UserInfoService;
 import com.wq.util.FileUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +23,8 @@ import java.io.IOException;
  * @author wq
  * @since 2022-02-05
  */
-@Service("userInfoService")
+@Slf4j
+@Service("UserInfoService")
 public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> implements UserInfoService {
 
 
@@ -44,9 +46,12 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
         // 文件校验
         FileUtils.isEmpty (file);
+        log.info ("getContentType" + file.getContentType ());
+        log.info ("getOriginalFilename" + file.getOriginalFilename ());
+        log.info ("getName" + file.getName ());
 
         // 生成文件名, 以用户 id 为文件名
-        String fileName = String.format (FileUtils.IMG_NAME, userId);
+        String fileName = String.format (FileUtils.IMG_NAME, "userAvatar-" + userId);
 
         // 生成文件路径
         File filePath = new File (photoProperties.getPaths () + "/" + photoProperties.getAvatarPaths ());
@@ -55,7 +60,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
             FileUtils.uploadFile (file, fileName, filePath);
 
-            return filePath + "/" + fileName;
+            return photoProperties.getUrlPaths () + "/" + photoProperties.getAvatarPaths () + "/" + fileName;
         } catch (IOException e) {
             e.printStackTrace ();
             log.error ("文件上传失败", e.getCause ());
