@@ -125,7 +125,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String salt = SaltUtils.getSalt(10);
 
         // 加密用户的密码
-        String md5Password = new Md5Hash(user.getUserPassword(), salt, 1024).toHex();
+        String md5Password = new Md5Hash(newPassword, salt, 1024).toHex();
 
         user.setUserPassword(md5Password);
         user.setUserSalt(salt);

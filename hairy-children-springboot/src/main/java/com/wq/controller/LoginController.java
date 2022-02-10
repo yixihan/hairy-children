@@ -2,8 +2,10 @@ package com.wq.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.pojo.Result;
+import com.wq.common.service.CodeService;
 import com.wq.pojo.User;
 import com.wq.service.UserService;
+import com.wq.util.StringUtils;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -30,6 +32,9 @@ public class LoginController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private CodeService codeService;
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
@@ -145,6 +150,28 @@ public class LoginController {
     @ApiOperation(value = "注册")
     @PostMapping("/register")
     public Result register(User user) {
+
+        boolean name = codeService.verifyUserName (user.getUserName ());
+
+        if (! name) {
+            return Result.fail ("该用户名已被注册");
+        }
+
+        if (! StringUtils.isEmpty (user.getUserEmail ())) {
+            boolean email = codeService.verifyUserEmail (user.getUserEmail ());
+
+            if (! email) {
+                return Result.fail ("该邮箱已被注册");
+            }
+        }
+
+        if (! StringUtils.isEmpty (user.getUserPhone ())) {
+            boolean phone = codeService.verifyUserPhone (user.getUserPhone ());
+
+            if (! phone) {
+                return Result.fail ("该电话已被注册");
+            }
+        }
 
         Boolean register = userService.register (user);
 

@@ -41,8 +41,11 @@ public class Clue implements Serializable {
     @ApiModelProperty(value = "线索内容")
     private String clueContent;
 
-    @ApiModelProperty(value = "线索图片")
+    @ApiModelProperty(value = "图片存储路径")
     private String clueDir;
+
+    @ApiModelProperty(value = "图片 url")
+    private String imgsDir;
 
     @ApiModelProperty(value = "是否成功, 0 : 未成功, 1 : 成功")
     private Integer isSuccess;

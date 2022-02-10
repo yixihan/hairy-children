@@ -1,9 +1,24 @@
 package com.wq.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.wq.common.PhotoProperties;
+import com.wq.common.pojo.Result;
+import com.wq.pojo.Adopt;
+import com.wq.pojo.Title;
+import com.wq.service.AdoptService;
+import com.wq.service.TitleService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -14,7 +29,115 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2022-02-05
  */
 @RestController
+@Slf4j
 @RequestMapping("/adopt")
 public class AdoptController {
 
+    @Resource
+    private AdoptService adoptService;
+
+    @Resource
+    private TitleService titleService;
+
+    @Resource
+    private PhotoProperties photoProperties;
+
+    @PostMapping("/creatAdopt")
+    public Result createAdopt (Adopt adopt) {
+
+        if (! adoptService.isExists (adopt.getTitleId (), adopt.getUserId ())) {
+            return Result.fail ("请勿重复申请领养贴");
+        }
+        Boolean create = adoptService.createAdopt (adopt);
+
+        if (create) {
+            QueryWrapper<Adopt> wrapper = new QueryWrapper<> ();
+            wrapper.eq ("user_id", adopt.getUserId ())
+                    .eq ("title_id", adopt.getTitleId ());
+
+            Adopt one = adoptService.getOne (wrapper);
+
+            Map<String, Object> map = new HashMap<> (16);
+            map.put("adoptId", one.getAdoptId ());
+            return Result.success("创建成功", map);
+        }
+
+        return Result.fail ("创建失败");
+    }
+
+    @PostMapping("/updateAdopt")
+    public Result updateAdopt (Adopt adopt) {
+        boolean update = adoptService.updateById (adopt);
+
+        return update ? Result.success("更新成功") : Result.fail("更新失败");
+    }
+
+    @PostMapping("/deleteAdopt")
+    public Result deleteAdopt (Long adoptId) {
+        boolean remove = adoptService.removeById (adoptId);
+
+        return remove ? Result.success("删除成功") : Result.fail("删除失败");
+    }
+
+    @PostMapping("/updateImg")
+    public Result updateImg (Long adoptId, @Param("file") MultipartFile[] imgs) {
+        StringBuilder adoptImgs = new StringBuilder(imgs.length * 20);
+
+        for (MultipartFile img : imgs) {
+            String adoptImg = adoptService.uploadImg (adoptId, img);
+            adoptImgs.append (photoProperties.getUrlPaths ()).append (adoptImg).append ("-");
+        }
+        adoptImgs.deleteCharAt (adoptImgs.length () - 1);
+
+        Adopt adopt = adoptService.getById (adoptId);
+        adopt.setImgsDir (adoptImgs.toString ());
+        adoptService.updateById (adopt);
+
+        return Result.success("图片上传成功");
+    }
+
+    @PostMapping("/getAdopt")
+    public Result getMd (Long adoptId) {
+
+        Adopt adopt = adoptService.getById (adoptId);
+
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("adopt", adopt);
+        return Result.success("获取成功", map);
+    }
+
+    @PostMapping("/success")
+    public Result finish (Long adoptId, Long titleId) {
+        Title title = titleService.getById (titleId);
+
+        if (title.getIsFinish () == 1) {
+            return Result.fail ("请勿重复同意申请");
+        }
+
+        Adopt adopt = adoptService.getById (adoptId);
+        adopt.setIsSuccess (1);
+        title.setIsFinish (1);
+        boolean update1 = adoptService.updateById (adopt);
+        boolean update2 = titleService.updateById (title);
+
+        return update1 && update2 ? Result.success ("更新成功") : Result.fail ("更新失败");
+    }
+
+    @PostMapping("/getAllUserAdopts")
+    public Result getAllUserAdopts (Long userId) {
+        List<Adopt> adoptList = adoptService.getAdoptsByUserId (userId);
+
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("adoptList", adoptList);
+        return Result.success("获取成功", map);
+    }
+
+    @PostMapping("/getAllTitleAdopts")
+    public Result getAllTitleAdopts (Long titleId) {
+        List<Adopt> adoptList = adoptService.getAllAdoptsByTitleId (titleId);
+
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("adoptList", adoptList);
+        return Result.success("获取成功", map);
+    }
 }

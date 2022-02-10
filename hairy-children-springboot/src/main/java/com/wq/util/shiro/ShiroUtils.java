@@ -1,6 +1,7 @@
 package com.wq.util.shiro;
 
 import com.wq.pojo.User;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
@@ -8,6 +9,7 @@ import org.apache.shiro.subject.Subject;
  * @author : yixihan
  * @create : 2022-02-05-12:22
  */
+@Slf4j
 public class ShiroUtils {
 
     /**
@@ -15,6 +17,7 @@ public class ShiroUtils {
      * @return user
      */
     public static User getUser () {
+        log.info (String.valueOf (SecurityUtils.getSubject().getPrincipal()));
         return (User) SecurityUtils.getSubject().getPrincipal();
     }
 

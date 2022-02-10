@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * <p>
@@ -36,7 +37,8 @@ public class TitleServiceImpl extends ServiceImpl<TitleMapper, Title> implements
     public Boolean createTitle(Title title) {
 
         // 获取文件路径 以用户 id 作为目录
-        File titlePath = new File (photoProperties.getTitlePaths () + "/" + title.getUserId ());
+        String fileName = title.getUserId ()  + "-" + UUID.randomUUID ().toString ();
+        File titlePath = new File (photoProperties.getTitlePaths () + "/" + fileName);
 
         // 生成图片目录
         String imageName = String.format (FileUtils.TITLE_DIR, title.getTitleName () + "-" + System.currentTimeMillis ());
@@ -45,7 +47,7 @@ public class TitleServiceImpl extends ServiceImpl<TitleMapper, Title> implements
         File imagePath = new File (photoProperties.getPaths () + "/" + titlePath + "/" + imageName);
         FileUtils.isFileExists (imagePath);
 
-        title.setTitleDir (imagePath.toString ());
+        title.setTitleDir (titlePath.getPath () + "/" + imageName);
         return titleMapper.insert (title) == 1;
     }
 
@@ -64,7 +66,7 @@ public class TitleServiceImpl extends ServiceImpl<TitleMapper, Title> implements
 
         try {
 
-            FileUtils.uploadFile (file, fileName, filePath);
+            FileUtils.uploadFile (file, fileName, new File (photoProperties.getPaths () + "/" + filePath));
 
             return filePath + "/" + fileName;
 

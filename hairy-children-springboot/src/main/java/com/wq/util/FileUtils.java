@@ -17,6 +17,12 @@ public class FileUtils {
     public static final String TITLE_DIR = "%s.assets";
 
 
+    /**
+     * 上传文件
+     * @param file 要上传的文件
+     * @param fileName 文件名
+     * @param filePath 文件路径
+     */
     public static void uploadFile (MultipartFile file, String fileName, File filePath) throws IOException {
 
         // 校验文件路径

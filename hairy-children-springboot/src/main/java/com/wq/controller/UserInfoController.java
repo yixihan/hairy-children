@@ -74,6 +74,15 @@ public class UserInfoController {
         return b ? Result.success() : Result.fail();
     }
 
+    @PostMapping("/getUserAddress")
+    public Result getUserAddress () {
+        UserInfo userInfo = userInfoService.getUserInfoById (ShiroUtils.getUserId ());
+
+        HashMap<String, Object> map = new HashMap<> (16);
+        map.put ("address", userInfo.getUserAddress ());
+        return Result.success (map);
+    }
+
     @PostMapping("/authentication")
     public Result authenticate(String realName, String identityCard) {
         String url = "https://puhui.shumaidata.com/id_card/check/puhui";

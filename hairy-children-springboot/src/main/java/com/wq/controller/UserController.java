@@ -146,8 +146,6 @@ public class UserController {
         return Result.success ("用户信息获取成功", userInfo);
     }
 
-
-
     @PostMapping("/logout")
     public Result logout(String token) {
         Subject subject = ShiroUtils.getSubject ();

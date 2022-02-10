@@ -56,8 +56,12 @@ public class Adopt implements Serializable {
     @ApiModelProperty(value = "申请人年龄")
     private Integer adoptUserAge;
 
-    @ApiModelProperty(value = "图片")
+    @ApiModelProperty(value = "图片存储路径")
     private String adoptDir;
+
+    @ApiModelProperty(value = "图片 url")
+    private String imgsDir;
+
 
     @ApiModelProperty(value = "是否接受定期回访, 0 : 否, 1 : 是")
     private Integer isReturnVisit;
