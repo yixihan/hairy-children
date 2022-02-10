@@ -121,12 +121,12 @@ upload:
 
 customer:
   # 实名认证
-  appCode: a490abf96cc442f79c4761d95e314fad
+  appCode: *****
   # 发送短信
   phone:
-    secretId: AKIDxkIZZIkvoQqzrSmpb6KHxMUM0NTIAm8F
-    secretKey: tVquhETR9akdFafU2II0RbU7SWKr64k9
-    smsSdkAppId: 1400631199
-    signName: 我的专属摸鱼小屋个人网站
-    templateId: 1298576
+    secretId: ******
+    secretKey: *****
+    smsSdkAppId: *****
+    signName: *****
+    templateId: *****
 
