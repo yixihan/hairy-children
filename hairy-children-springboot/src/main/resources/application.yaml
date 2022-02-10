@@ -78,15 +78,16 @@ spring:
 
   # redis 配置
   redis:
-    port: 9942
-    host: 175.24.229.41
+    port: 6379
+    host: host
     database: 11
-    password: DLgWoryp1S0xtfC4*PVM
+    password: password
 
   #邮件发送配置
   mail:
-    username: 3113788997@qq.com
-    password: ddqojujebbcidghc
+    username: username
+    password: password
+
     host: smtp.qq.com
     # 开启加密授权验证
     properties:
@@ -121,12 +122,11 @@ upload:
 
 customer:
   # 实名认证
-  appCode: *****
+  appCode: appCode
   # 发送短信
   phone:
-    secretId: ******
-    secretKey: *****
-    smsSdkAppId: *****
-    signName: *****
-    templateId: *****
-
+    secretId: secretId
+    secretKey: secretKey
+    smsSdkAppId: smsSdkAppId
+    signName: signName
+    templateId: templateId
