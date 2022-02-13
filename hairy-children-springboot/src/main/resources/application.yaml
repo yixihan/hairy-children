@@ -78,22 +78,15 @@ spring:
 
   # redis 配置
   redis:
-    port: 9942
-    host: 175.24.229.41
-    database: 11
-    password: DLgWoryp1S0xtfC4*PVM
-  #  redis:
-  #    port: 6379
-  #    host: host
-  #    database: 11
-  #    password: password
+      port: 6379
+      host: host
+      database: 11
+      password: password
 
   #邮件发送配置
   mail:
-    username: 3113788997@qq.com
-    password: uxjifzhywwspdgff
-    #    username: username
-    #    password: password
+      username: username
+      password: password
 
     host: smtp.qq.com
     # 开启加密授权验证
@@ -106,10 +99,10 @@ spring:
 
   # rabbitmq
   rabbitmq:
-    host: 175.24.229.41
+    host: host
     port: 5672
-    username: admin
-    password: 123
+    username: username
+    password: password
     # NONE : 禁用发布确认模式，是默认值
     # CORRELATED : 发布消息成功到交换器后会触发回调方法
     # SIMPLE : 经测试有两种效果，
@@ -144,23 +137,14 @@ upload:
   titlePaths: title/
   urlPaths: localhost:9001/
 
-#customer:
-#  # 实名认证
-#  appCode: appCode
-#  # 发送短信
-#  phone:
-#    secretId: secretId
-#    secretKey: secretKey
-#    smsSdkAppId: smsSdkAppId
-#    signName: signName
-#    templateId: templateId
 customer:
   # 实名认证
-  appCode: a490abf96cc442f79c4761d95e314fad
+  appCode: appCode
   # 发送短信
   phone:
-    secretId: AKIDqUs0rRklW0D9pEPggRwA7oFPIvIPFo67
-    secretKey: mIYWEfqjOnzuXtyqVx96mBJBm68tOcYD
-    smsSdkAppId: 1400631199
-    signName: 我的专属摸鱼小屋个人网站
-    templateId: 1298576
+    secretId: secretId
+    secretKey: secretKey
+    smsSdkAppId: smsSdkAppId
+    signName: signName
+    templateId: templateId
+
