@@ -18,6 +18,19 @@
     </properties>
     <dependencies>
 
+        <!-- RabbitMQ 依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <!-- RabbitMQ 测试依赖 -->
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
         <!-- redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
