@@ -68,10 +68,5 @@ public interface CommentRootService extends IService<CommentRoot> {
      */
     List<UserComments> getAllUserSonComments(Long userId);
 
-    /**
-     * 给父评论 点赞
-     * @param rootId 父评论 id
-     * @return true : 成功 | false : 失败
-     */
-    Boolean updateRootCommentLikeCount (Long rootId);
+
 }

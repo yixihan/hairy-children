@@ -5,9 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.PhotoProperties;
 import com.wq.common.pojo.Result;
 import com.wq.pojo.Title;
+import com.wq.pojo.TitleLikeMailbox;
+import com.wq.service.TitleLikeMailboxService;
 import com.wq.service.TitleService;
+import com.wq.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,7 +40,18 @@ public class TitleController {
     private TitleService titleService;
 
     @Resource
+    private TitleLikeMailboxService titleLikeMailboxService;
+
+    @Resource
+    private RedisService redisService;
+
+    @Resource
     private PhotoProperties photoProperties;
+
+    /**
+     * title_like:userId:titleId
+     */
+    private static final String USER_TITLE_LIKE_KEY = "title_like:%s:%s";
 
     @PostMapping("/createTitle")
     public Result createTitle (Title title) {
@@ -83,7 +98,7 @@ public class TitleController {
     }
 
     @PostMapping("/getTitle")
-    public Result getMd (Long titleId) {
+    public Result getTitle (Long titleId) {
 
         Title title = titleService.getById (titleId);
 
@@ -191,5 +206,65 @@ public class TitleController {
         Map<String, Object> map = new HashMap<>(16);
         map.put ("titleList", titleList);
         return Result.success (map);
+    }
+
+    @PostMapping("/like")
+    @Transactional(rollbackFor = RuntimeException.class)
+    public Result like (Long titleId, Long userId) {
+        Title title = titleService.getById (titleId);
+
+        if (title == null) {
+            log.error ("无此文章");
+            throw new RuntimeException ("无此文章");
+        }
+
+        // 点赞
+        String key = String.format (USER_TITLE_LIKE_KEY, title.getUserId (), titleId);
+        Boolean bit = redisService.getBit (key, userId);
+        if (bit) {
+            log.warn ("已点赞, 请勿重复点赞");
+            return Result.success ("已点赞, 请勿重复点赞");
+        }
+        Boolean setBit = redisService.setBit (key, userId, true);
+        if (setBit) {
+            log.error ("点赞失败");
+            throw new RuntimeException ("点赞失败");
+        }
+
+        title.setLikeCount (Math.toIntExact (redisService.getLikeValueAll (key)));
+        boolean update = titleService.updateById (title);
+
+        if (! update) {
+            log.error ("文章更新失败");
+            throw new RuntimeException ("文章更新失败");
+        }
+
+        // 发送消息
+        TitleLikeMailbox titleLikeMailbox = new TitleLikeMailbox ();
+        titleLikeMailbox.setTitleId (titleId);
+        titleLikeMailbox.setSendUserId (userId);
+        titleLikeMailbox.setReceiveUserId (title.getUserId ());
+
+        boolean save = titleLikeMailboxService.save (titleLikeMailbox);
+
+        if (! save) {
+            log.error ("消息持久化失败");
+            throw new RuntimeException ("消息持久化失败");
+        }
+        QueryWrapper<TitleLikeMailbox> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("title_id", titleLikeMailbox.getTitleId ())
+                .eq ("send_user_id", titleLikeMailbox.getSendUserId ())
+                .like ("receive_user_id", titleLikeMailbox.getReceiveUserId ());
+
+        TitleLikeMailbox one = titleLikeMailboxService.getOne (wrapper);
+
+        if (one == null) {
+            log.error ("无此消息");
+            throw new RuntimeException ("无此消息");
+        }
+
+        titleLikeMailboxService.sendMailbox (one);
+
+        return Result.success ("发送成功");
     }
 }

@@ -133,20 +133,6 @@ public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, Comme
     }
 
 
-    @Override
-    public Boolean updateRootCommentLikeCount (Long rootId) {
-        CommentRoot commentRoot = commentRootMapper.selectById (rootId);
-        commentRoot.setLikeCount (commentRoot.getLikeCount () + 1);
-
-        int b = commentRootMapper.updateById (commentRoot);
-
-        updateUserComment (commentRoot.getUserId ());
-        updateTitleComment (commentRoot.getAnswerId ());
-
-        return b == 1;
-    }
-
-
     @Async
     public void updateTitleComment (Long titleId) {
         // 生成 redis key

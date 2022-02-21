@@ -3,6 +3,7 @@ package com.wq.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wq.common.PhotoProperties;
+import com.wq.mapper.TitleLikeMailboxMapper;
 import com.wq.mapper.TitleMapper;
 import com.wq.pojo.Title;
 import com.wq.service.TitleService;
@@ -32,6 +33,9 @@ public class TitleServiceImpl extends ServiceImpl<TitleMapper, Title> implements
 
     @Resource
     private TitleMapper titleMapper;
+
+    @Resource
+    private TitleLikeMailboxMapper titleLikeMailboxMapper;
 
     @Override
     public Boolean createTitle(Title title) {
@@ -83,4 +87,5 @@ public class TitleServiceImpl extends ServiceImpl<TitleMapper, Title> implements
         wrapper.eq ("user_id", userId);
         return titleMapper.selectList (wrapper);
     }
+
 }

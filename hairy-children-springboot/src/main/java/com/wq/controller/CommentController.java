@@ -1,16 +1,17 @@
 package com.wq.controller;
 
 
-import com.wq.pojo.CommentReply;
-import com.wq.pojo.CommentRoot;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.pojo.Result;
-import com.wq.pojo.UserComments;
+import com.wq.pojo.*;
+import com.wq.service.CommentLikeMailboxService;
 import com.wq.service.CommentRootService;
+import com.wq.service.redis.RedisService;
 import com.wq.util.shiro.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -32,6 +33,14 @@ public class CommentController {
 
     @Resource
     private CommentRootService commentRootService;
+
+    @Resource
+    private RedisService redisService;
+
+    @Resource
+    private CommentLikeMailboxService commentLikeMailboxService;
+
+    private static final String USER_COMMENT_LIKE_KEY = "comment_like:%s:%s";
 
     @PostMapping("/addRootComment")
     public Result addRootComment (CommentRoot commentRoot) {
@@ -72,10 +81,63 @@ public class CommentController {
     }
 
     @PostMapping("/likeComment")
-    public Result likeComment (Long rootId) {
-        Boolean update = commentRootService.updateRootCommentLikeCount (rootId);
+    @Transactional(rollbackFor = RuntimeException.class)
+    public Result likeComment (Long rootId, Long userId) {
+        CommentRoot commentRoot = commentRootService.getById (rootId);
 
-        return update ? Result.success ("点赞成功") : Result.fail ("点赞失败");
+        if (commentRoot == null) {
+            log.error ("无此评论");
+            throw new RuntimeException ("无此评论");
+        }
+
+        // 点赞
+        String key = String.format (USER_COMMENT_LIKE_KEY, commentRoot.getUserId (), rootId);
+        Boolean bit = redisService.getBit (key, userId);
+        if (bit) {
+            log.warn ("已点赞, 请勿重复点赞");
+            return Result.success ("已点赞, 请勿重复点赞");
+        }
+        Boolean setBit = redisService.setBit (key, userId, true);
+        if (setBit) {
+            log.error ("点赞失败");
+            throw new RuntimeException ("点赞失败");
+        }
+
+        commentRoot.setLikeCount (Math.toIntExact (redisService.getLikeValueAll (key)));
+        boolean update = commentRootService.updateById (commentRoot);
+
+        if (! update) {
+            log.error ("评论更新失败");
+            throw new RuntimeException ("评论更新失败");
+        }
+
+        // 发送消息
+        CommentLikeMailbox commentLikeMailbox = new CommentLikeMailbox ();
+        commentLikeMailbox.setRootId (rootId);
+        commentLikeMailbox.setSendUserId (userId);
+        commentLikeMailbox.setReceiveUserId (commentRoot.getUserId ());
+
+        boolean save = commentLikeMailboxService.save (commentLikeMailbox);
+
+        if (! save) {
+            log.error ("消息持久化失败");
+            throw new RuntimeException ("消息持久化失败");
+        }
+        QueryWrapper<CommentLikeMailbox> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("title_id", commentLikeMailbox.getTitleId ())
+                .eq ("send_user_id", commentLikeMailbox.getSendUserId ())
+                .like ("receive_user_id", commentLikeMailbox.getReceiveUserId ());
+
+        CommentLikeMailbox one = commentLikeMailboxService.getOne (wrapper);
+
+        if (one == null) {
+            log.error ("无此消息");
+            throw new RuntimeException ("无此消息");
+        }
+
+        commentLikeMailboxService.sendMailbox (one);
+
+        return Result.success ("发送成功");
     }
 
 }
