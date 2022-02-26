@@ -1,7 +1,7 @@
-package com.wq.service;
+package com.wq.service.message;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wq.pojo.CommentLikeMailbox;
+import com.wq.pojo.AdoptMailbox;
 
 import java.util.List;
 
@@ -13,13 +13,14 @@ import java.util.List;
  * @author wq
  * @since 2022-02-13
  */
-public interface CommentLikeMailboxService extends IService<CommentLikeMailbox> {
+public interface AdoptMailboxService extends IService<AdoptMailbox> {
 
     /**
-     * 点赞之后发送信息
-     * @param commentLikeMailbox
+     * 领养申请之后发送信息
+     *
+     * @param adoptMailbox
      */
-    void sendMailbox (CommentLikeMailbox commentLikeMailbox);
+    void sendMailbox (AdoptMailbox adoptMailbox);
 
     /**
      * 阅读消息, is_read : 0 => 1
@@ -29,23 +30,23 @@ public interface CommentLikeMailboxService extends IService<CommentLikeMailbox> 
     Boolean read (Long id);
 
     /**
-     * 获取用户未读消息数 -- 文章点赞
+     * 获取用户未读消息数 -- 领养申请
      * @param userId 用户 id
      * @return 未读消息数
      */
     Integer getMailBoxCount (Long userId);
 
     /**
-     * 获取用户所有消息 -- 文章点赞
+     * 获取用户所有消息 -- 领养申请
      * @param userId 用户 id
      * @return 用户所有消息
      */
-    List<CommentLikeMailbox> getMessages (Long userId);
+    List<AdoptMailbox> getMessages (Long userId);
 
     /**
-     * 获取指定消息 -- 文章点赞
+     * 获取指定消息 -- 领养申请
      * @param id 主键 id
      * @return 消息主体
      */
-    CommentLikeMailbox getMessage (Long id);
+    AdoptMailbox getMessage (Long id);
 }

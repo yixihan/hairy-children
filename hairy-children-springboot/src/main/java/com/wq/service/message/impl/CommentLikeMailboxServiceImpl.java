@@ -1,10 +1,10 @@
-package com.wq.service.impl;
+package com.wq.service.message.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wq.mapper.CommentLikeMailboxMapper;
 import com.wq.pojo.CommentLikeMailbox;
-import com.wq.service.CommentLikeMailboxService;
+import com.wq.service.message.CommentLikeMailboxService;
 import com.wq.service.redis.RedisService;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +29,9 @@ public class CommentLikeMailboxServiceImpl extends ServiceImpl<CommentLikeMailbo
     private RedisService redisService;
 
     /**
-     * user_message:receiveUserId
+     * comment_like_message:receiveUserId
      */
-    public static final String USER_KEY = "user_message:%s";
+    public static final String USER_KEY = "comment_like_message:%s";
 
     @Override
     public void sendMailbox(CommentLikeMailbox commentLikeMailbox) {

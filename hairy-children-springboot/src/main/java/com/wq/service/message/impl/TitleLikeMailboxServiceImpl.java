@@ -1,10 +1,10 @@
-package com.wq.service.impl;
+package com.wq.service.message.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wq.mapper.TitleLikeMailboxMapper;
 import com.wq.pojo.TitleLikeMailbox;
-import com.wq.service.TitleLikeMailboxService;
+import com.wq.service.message.TitleLikeMailboxService;
 import com.wq.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,11 +31,9 @@ public class TitleLikeMailboxServiceImpl extends ServiceImpl<TitleLikeMailboxMap
     private RedisService redisService;
 
     /**
-     * user_message:receiveUserId
+     * title_like_message:receiveUserId
      */
-    public static final String USER_KEY = "user_message:%s";
-
-
+    public static final String USER_KEY = "title_like_message:%s";
 
 
     @Override

@@ -6,7 +6,7 @@ import com.wq.common.PhotoProperties;
 import com.wq.common.pojo.Result;
 import com.wq.pojo.Title;
 import com.wq.pojo.TitleLikeMailbox;
-import com.wq.service.TitleLikeMailboxService;
+import com.wq.service.message.TitleLikeMailboxService;
 import com.wq.service.TitleService;
 import com.wq.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;

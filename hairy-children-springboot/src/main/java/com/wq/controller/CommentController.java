@@ -4,11 +4,16 @@ package com.wq.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.pojo.Result;
 import com.wq.pojo.*;
-import com.wq.service.CommentLikeMailboxService;
+import com.wq.service.CommentReplyService;
 import com.wq.service.CommentRootService;
+import com.wq.service.TitleService;
+import com.wq.service.message.CommentLikeMailboxService;
+import com.wq.service.message.CommentMailboxService;
+import com.wq.service.message.ReplyMailboxService;
 import com.wq.service.redis.RedisService;
 import com.wq.util.shiro.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,11 +40,26 @@ public class CommentController {
     private CommentRootService commentRootService;
 
     @Resource
+    private CommentReplyService commentReplyService;
+
+    @Resource
+    private TitleService titleService;
+
+    @Resource
     private RedisService redisService;
 
     @Resource
     private CommentLikeMailboxService commentLikeMailboxService;
 
+    @Resource
+    private CommentMailboxService commentMailboxService;
+
+    @Resource
+    private ReplyMailboxService replyMailboxService;
+
+    /**
+     * comment_like:userId:rootId
+     */
     private static final String USER_COMMENT_LIKE_KEY = "comment_like:%s:%s";
 
     @PostMapping("/addRootComment")
@@ -50,6 +70,25 @@ public class CommentController {
 
         Boolean add = commentRootService.addRootComment (commentRoot);
 
+        QueryWrapper<CommentRoot> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("answer_id", commentRoot.getAnswerId ())
+                .eq ("user_id", commentRoot.getUserId ())
+                .eq ("content", commentRoot.getContent ());
+        CommentRoot one = commentRootService.getOne (wrapper);
+
+        Title title = titleService.getById (commentRoot.getAnswerId ());
+
+        CommentMailbox mailbox = new CommentMailbox ();
+        mailbox.setRootId (one.getRootId ());
+        mailbox.setTitleId (one.getAnswerId ());
+        mailbox.setCommentContent (one.getContent ());
+        mailbox.setSendUserId (one.getUserId ());
+        mailbox.setReceiveUserId (title.getUserId ());
+
+
+        // 给被评论者发送信息
+        sendCommentRootMailBox (mailbox);
+
         return add ? Result.success ("评论成功") : Result.fail ("评论失败");
     }
 
@@ -59,6 +98,27 @@ public class CommentController {
         commentReply.setUserId (ShiroUtils.getUserId ());
 
         Boolean add = commentRootService.addSonComment (commentReply, titleId);
+
+        QueryWrapper<CommentReply> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("root_id", commentReply.getRootId ())
+                .eq ("reply_comment_id", commentReply.getReplyCommentId ())
+                .eq ("reply_user_id", commentReply.getReplyCommentId ())
+                .eq ("user_id", commentReply.getUserId ())
+                .eq ("content", commentReply.getContent ());
+        CommentReply one = commentReplyService.getOne (wrapper);
+
+        Title title = titleService.getById (titleId);
+
+        ReplyMailbox mailbox = new ReplyMailbox ();
+        mailbox.setTitleId (titleId);
+        mailbox.setRootId (one.getRootId ());
+        mailbox.setReplyId (one.getReplyId ());
+        mailbox.setReplyContent (one.getContent ());
+        mailbox.setSendUserId (one.getUserId ());
+        mailbox.setReceiveUserId (title.getUserId ());
+
+        // 给被评论者发送信息
+        sendCommentReplyMailBox (mailbox);
 
         return add ? Result.success ("评论成功") : Result.fail ("评论失败");
     }
@@ -139,5 +199,86 @@ public class CommentController {
 
         return Result.success ("发送成功");
     }
+
+    /**
+     * 发送父评论 消息
+     * @param mailbox
+     */
+    @Async
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void sendCommentRootMailBox(CommentMailbox mailbox) {
+
+        // 添加文章回复数
+        boolean titleCount = addCommentTitleCount (mailbox.getTitleId ());
+
+        if (! titleCount) {
+            log.warn ("文章回复添加失败");
+            throw new RuntimeException ("文章回复添加失败");
+        }
+
+        boolean save = commentMailboxService.save (mailbox);
+
+        if (! save) {
+            log.warn ("消息持久化失败");
+            throw new RuntimeException ("消息持久化失败");
+        }
+
+
+        commentMailboxService.sendMailbox (mailbox);
+    }
+
+    /**
+     * 发送子评论 消息
+     * @param mailbox
+     */
+    @Async
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void sendCommentReplyMailBox(ReplyMailbox mailbox) {
+        // 添加文章回复数
+        boolean titleCount = addCommentTitleCount (mailbox.getTitleId ());
+
+        if (! titleCount) {
+            log.warn ("文章回复添加失败");
+            throw new RuntimeException ("文章回复添加失败");
+        }
+
+        // 添加评论回复数
+        boolean rootCount = addCommentRootCount (mailbox.getRootId ());
+
+        if (! rootCount) {
+            log.warn ("评论回复添加失败");
+            throw new RuntimeException ("评论回复添加失败");
+        }
+
+        boolean save = replyMailboxService.save (mailbox);
+
+        if (! save) {
+            log.warn ("消息持久化失败");
+            throw new RuntimeException ("消息持久化失败");
+        }
+
+        replyMailboxService.sendMailbox (mailbox);
+    }
+
+
+    /**
+     * 添加文章回复数
+     */
+    private boolean addCommentTitleCount (Long titleId) {
+        Title title = titleService.getById (titleId);
+        title.setCommentCount (title.getCommentCount () + 1);
+        return titleService.updateById (title);
+    }
+
+    /**
+     * 添加父评论回复数
+     */
+    private boolean addCommentRootCount (Long rootId) {
+        CommentRoot commentRoot = commentRootService.getById (rootId);
+        commentRoot.setReplyCount (commentRoot.getReplyCount () + 1);
+        return commentRootService.updateById (commentRoot);
+    }
+
+
 
 }

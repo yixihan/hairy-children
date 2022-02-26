@@ -3,6 +3,7 @@ package com.wq.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wq.mapper.CommentReplyMapper;
 import com.wq.mapper.CommentRootMapper;
+import com.wq.mapper.TitleMapper;
 import com.wq.pojo.CommentReply;
 import com.wq.pojo.CommentRoot;
 import com.wq.pojo.UserComments;
@@ -35,6 +36,9 @@ public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, Comme
 
     @Resource
     private CommentReplyMapper commentReplyMapper;
+
+    @Resource
+    private TitleMapper titleMapper;
 
     @Resource
     private RedisTemplate<String,Object> redisTemplate;
@@ -79,9 +83,6 @@ public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, Comme
             // 回复的子评论 用户 id
             commentReply.setReplyUserId(replyComment.getUserId());
         }
-
-        // 父评论 回复数 + 1
-        updateRootCommentReplyCount (commentReply.getRootId ());
 
         // 存入数据库
         boolean insert = commentReplyMapper.insert (commentReply) == 1;
@@ -172,10 +173,4 @@ public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, Comme
 
     }
 
-    private void updateRootCommentReplyCount (Long rootId) {
-        CommentRoot commentRoot = commentRootMapper.selectById (rootId);
-        commentRoot.setReplyCount (commentRoot.getReplyCount () + 1);
-
-        commentRootMapper.updateById (commentRoot);
-    }
 }

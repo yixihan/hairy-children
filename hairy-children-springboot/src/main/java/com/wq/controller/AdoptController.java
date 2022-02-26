@@ -5,11 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.PhotoProperties;
 import com.wq.common.pojo.Result;
 import com.wq.pojo.Adopt;
+import com.wq.pojo.AdoptMailbox;
 import com.wq.pojo.Title;
 import com.wq.service.AdoptService;
 import com.wq.service.TitleService;
+import com.wq.service.message.AdoptMailboxService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +39,9 @@ public class AdoptController {
 
     @Resource
     private AdoptService adoptService;
+
+    @Resource
+    private AdoptMailboxService adoptMailboxService;
 
     @Resource
     private TitleService titleService;
@@ -68,6 +75,16 @@ public class AdoptController {
     @PostMapping("/updateAdopt")
     public Result updateAdopt (Adopt adopt) {
         boolean update = adoptService.updateById (adopt);
+
+        Title title = titleService.getById (adopt.getTitleId ());
+
+        AdoptMailbox mailbox = new AdoptMailbox ();
+        mailbox.setAdoptId (adopt.getAdoptId ());
+        mailbox.setTitleId (adopt.getTitleId ());
+        mailbox.setSendUserId (adopt.getUserId ());
+        mailbox.setReceiveUserId (title.getUserId ());
+
+        sendAdoptMailBox (mailbox);
 
         return update ? Result.success("更新成功") : Result.fail("更新失败");
     }
@@ -139,5 +156,24 @@ public class AdoptController {
         Map<String, Object> map = new HashMap<>(16);
         map.put("adoptList", adoptList);
         return Result.success("获取成功", map);
+    }
+
+    /**
+     * 发送消息 - 领养申请
+     * @param mailbox
+     */
+    @Async
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void sendAdoptMailBox(AdoptMailbox mailbox) {
+        QueryWrapper<AdoptMailbox> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("adopt_id", mailbox.getAdoptId ())
+                .eq ("title_id", mailbox.getTitleId ())
+                .eq ("send_user_id", mailbox.getSendUserId ())
+                .eq ("receive_user_id", mailbox.getReceiveUserId ());
+        AdoptMailbox one = adoptMailboxService.getOne (wrapper);
+
+        if (one != null) {
+
+        }
     }
 }

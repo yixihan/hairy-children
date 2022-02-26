@@ -1,7 +1,7 @@
-package com.wq.service;
+package com.wq.service.message;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wq.pojo.TitleLikeMailbox;
+import com.wq.pojo.ClueMailbox;
 
 import java.util.List;
 
@@ -13,13 +13,15 @@ import java.util.List;
  * @author wq
  * @since 2022-02-13
  */
-public interface TitleLikeMailboxService extends IService<TitleLikeMailbox> {
+public interface ClueMailboxService extends IService<ClueMailbox> {
+
 
     /**
-     * 点赞之后发送信息
-     * @param titleLikeMailbox
+     * 发送线索之后发送信息
+     *
+     * @param clueMailbox
      */
-    void sendMailbox (TitleLikeMailbox titleLikeMailbox);
+    void sendMailbox (ClueMailbox clueMailbox);
 
     /**
      * 阅读消息, is_read : 0 => 1
@@ -29,24 +31,23 @@ public interface TitleLikeMailboxService extends IService<TitleLikeMailbox> {
     Boolean read (Long id);
 
     /**
-     * 获取用户未读消息数 -- 文章点赞
+     * 获取用户未读消息数 -- 线索
      * @param userId 用户 id
      * @return 未读消息数
      */
     Integer getMailBoxCount (Long userId);
 
     /**
-     * 获取用户所有消息 -- 文章点赞
+     * 获取用户所有消息 -- 线索
      * @param userId 用户 id
      * @return 用户所有消息
      */
-    List<TitleLikeMailbox> getMessages (Long userId);
+    List<ClueMailbox> getMessages (Long userId);
 
     /**
-     * 获取指定消息 -- 文章点赞
+     * 获取指定消息 -- 线索
      * @param id 主键 id
      * @return 消息主体
      */
-    TitleLikeMailbox getMessage (Long id);
-
+    ClueMailbox getMessage (Long id);
 }
