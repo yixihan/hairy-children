@@ -165,15 +165,13 @@ public class AdoptController {
     @Async
     @Transactional(rollbackFor = RuntimeException.class)
     public void sendAdoptMailBox(AdoptMailbox mailbox) {
-        QueryWrapper<AdoptMailbox> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("adopt_id", mailbox.getAdoptId ())
-                .eq ("title_id", mailbox.getTitleId ())
-                .eq ("send_user_id", mailbox.getSendUserId ())
-                .eq ("receive_user_id", mailbox.getReceiveUserId ());
-        AdoptMailbox one = adoptMailboxService.getOne (wrapper);
+        boolean save = adoptMailboxService.save (mailbox);
 
-        if (one != null) {
-
+        if (save) {
+            log.warn ("消息持久化失败");
+            throw new RuntimeException ("消息持久化失败");
         }
+
+        adoptMailboxService.sendMailbox (mailbox);
     }
 }

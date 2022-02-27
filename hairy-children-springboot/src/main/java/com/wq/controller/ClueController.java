@@ -5,11 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.PhotoProperties;
 import com.wq.common.pojo.Result;
 import com.wq.pojo.Clue;
+import com.wq.pojo.ClueMailbox;
 import com.wq.pojo.Title;
 import com.wq.service.ClueService;
 import com.wq.service.TitleService;
+import com.wq.service.message.ClueMailboxService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +44,9 @@ public class ClueController {
     private TitleService titleService;
 
     @Resource
+    private ClueMailboxService clueMailboxService;
+
+    @Resource
     private PhotoProperties photoProperties;
 
     @PostMapping("/creatClue")
@@ -68,6 +75,16 @@ public class ClueController {
     @PostMapping("/updateClue")
     public Result updateClue (Clue clue) {
         boolean update = clueService.updateById (clue);
+
+        Title title = titleService.getById (clue.getTitleId ());
+
+        ClueMailbox mailbox = new ClueMailbox ();
+        mailbox.setClueId (clue.getClueId ());
+        mailbox.setTitleId (clue.getTitleId ());
+        mailbox.setSendUserId (clue.getUserId ());
+        mailbox.setReceiveUserId (title.getUserId ());
+
+        sendClueMailBox (mailbox);
 
         return update ? Result.success("更新成功") : Result.fail("更新失败");
     }
@@ -139,6 +156,19 @@ public class ClueController {
         Map<String, Object> map = new HashMap<>(16);
         map.put("clueList", clueList);
         return Result.success("获取成功", map);
+    }
+
+    @Async
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void sendClueMailBox(ClueMailbox mailbox) {
+        boolean save = clueMailboxService.save (mailbox);
+
+        if (save) {
+            log.warn ("消息持久化失败");
+            throw new RuntimeException ("消息持久化失败");
+        }
+
+        clueMailboxService.sendMailbox (mailbox);
     }
 
 }
