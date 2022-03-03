@@ -30,7 +30,7 @@
                1 type,
                gmt_create gmtCreate
         from comment_root
-        where user_id = 4
+        where user_id = #{userId}
           and is_deleted = 0;
     </select>
 
@@ -49,7 +49,7 @@
         from comment_reply ry
                  left join comment_root rt on ry.root_id = rt.root_id
         where rt.user_id = ry.user_id
-          and rt.user_id = 4
+          and rt.user_id = #{userId}
           and rt.is_deleted = 0
           and ry.is_deleted = 0;
     </select>

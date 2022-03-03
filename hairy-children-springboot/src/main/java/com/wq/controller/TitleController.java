@@ -130,7 +130,10 @@ public class TitleController {
         QueryWrapper<Title> wrapper = new QueryWrapper<> ();
         wrapper.like ("title_name", titleName);
 
-        Map<String, Object> map = titleService.getMap (wrapper);
+        List<Title> titleList = titleService.list (wrapper);
+
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("titleList", titleList);
 
         return Result.success (map);
     }
@@ -265,6 +268,6 @@ public class TitleController {
 
         titleLikeMailboxService.sendMailbox (one);
 
-        return Result.success ("发送成功");
+        return Result.success ("点赞成功");
     }
 }

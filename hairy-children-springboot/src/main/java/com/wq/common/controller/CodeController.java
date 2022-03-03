@@ -30,7 +30,7 @@ public class CodeController {
     }
 
 
-    @PostMapping("sendCodeByPhone")
+    @PostMapping("/sendCodeByPhone")
     public Result sendCodeByPhone (String phone) {
 
         boolean b = codeService.sendCodeByPhone(phone);
