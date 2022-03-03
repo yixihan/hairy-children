@@ -67,15 +67,7 @@ public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, Comme
     public Boolean addSonComment(CommentReply commentReply, Long titleId) {
 
         // 如果回复的 子评论 id 为空
-        if (commentReply.getReplyCommentId() == null) {
-
-            // 根据回复父评论 id 查询 被回复人信息
-            CommentRoot replyComment = commentRootMapper.selectById(commentReply.getRootId());
-
-            // 回复的父评论 用户 id
-            commentReply.setReplyUserId(replyComment.getUserId());
-
-        } else {
+        if (commentReply.getReplyCommentId() != null) {
 
             // 根据回复子评论 id 查询 被回复人信息
             CommentReply replyComment = commentReplyMapper.selectById (commentReply.getReplyCommentId ());
@@ -110,7 +102,6 @@ public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, Comme
     @Override
     public List<CommentReply> getSonComments(Long rootId) {
         List<CommentReply> sonComments = commentRootMapper.getSonComments (rootId);
-        log.info ("sonComments : " + sonComments);
         return sonComments;
     }
 
@@ -142,6 +133,7 @@ public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, Comme
         // 获取文章的所有父评论
         List<CommentRoot> rootCommentList = commentRootMapper.getAllRootCommentsByTitleId (titleId);
 
+
         // 获取所有父评论的子评论
         for (CommentRoot commentRoot : rootCommentList) {
             commentRoot.setCommentReplyList (getSonComments (commentRoot.getRootId ()));
@@ -161,10 +153,15 @@ public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, Comme
         List<UserComments> userCommentsList = new ArrayList<>();
 
         // 获取 父评论
-        userCommentsList.addAll (getAllUserRootComments (userId));
+        List<UserComments> allUserRootComments = getAllUserRootComments (userId);
+        log.info ("allUserRootComments : " + allUserRootComments);
+        userCommentsList.addAll (allUserRootComments);
+
 
         // 获取 子评论
-        userCommentsList.addAll (getAllUserSonComments (userId));
+        List<UserComments> allUserSonComments = getAllUserSonComments (userId);
+        log.info ("allUserSonComments : " + allUserSonComments);
+        userCommentsList.addAll (allUserSonComments);
 
         // 按时间先后排序
         userCommentsList.sort ((o1, o2) -> - o1.getGmtCreate ().compareTo (o2.getGmtCreate ()));

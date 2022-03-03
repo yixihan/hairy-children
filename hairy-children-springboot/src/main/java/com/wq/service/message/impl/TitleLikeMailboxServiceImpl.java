@@ -48,6 +48,9 @@ public class TitleLikeMailboxServiceImpl extends ServiceImpl<TitleLikeMailboxMap
         TitleLikeMailbox titleLikeMailbox = titleLikeMailboxMapper.selectById (id);
         titleLikeMailbox.setIsRead (1);
 
+        String key = String.format (USER_KEY, titleLikeMailbox.getReceiveUserId ());
+        redisService.setBit (key, titleLikeMailbox.getReceiveUserId (), false);
+
         return titleLikeMailboxMapper.updateById (titleLikeMailbox) == 1;
     }
 
@@ -55,6 +58,14 @@ public class TitleLikeMailboxServiceImpl extends ServiceImpl<TitleLikeMailboxMap
     public Integer getMailBoxCount(Long userId) {
         QueryWrapper<TitleLikeMailbox> wrapper = new QueryWrapper<> ();
         wrapper.eq ("receive_user_id", userId);
+        return titleLikeMailboxMapper.selectCount (wrapper);
+    }
+
+    @Override
+    public Integer getUnreadMailBoxCount(Long userId) {
+        QueryWrapper<TitleLikeMailbox> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("receive_user_id", userId)
+                .eq ("is_read", 0);
         return titleLikeMailboxMapper.selectCount (wrapper);
     }
 

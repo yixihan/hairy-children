@@ -54,6 +54,20 @@ public class ClueMailboxServiceImpl extends ServiceImpl<ClueMailboxMapper, ClueM
         return clueMailboxMapper.selectCount (wrapper);
     }
 
+    /**
+     * 获取用户未读消息数 -- 线索
+     *
+     * @param userId 用户 id
+     * @return 未读消息数
+     */
+    @Override
+    public Integer getUnreadMailBoxCount(Long userId) {
+        QueryWrapper<ClueMailbox> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("receive_user_id", userId)
+                .eq ("is_read", 0);
+        return clueMailboxMapper.selectCount (wrapper);
+    }
+
     @Override
     public List<ClueMailbox> getMessages(Long userId) {
         QueryWrapper<ClueMailbox> wrapper = new QueryWrapper<> ();

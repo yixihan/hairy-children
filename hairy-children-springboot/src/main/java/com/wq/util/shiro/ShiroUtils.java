@@ -17,7 +17,6 @@ public class ShiroUtils {
      * @return user
      */
     public static User getUser () {
-        log.info (String.valueOf (SecurityUtils.getSubject().getPrincipal()));
         return (User) SecurityUtils.getSubject().getPrincipal();
     }
 

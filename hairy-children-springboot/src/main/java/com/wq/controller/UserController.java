@@ -120,8 +120,7 @@ public class UserController {
     }
 
     @PostMapping("/getUserInfo")
-    public Result getUserInfo () {
-        Long userId = ShiroUtils.getUserId ();
+    public Result getUserInfo (Long userId) {
 
         User user = userService.getById (userId);
         UserInfo info = userInfoService.getUserInfoById (userId);

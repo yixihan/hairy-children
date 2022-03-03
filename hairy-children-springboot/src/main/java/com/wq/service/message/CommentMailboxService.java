@@ -31,11 +31,18 @@ public interface CommentMailboxService extends IService<CommentMailbox> {
     Boolean read (Long id);
 
     /**
+     * 获取用户消息数 -- 评论回复 - 父评论
+     * @param userId 用户 id
+     * @return 消息数
+     */
+    Integer getMailBoxCount (Long userId);
+
+    /**
      * 获取用户未读消息数 -- 评论回复 - 父评论
      * @param userId 用户 id
      * @return 未读消息数
      */
-    Integer getMailBoxCount (Long userId);
+    Integer getUnreadMailBoxCount (Long userId);
 
     /**
      * 获取用户所有消息 -- 评论回复 - 父评论

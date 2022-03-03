@@ -55,6 +55,14 @@ public class AdoptMailboxServiceImpl extends ServiceImpl<AdoptMailboxMapper, Ado
     }
 
     @Override
+    public Integer getUnreadMailBoxCount(Long userId) {
+        QueryWrapper<AdoptMailbox> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("receive_user_id", userId)
+                .eq ("is_read", 0);
+        return adoptMailboxMapper.selectCount (wrapper);
+    }
+
+    @Override
     public List<AdoptMailbox> getMessages(Long userId) {
         QueryWrapper<AdoptMailbox> wrapper = new QueryWrapper<> ();
         wrapper.eq ("receive_user_id", userId);

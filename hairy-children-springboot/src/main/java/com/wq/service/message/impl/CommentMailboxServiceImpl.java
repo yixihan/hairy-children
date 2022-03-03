@@ -57,6 +57,20 @@ public class CommentMailboxServiceImpl extends ServiceImpl<CommentMailboxMapper,
         return commentMailboxMapper.selectCount (wrapper);
     }
 
+    /**
+     * 获取用户未读消息数 -- 评论回复 - 父评论
+     *
+     * @param userId 用户 id
+     * @return 未读消息数
+     */
+    @Override
+    public Integer getUnreadMailBoxCount(Long userId) {
+        QueryWrapper<CommentMailbox> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("receive_user_id", userId)
+                .eq ("is_read", 0);
+        return commentMailboxMapper.selectCount (wrapper);
+    }
+
     @Override
     public List<CommentMailbox> getMessages(Long userId) {
         QueryWrapper<CommentMailbox> wrapper = new QueryWrapper<> ();

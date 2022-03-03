@@ -75,6 +75,7 @@ public class ClueController {
     @PostMapping("/updateClue")
     public Result updateClue (Clue clue) {
         boolean update = clueService.updateById (clue);
+        clue = clueService.getById (clue.getClueId ());
 
         Title title = titleService.getById (clue.getTitleId ());
 
@@ -98,11 +99,11 @@ public class ClueController {
 
     @PostMapping("/updateImg")
     public Result updateImg (Long clueId, @Param("file") MultipartFile[] imgs) {
-        StringBuilder clueImgs = new StringBuilder(imgs.length * 20);
+        StringBuilder clueImgs = new StringBuilder();
 
         for (MultipartFile img : imgs) {
             String clueImg = clueService.uploadImg (clueId, img);
-            clueImgs.append (photoProperties.getUrlPaths ()).append (clueImg).append ("-");
+            clueImgs.append (photoProperties.getUrlPaths ()).append (clueImg).append ("::");
         }
         clueImgs.deleteCharAt (clueImgs.length () - 1);
 
@@ -114,9 +115,10 @@ public class ClueController {
     }
 
     @PostMapping("/getClue")
-    public Result getMd (Long clueId) {
+    public Result getClue (Long clueId) {
 
         Clue clue = clueService.getById (clueId);
+        clue.setImgs (clue.getImgsDir ().split ("::"));
 
         Map<String, Object> map = new HashMap<>(16);
         map.put("clue", clue);
@@ -124,14 +126,14 @@ public class ClueController {
     }
 
     @PostMapping("/success")
-    public Result finish (Long clueId, Long titleId) {
-        Title title = titleService.getById (titleId);
+    public Result finish (Long clueId) {
+        Clue clue = clueService.getById (clueId);
+        Title title = titleService.getById (clue.getTitleId ());
 
-        if (title.getIsFinish () == 1) {
-            return Result.fail ("请勿重复同意申请");
+        if (clue.getIsSuccess () == 1) {
+            return Result.fail ("请勿重复同意线索");
         }
 
-        Clue clue = clueService.getById (clueId);
         clue.setIsSuccess (1);
         title.setIsFinish (1);
         boolean update1 = clueService.updateById (clue);
@@ -163,7 +165,7 @@ public class ClueController {
     public void sendClueMailBox(ClueMailbox mailbox) {
         boolean save = clueMailboxService.save (mailbox);
 
-        if (save) {
+        if (! save) {
             log.warn ("消息持久化失败");
             throw new RuntimeException ("消息持久化失败");
         }

@@ -55,6 +55,7 @@ public class AdoptController {
         if (! adoptService.isExists (adopt.getTitleId (), adopt.getUserId ())) {
             return Result.fail ("请勿重复申请领养贴");
         }
+
         Boolean create = adoptService.createAdopt (adopt);
 
         if (create) {
@@ -75,6 +76,7 @@ public class AdoptController {
     @PostMapping("/updateAdopt")
     public Result updateAdopt (Adopt adopt) {
         boolean update = adoptService.updateById (adopt);
+        adopt = adoptService.getById (adopt.getAdoptId ());
 
         Title title = titleService.getById (adopt.getTitleId ());
 
@@ -98,11 +100,11 @@ public class AdoptController {
 
     @PostMapping("/updateImg")
     public Result updateImg (Long adoptId, @Param("file") MultipartFile[] imgs) {
-        StringBuilder adoptImgs = new StringBuilder(imgs.length * 20);
+        StringBuilder adoptImgs = new StringBuilder();
 
         for (MultipartFile img : imgs) {
             String adoptImg = adoptService.uploadImg (adoptId, img);
-            adoptImgs.append (photoProperties.getUrlPaths ()).append (adoptImg).append ("-");
+            adoptImgs.append (photoProperties.getUrlPaths ()).append (adoptImg).append ("::");
         }
         adoptImgs.deleteCharAt (adoptImgs.length () - 1);
 
@@ -114,9 +116,10 @@ public class AdoptController {
     }
 
     @PostMapping("/getAdopt")
-    public Result getMd (Long adoptId) {
+    public Result getAdopt (Long adoptId) {
 
         Adopt adopt = adoptService.getById (adoptId);
+        adopt.setImgs (adopt.getImgsDir ().split ("::"));
 
         Map<String, Object> map = new HashMap<>(16);
         map.put("adopt", adopt);
@@ -124,14 +127,14 @@ public class AdoptController {
     }
 
     @PostMapping("/success")
-    public Result finish (Long adoptId, Long titleId) {
-        Title title = titleService.getById (titleId);
+    public Result finish (Long adoptId) {
+        Adopt adopt = adoptService.getById (adoptId);
+        Title title = titleService.getById (adopt.getTitleId ());
 
-        if (title.getIsFinish () == 1) {
+        if (adopt.getIsSuccess () == 1) {
             return Result.fail ("请勿重复同意申请");
         }
 
-        Adopt adopt = adoptService.getById (adoptId);
         adopt.setIsSuccess (1);
         title.setIsFinish (1);
         boolean update1 = adoptService.updateById (adopt);
@@ -167,7 +170,7 @@ public class AdoptController {
     public void sendAdoptMailBox(AdoptMailbox mailbox) {
         boolean save = adoptMailboxService.save (mailbox);
 
-        if (save) {
+        if (! save) {
             log.warn ("消息持久化失败");
             throw new RuntimeException ("消息持久化失败");
         }

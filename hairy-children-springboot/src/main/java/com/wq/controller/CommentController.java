@@ -101,10 +101,12 @@ public class CommentController {
 
         QueryWrapper<CommentReply> wrapper = new QueryWrapper<> ();
         wrapper.eq ("root_id", commentReply.getRootId ())
-                .eq ("reply_comment_id", commentReply.getReplyCommentId ())
-                .eq ("reply_user_id", commentReply.getReplyCommentId ())
                 .eq ("user_id", commentReply.getUserId ())
                 .eq ("content", commentReply.getContent ());
+
+        if (commentReply.getReplyCommentId () != null) {
+            wrapper.eq ("reply_comment_id", commentReply.getReplyCommentId ());
+        }
         CommentReply one = commentReplyService.getOne (wrapper);
 
         Title title = titleService.getById (titleId);
@@ -116,7 +118,6 @@ public class CommentController {
         mailbox.setReplyContent (one.getContent ());
         mailbox.setSendUserId (one.getUserId ());
         mailbox.setReceiveUserId (title.getUserId ());
-
         // 给被评论者发送信息
         sendCommentReplyMailBox (mailbox);
 
@@ -173,6 +174,7 @@ public class CommentController {
 
         // 发送消息
         CommentLikeMailbox commentLikeMailbox = new CommentLikeMailbox ();
+        commentLikeMailbox.setTitleId (commentRoot.getAnswerId ());
         commentLikeMailbox.setRootId (rootId);
         commentLikeMailbox.setSendUserId (userId);
         commentLikeMailbox.setReceiveUserId (commentRoot.getUserId ());

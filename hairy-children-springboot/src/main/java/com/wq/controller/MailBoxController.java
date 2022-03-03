@@ -59,6 +59,15 @@ public class MailBoxController {
         return Result.success (map);
     }
 
+    @PostMapping("/getUnReadAdoptMailBoxCount")
+    public Result getUnReadAdoptMailBoxCount () {
+        Integer count = adoptMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
+
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("count", count);
+        return Result.success (map);
+    }
+
     @PostMapping("/getAdoptMessages")
     public Result getAdoptMessages () {
         List<AdoptMailbox> messages = adoptMailboxService.getMessages (ShiroUtils.getUserId ());
@@ -88,6 +97,15 @@ public class MailBoxController {
     @PostMapping("/getClueMailBoxCount")
     public Result getClueMailboxCount () {
         Integer count = clueMailboxService.getMailBoxCount (ShiroUtils.getUserId ());
+
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("count", count);
+        return Result.success (map);
+    }
+
+    @PostMapping("/getUnReadClueMailBoxCount")
+    public Result getUnReadClueMailBoxCount () {
+        Integer count = clueMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -130,6 +148,15 @@ public class MailBoxController {
         return Result.success (map);
     }
 
+    @PostMapping("/getUnReadCommentMailBoxCount")
+    public Result getUnReadCommentMailBoxCount () {
+        Integer count = commentMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
+
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("count", count);
+        return Result.success (map);
+    }
+
     @PostMapping("/getCommentMessages")
     public Result getCommentMessages () {
         List<CommentMailbox> messages = commentMailboxService.getMessages (ShiroUtils.getUserId ());
@@ -160,6 +187,15 @@ public class MailBoxController {
     @PostMapping("/getReplyMailBoxCount")
     public Result getReplyMailboxCount () {
         Integer count = replyMailboxService.getMailBoxCount (ShiroUtils.getUserId ());
+
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("count", count);
+        return Result.success (map);
+    }
+
+    @PostMapping("/getUnReadReplyMailBoxCount")
+    public Result getUnReadReplyMailBoxCount () {
+        Integer count = replyMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -202,6 +238,15 @@ public class MailBoxController {
         return Result.success (map);
     }
 
+    @PostMapping("/getUnReadCommentLikeMailBoxCount")
+    public Result getUnReadCommentLikeMailBoxCount () {
+        Integer count = commentLikeMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
+
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("count", count);
+        return Result.success (map);
+    }
+
     @PostMapping("/getCommentLikeMessages")
     public Result getCommentLikeMessages () {
         List<CommentLikeMailbox> messages = commentLikeMailboxService.getMessages (ShiroUtils.getUserId ());
@@ -232,6 +277,15 @@ public class MailBoxController {
     @PostMapping("/getTitleLikeMailBoxCount")
     public Result getTitleLikeMailboxCount () {
         Integer count = titleLikeMailboxService.getMailBoxCount (ShiroUtils.getUserId ());
+
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("count", count);
+        return Result.success (map);
+    }
+
+    @PostMapping("/getUnReadTitleLikeMailBoxCount")
+    public Result getUnReadTitleLikeMailBoxCount () {
+        Integer count = titleLikeMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
