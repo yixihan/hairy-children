@@ -124,6 +124,30 @@ public class CommentController {
         return add ? Result.success ("评论成功") : Result.fail ("评论失败");
     }
 
+    @PostMapping ("/removeRootComment")
+    public Result removeRootComment (Long rootId, Long titleId) {
+        Integer replyCount = commentRootService.removeRootComment (rootId);
+
+        // 更新回复数
+        updateCommentRootCount (rootId, -replyCount);
+        updateCommentTitleCount (titleId, - (replyCount + 1));
+
+        return Result.success ("删除评论成功");
+
+    }
+
+    @PostMapping ("/removeSonComment")
+    public Result removeSonComment (Long replyId, Long titleId) {
+        CommentReply commentReply = commentReplyService.getById (replyId);
+        Integer count = commentRootService.removeSonComment (replyId);
+
+        // 更新回复数
+        updateCommentRootCount (commentReply.getRootId (), -count);
+        updateCommentTitleCount (titleId, - count);
+
+        return Result.success ("删除评论成功");
+    }
+
     @PostMapping("/getAllTitleComment")
     public Result getAllTitleComment (Long titleId) {
         List<CommentRoot> commentRootList = commentRootService.getAll (titleId);
@@ -211,7 +235,7 @@ public class CommentController {
     public void sendCommentRootMailBox(CommentMailbox mailbox) {
 
         // 添加文章回复数
-        boolean titleCount = addCommentTitleCount (mailbox.getTitleId ());
+        boolean titleCount = updateCommentTitleCount (mailbox.getTitleId (), 1);
 
         if (! titleCount) {
             log.warn ("文章回复添加失败");
@@ -237,7 +261,7 @@ public class CommentController {
     @Transactional(rollbackFor = RuntimeException.class)
     public void sendCommentReplyMailBox(ReplyMailbox mailbox) {
         // 添加文章回复数
-        boolean titleCount = addCommentTitleCount (mailbox.getTitleId ());
+        boolean titleCount = updateCommentTitleCount (mailbox.getTitleId (), 1);
 
         if (! titleCount) {
             log.warn ("文章回复添加失败");
@@ -245,7 +269,7 @@ public class CommentController {
         }
 
         // 添加评论回复数
-        boolean rootCount = addCommentRootCount (mailbox.getRootId ());
+        boolean rootCount = updateCommentRootCount (mailbox.getRootId (), 1);
 
         if (! rootCount) {
             log.warn ("评论回复添加失败");
@@ -266,18 +290,18 @@ public class CommentController {
     /**
      * 添加文章回复数
      */
-    private boolean addCommentTitleCount (Long titleId) {
+    private boolean updateCommentTitleCount (Long titleId, Integer count) {
         Title title = titleService.getById (titleId);
-        title.setCommentCount (title.getCommentCount () + 1);
+        title.setCommentCount (title.getCommentCount () + count);
         return titleService.updateById (title);
     }
 
     /**
      * 添加父评论回复数
      */
-    private boolean addCommentRootCount (Long rootId) {
+    private boolean updateCommentRootCount (Long rootId, Integer count) {
         CommentRoot commentRoot = commentRootService.getById (rootId);
-        commentRoot.setReplyCount (commentRoot.getReplyCount () + 1);
+        commentRoot.setReplyCount (commentRoot.getReplyCount () + count);
         return commentRootService.updateById (commentRoot);
     }
 

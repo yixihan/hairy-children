@@ -99,6 +99,57 @@ public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, Comme
         return insert;
     }
 
+    /**
+     * 删除父评论, 会将父评论下的子评论一并删除
+     *
+     * @param rootId 父评论 id
+     * @return true : 成功 | false : 失败
+     */
+    @Override
+    public Integer removeRootComment(Long rootId) {
+
+
+        // 删除父评论下的子评论
+        // 获取父评论下的所有子评论
+        List<CommentReply> commentReplyList = getSonComments (rootId);
+
+        // 删除 + 更新 redis 中用户评论数据
+        for (CommentReply commentReply : commentReplyList) {
+            // 删除子评论
+            commentReplyMapper.deleteById (commentReply.getReplyId ());
+            // 更新redis 中用户评论数据
+            updateUserComment (commentReply.getUserId ());
+        }
+
+
+        // 删除父评论
+        CommentRoot commentRoot = commentRootMapper.selectById (rootId);
+        commentRootMapper.deleteById (rootId);
+        updateUserComment (commentRoot.getUserId ());
+
+        // 异步方法更新 redis 内的评论内容
+        updateTitleComment (commentRoot.getAnswerId ());
+        return commentReplyList.size ();
+    }
+
+    /**
+     * 删除子评论
+     * 差一个删除评论子评论的评论的逻辑
+     * @param replyId 子评论 id
+     * @return true : 成功 | false : 失败
+     */
+    @Override
+    public Integer removeSonComment(Long replyId) {
+        CommentReply commentReply = commentReplyMapper.selectById (replyId);
+        CommentRoot commentRoot = commentRootMapper.selectById (commentReply.getRootId ());
+        int delete = commentReplyMapper.deleteById (replyId);
+        // 异步方法更新 redis 内的评论内容
+        updateTitleComment (commentRoot.getAnswerId ());
+        updateUserComment (commentReply.getUserId ());
+        return delete;
+    }
+
+
     @Override
     public List<CommentReply> getSonComments(Long rootId) {
         List<CommentReply> sonComments = commentRootMapper.getSonComments (rootId);

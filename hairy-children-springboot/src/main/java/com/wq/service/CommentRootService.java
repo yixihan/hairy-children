@@ -41,6 +41,20 @@ public interface CommentRootService extends IService<CommentRoot> {
     Boolean addRootComment (CommentRoot commentRoot);
 
     /**
+     * 删除父评论, 会将父评论下的子评论一并删除
+     * @param rootId 父评论 id
+     * @return 删除的评论数
+     */
+    Integer removeRootComment (Long rootId);
+
+    /**
+     * 删除子评论
+     * @param replyId 子评论 id
+     * @return 删除的评论数
+     */
+    Integer removeSonComment (Long replyId);
+
+    /**
      * 获取指定 父评论 id 的所有子评论
      * @param rootId 父评论 id
      * @return 指定 文章 id 下的指定 父评论 id 的所有子评论
