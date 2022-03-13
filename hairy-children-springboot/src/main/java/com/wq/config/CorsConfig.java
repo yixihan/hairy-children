@@ -8,6 +8,7 @@ import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import javax.annotation.Resource;
@@ -46,8 +47,10 @@ public class CorsConfig extends WebMvcConfigurationSupport {
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         // swagger
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/**");
+        registry.addResourceHandler("/swagger-ui/**")
+                .addResourceLocations("classpath:/META-INF/resources/**/**")
+                .addResourceLocations ("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
+                .resourceChain(false);
         // webjars
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/**");
@@ -65,6 +68,12 @@ public class CorsConfig extends WebMvcConfigurationSupport {
         // 文章图片 储存位置
         registry.addResourceHandler("/title/**")
                 .addResourceLocations("file:" + photoProperties.getPaths () + photoProperties.getTitlePaths ());
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/swagger-ui/")
+                .setViewName("forward:/swagger-ui/index.html");
     }
 
     @Bean
