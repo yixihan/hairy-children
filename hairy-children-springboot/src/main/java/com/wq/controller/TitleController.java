@@ -6,9 +6,10 @@ import com.wq.common.PhotoProperties;
 import com.wq.common.pojo.Result;
 import com.wq.pojo.Title;
 import com.wq.pojo.TitleLikeMailbox;
-import com.wq.service.message.TitleLikeMailboxService;
 import com.wq.service.TitleService;
+import com.wq.service.message.TitleLikeMailboxService;
 import com.wq.service.redis.RedisService;
+import com.wq.util.PageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,9 +120,10 @@ public class TitleController {
     @PostMapping("/getAllUserTitles")
     public Result getAllUserTitles (Long userId) {
         List<Title> titleList = titleService.getTitleByUserId (userId);
+        PageUtils titlePage = new PageUtils (titleList, titleList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put("titleList", titleList);
+        map.put("titlePage", titlePage);
         return Result.success("获取文章成功", map);
     }
 
@@ -151,7 +153,7 @@ public class TitleController {
      */
     @PostMapping("/getAllTitles")
     public Result getAllTitles (Integer titleType, Integer timeLimit, String city, Integer isFinish,
-                                Boolean time, Boolean like, Boolean reply, Boolean collection ) {
+                                Boolean time, Boolean like, Boolean reply, Boolean collection) {
 
         QueryWrapper<Title> wrapper = new QueryWrapper<> ();
         // 文章类型限制
@@ -206,8 +208,9 @@ public class TitleController {
             }
         });
 
+        PageUtils titlePage = new PageUtils (titleList, titleList.size (), 10, 0);
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("titleList", titleList);
+        map.put ("titlePage", titlePage);
         return Result.success (map);
     }
 

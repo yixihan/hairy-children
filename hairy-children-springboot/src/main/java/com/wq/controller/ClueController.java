@@ -10,6 +10,7 @@ import com.wq.pojo.Title;
 import com.wq.service.ClueService;
 import com.wq.service.TitleService;
 import com.wq.service.message.ClueMailboxService;
+import com.wq.util.PageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.scheduling.annotation.Async;
@@ -145,18 +146,20 @@ public class ClueController {
     @PostMapping("/getAllUserClues")
     public Result getAllUserClues (Long userId) {
         List<Clue> clueList = clueService.getCluesByUserId (userId);
+        PageUtils cluePage = new PageUtils (clueList, clueList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<> (16);
-        map.put("clueList", clueList);
+        map.put("cluePage", cluePage);
         return Result.success("获取成功", map);
     }
 
     @PostMapping("/getAllTitleClues")
     public Result getAllTitleClues (Long titleId) {
         List<Clue> clueList = clueService.getCluesByTitleId (titleId);
+        PageUtils cluePage = new PageUtils (clueList, clueList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put("clueList", clueList);
+        map.put("cluePage", cluePage);
         return Result.success("获取成功", map);
     }
 

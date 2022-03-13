@@ -11,6 +11,7 @@ import com.wq.service.message.CommentLikeMailboxService;
 import com.wq.service.message.CommentMailboxService;
 import com.wq.service.message.ReplyMailboxService;
 import com.wq.service.redis.RedisService;
+import com.wq.util.PageUtils;
 import com.wq.util.shiro.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -151,17 +152,20 @@ public class CommentController {
     @PostMapping("/getAllTitleComment")
     public Result getAllTitleComment (Long titleId) {
         List<CommentRoot> commentRootList = commentRootService.getAll (titleId);
+        PageUtils commentPage = new PageUtils (commentRootList, commentRootList.size (), 10, 0);
 
         HashMap<String, Object> map = new HashMap<> (8);
-        map.put ("commentRootList", commentRootList);
+        map.put ("commentPage", commentPage);
         return Result.success (map);
     }
 
     @PostMapping("/getAllUserComment")
     public Result getAllUserComment (Long userId) {
         List<UserComments> userCommentList = commentRootService.getUserComments (userId);
+        PageUtils commentPage = new PageUtils (userCommentList, userCommentList.size (), 10, 0);
+
         HashMap<String, Object> map = new HashMap<> (8);
-        map.put ("userCommentList", userCommentList);
+        map.put ("commentPage", commentPage);
         return Result.success (map);
     }
 

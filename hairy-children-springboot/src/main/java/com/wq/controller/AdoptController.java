@@ -10,6 +10,7 @@ import com.wq.pojo.Title;
 import com.wq.service.AdoptService;
 import com.wq.service.TitleService;
 import com.wq.service.message.AdoptMailboxService;
+import com.wq.util.PageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.scheduling.annotation.Async;
@@ -146,18 +147,20 @@ public class AdoptController {
     @PostMapping("/getAllUserAdopts")
     public Result getAllUserAdopts (Long userId) {
         List<Adopt> adoptList = adoptService.getAdoptsByUserId (userId);
+        PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put("adoptList", adoptList);
+        map.put("adoptPage", adoptPage);
         return Result.success("获取成功", map);
     }
 
     @PostMapping("/getAllTitleAdopts")
     public Result getAllTitleAdopts (Long titleId) {
         List<Adopt> adoptList = adoptService.getAllAdoptsByTitleId (titleId);
+        PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put("adoptList", adoptList);
+        map.put("adoptPage", adoptPage);
         return Result.success("获取成功", map);
     }
 

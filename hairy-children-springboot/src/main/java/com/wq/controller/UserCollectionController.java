@@ -7,6 +7,7 @@ import com.wq.pojo.CollectionTitle;
 import com.wq.pojo.UserCollection;
 import com.wq.service.CollectionTitleService;
 import com.wq.service.UserCollectionService;
+import com.wq.util.PageUtils;
 import com.wq.util.shiro.ShiroUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,9 +61,11 @@ public class UserCollectionController {
     public Result getAllFavorites () {
         List<UserCollection> userCollectionList = userCollectionService.
                 getAllCollectionById (ShiroUtils.getUserId ());
+        PageUtils userCollectionPage =
+                new PageUtils (userCollectionList, userCollectionList.size (), 10, 0);
 
         HashMap<String, Object> map = new HashMap<> (16);
-        map.put ("userCollectionList", userCollectionList);
+        map.put ("userCollectionPage", userCollectionPage);
         return Result.success (map);
     }
 
@@ -109,8 +112,11 @@ public class UserCollectionController {
         List<CollectionTitle> collectionTitleList = collectionTitleService.
                 getAllCollectionTitle (userCollectionId);
 
+        PageUtils collectionTitlePage =
+                new PageUtils (collectionTitleList, collectionTitleList.size (), 10, 0);
+
         HashMap<String, Object> map = new HashMap<> (16);
-        map.put ("collectionTitleList", collectionTitleList);
+        map.put ("collectionTitlePage", collectionTitlePage);
         return Result.success (map);
     }
 

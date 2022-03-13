@@ -3,6 +3,7 @@ package com.wq.controller;
 import com.wq.common.pojo.Result;
 import com.wq.pojo.*;
 import com.wq.service.message.*;
+import com.wq.util.PageUtils;
 import com.wq.util.shiro.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,9 +72,10 @@ public class MailBoxController {
     @PostMapping("/getAdoptMessages")
     public Result getAdoptMessages () {
         List<AdoptMailbox> messages = adoptMailboxService.getMessages (ShiroUtils.getUserId ());
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messages", messages);
+        map.put ("messagesPage", messagesPage);
         return Result.success (map);
     }
 
@@ -115,9 +117,10 @@ public class MailBoxController {
     @PostMapping("/getClueMessages")
     public Result getClueMessages () {
         List<ClueMailbox> messages = clueMailboxService.getMessages (ShiroUtils.getUserId ());
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messages", messages);
+        map.put ("messagesPage", messagesPage);
         return Result.success (map);
     }
 
@@ -160,9 +163,10 @@ public class MailBoxController {
     @PostMapping("/getCommentMessages")
     public Result getCommentMessages () {
         List<CommentMailbox> messages = commentMailboxService.getMessages (ShiroUtils.getUserId ());
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messages", messages);
+        map.put ("messagesPage", messagesPage);
         return Result.success (map);
     }
 
@@ -205,9 +209,10 @@ public class MailBoxController {
     @PostMapping("/getReplyMessages")
     public Result getReplyMessages () {
         List<ReplyMailbox> messages = replyMailboxService.getMessages (ShiroUtils.getUserId ());
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messages", messages);
+        map.put ("messagesPage", messagesPage);
         return Result.success (map);
     }
 
@@ -250,9 +255,10 @@ public class MailBoxController {
     @PostMapping("/getCommentLikeMessages")
     public Result getCommentLikeMessages () {
         List<CommentLikeMailbox> messages = commentLikeMailboxService.getMessages (ShiroUtils.getUserId ());
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messages", messages);
+        map.put ("messagesPage", messagesPage);
         return Result.success (map);
     }
 
@@ -295,9 +301,10 @@ public class MailBoxController {
     @PostMapping("/getTitleLikeMessages")
     public Result getTitleLikeMessages () {
         List<TitleLikeMailbox> messages = titleLikeMailboxService.getMessages (ShiroUtils.getUserId ());
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messages", messages);
+        map.put ("messagesPage", messagesPage);
         return Result.success (map);
     }
 

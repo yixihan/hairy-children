@@ -24,7 +24,7 @@ public class MybatisPlusConfig {
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
 
         // MP 分页插件
-        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor (DbType.H2));
+        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor (DbType.MYSQL));
 
         // MP 乐观锁
         mybatisPlusInterceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor ());

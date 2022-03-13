@@ -61,6 +61,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public Result exceptionHandler(HttpServletRequest req, NullPointerException e){
         log.error("空指针异常. 异常信息 : " + e.getMessage () + ", 异常原因 : " + e.getCause ());
+        e.printStackTrace ();
         return Result.fail (e.getMessage ());
     }
 
