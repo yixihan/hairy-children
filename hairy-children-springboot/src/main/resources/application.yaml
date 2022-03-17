@@ -15,9 +15,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     druid:
-      url: jdbc:mysql://localhost:3306/hairy_children?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      url: jdbc:mysql://175.24.229.41:1617/hairy_children?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
       username: root
-      password: 123456
+      password: W6YnvKnLzpSFNGuc.
       # 初始连接数
       initialSize: 5
       # 最小连接池数量
@@ -78,15 +78,15 @@ spring:
 
   # redis 配置
   redis:
-    port: 6379
-    host: 127.0.0.1
+    port: 9942
+    host: 175.24.229.41
     database: 11
-    password: password
+    password: DLgWoryp1S0xtfC4*PVM
 
   #邮件发送配置
   mail:
-    username: username
-    password: password
+    username: 3113788997@qq.com
+    password: uxjifzhywwspdgff
 
     host: smtp.qq.com
     # 开启加密授权验证
@@ -122,11 +122,11 @@ upload:
 
 customer:
   # 实名认证
-  appCode: appCode
+  appCode: a490abf96cc442f79c4761d95e314fad
   # 发送短信
   phone:
-    secretId: secretId
-    secretKey: secretKey
-    smsSdkAppId: smsSdkAppId
-    signName: signName
-    templateId: templateId
+    secretId: AKIDqUs0rRklW0D9pEPggRwA7oFPIvIPFo67
+    secretKey: mIYWEfqjOnzuXtyqVx96mBJBm68tOcYD
+    smsSdkAppId: 1400631199
+    signName: 我的专属摸鱼小屋个人网站
+    templateId: 1298576

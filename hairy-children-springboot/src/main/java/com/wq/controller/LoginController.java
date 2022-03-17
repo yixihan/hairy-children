@@ -15,6 +15,7 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,8 +43,8 @@ public class LoginController {
     /**
      * 通过 用户名 密码 登录
      *
-     * @param userName 用户名
-     * @param password 密码
+     *  userName 用户名
+     *  password 密码
      */
     @ApiOperation(value = "通过 用户名 密码 登录")
     @ApiImplicitParams({
@@ -51,7 +52,10 @@ public class LoginController {
             @ApiImplicitParam(name = "password", value = "密码", dataTypeClass = String.class, required = true)
     })
     @PostMapping("/login")
-    public Result loginByUserName(String userName, String password) {
+    public Result loginByUserName(@RequestBody Map<String, Object> params) {
+
+        String userName = String.valueOf (params.get ("userName"));
+        String password = String.valueOf (params.get ("password"));
 
         // 查询数据库
         User user = userService.getUserByName (userName);
@@ -92,7 +96,7 @@ public class LoginController {
             @ApiImplicitParam(name = "email", value = "邮箱", dataTypeClass = String.class, required = true),
     })
     @PostMapping("/loginByEmail")
-    public Result loginByEmail(String email) {
+    public Result loginByEmail(@RequestBody String email) {
 
         // 查询数据库
         QueryWrapper<User> wrapper = new QueryWrapper<> ();
@@ -122,12 +126,14 @@ public class LoginController {
             @ApiImplicitParam(name = "phone", value = "电话", dataTypeClass = String.class, required = true),
     })
     @PostMapping("/loginByPhone")
-    public Result loginByPhone(String phone) {
+    public Result loginByPhone(@RequestBody String phone) {
 
+        log.info (phone);
         // 查询数据库
         QueryWrapper<User> wrapper = new QueryWrapper<> ();
         wrapper.eq ("user_phone", phone);
         User user = userService.getOne (wrapper);
+        log.info ("user : " + user);
 
         // 登录
         try {
@@ -149,7 +155,7 @@ public class LoginController {
      */
     @ApiOperation(value = "注册")
     @PostMapping("/register")
-    public Result register(User user) {
+    public Result register(@RequestBody User user) {
 
         boolean name = codeService.verifyUserName (user.getUserName ());
 
@@ -181,8 +187,8 @@ public class LoginController {
     /**
      * 通过 邮箱 重置 密码
      *
-     * @param email    邮箱
-     * @param password 密码
+     *  email    邮箱
+     *  password 密码
      */
     @ApiOperation(value = "通过 邮箱 重置 密码")
     @ApiImplicitParams({
@@ -190,7 +196,11 @@ public class LoginController {
             @ApiImplicitParam(name = "password", value = "密码", dataTypeClass = String.class, required = true),
     })
     @PostMapping("/resetPasswordByEmail")
-    public Result resetPasswordByEmail(String email, String password) {
+    public Result resetPasswordByEmail(@RequestBody Map<String, Object> params) {
+
+
+        String email = String.valueOf (params.get ("email"));
+        String password = String.valueOf (params.get ("password"));
 
         // 查询数据库
         QueryWrapper<User> wrapper = new QueryWrapper<> ();
@@ -205,8 +215,8 @@ public class LoginController {
     /**
      * 通过 电话 重置 密码
      *
-     * @param phone    电话
-     * @param password 密码
+     *  phone    电话
+     *  password 密码
      */
     @ApiOperation(value = "通过 电话 重置 密码")
     @ApiImplicitParams({
@@ -214,7 +224,10 @@ public class LoginController {
             @ApiImplicitParam(name = "password", value = "密码", dataTypeClass = String.class, required = true),
     })
     @PostMapping("/resetPasswordByPhone")
-    public Result resetPasswordByPhone(String phone, String password) {
+    public Result resetPasswordByPhone(@RequestBody Map<String, Object> params) {
+
+        String phone = String.valueOf (params.get ("phone"));
+        String password = String.valueOf (params.get ("password"));
 
         // 查询数据库
         QueryWrapper<User> wrapper = new QueryWrapper<> ();

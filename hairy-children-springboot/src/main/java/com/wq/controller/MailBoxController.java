@@ -7,6 +7,7 @@ import com.wq.util.PageUtils;
 import com.wq.util.shiro.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,7 +46,7 @@ public class MailBoxController {
 
     /**************adopt**************/
     @PostMapping("/readAdoptMailBox")
-    public Result readAdoptMailBox (Long id) {
+    public Result readAdoptMailBox (@RequestBody Long id) {
         Boolean read = adoptMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -80,7 +81,7 @@ public class MailBoxController {
     }
 
     @PostMapping("/getAdoptMessage")
-    public Result getAdoptMessage (Long id) {
+    public Result getAdoptMessage (@RequestBody Long id) {
         AdoptMailbox message = adoptMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -90,7 +91,7 @@ public class MailBoxController {
 
     /**************clue**************/
     @PostMapping("/readClueMailBox")
-    public Result readClueMailBox (Long id) {
+    public Result readClueMailBox (@RequestBody Long id) {
         Boolean read = clueMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -125,7 +126,7 @@ public class MailBoxController {
     }
 
     @PostMapping("/getClueMessage")
-    public Result getClueMessage (Long id) {
+    public Result getClueMessage (@RequestBody Long id) {
         ClueMailbox message = clueMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -136,7 +137,7 @@ public class MailBoxController {
 
     /**************comment**************/
     @PostMapping("/readCommentMailBox")
-    public Result readCommentMailBox (Long id) {
+    public Result readCommentMailBox (@RequestBody Long id) {
         Boolean read = commentMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -171,7 +172,7 @@ public class MailBoxController {
     }
 
     @PostMapping("/getCommentMessage")
-    public Result getCommentMessage (Long id) {
+    public Result getCommentMessage (@RequestBody Long id) {
         CommentMailbox message = commentMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -182,7 +183,7 @@ public class MailBoxController {
 
     /**************reply**************/
     @PostMapping("/readReplyMailBox")
-    public Result readReplyMailBox (Long id) {
+    public Result readReplyMailBox (@RequestBody Long id) {
         Boolean read = replyMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -217,7 +218,7 @@ public class MailBoxController {
     }
 
     @PostMapping("/getReplyMessage")
-    public Result getReplyMessage (Long id) {
+    public Result getReplyMessage (@RequestBody Long id) {
         ReplyMailbox message = replyMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -228,7 +229,7 @@ public class MailBoxController {
 
     /**************commentLike**************/
     @PostMapping("/readCommentLikeMailBox")
-    public Result readCommentLikeMailBox (Long id) {
+    public Result readCommentLikeMailBox (@RequestBody Long id) {
         Boolean read = commentLikeMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -263,7 +264,7 @@ public class MailBoxController {
     }
 
     @PostMapping("/getCommentLikeMessage")
-    public Result getCommentLikeMessage (Long id) {
+    public Result getCommentLikeMessage (@RequestBody Long id) {
         CommentLikeMailbox message = commentLikeMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -274,7 +275,7 @@ public class MailBoxController {
 
     /**************titleLike**************/
     @PostMapping("/readTitleLikeMailBox")
-    public Result readTitleLikeMailBox (Long id) {
+    public Result readTitleLikeMailBox (@RequestBody Long id) {
         Boolean read = titleLikeMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -309,7 +310,7 @@ public class MailBoxController {
     }
 
     @PostMapping("/getTitleLikeMessage")
-    public Result getTitleLikeMessage (Long id) {
+    public Result getTitleLikeMessage (@RequestBody Long id) {
         TitleLikeMailbox message = titleLikeMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);

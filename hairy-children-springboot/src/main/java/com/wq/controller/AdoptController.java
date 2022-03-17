@@ -16,6 +16,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +52,7 @@ public class AdoptController {
     private PhotoProperties photoProperties;
 
     @PostMapping("/creatAdopt")
-    public Result createAdopt (Adopt adopt) {
+    public Result createAdopt (@RequestBody Adopt adopt) {
 
         if (! adoptService.isExists (adopt.getTitleId (), adopt.getUserId ())) {
             return Result.fail ("请勿重复申请领养贴");
@@ -75,7 +76,7 @@ public class AdoptController {
     }
 
     @PostMapping("/updateAdopt")
-    public Result updateAdopt (Adopt adopt) {
+    public Result updateAdopt (@RequestBody Adopt adopt) {
         boolean update = adoptService.updateById (adopt);
         adopt = adoptService.getById (adopt.getAdoptId ());
 
@@ -93,7 +94,7 @@ public class AdoptController {
     }
 
     @PostMapping("/deleteAdopt")
-    public Result deleteAdopt (Long adoptId) {
+    public Result deleteAdopt (@RequestBody Long adoptId) {
         boolean remove = adoptService.removeById (adoptId);
 
         return remove ? Result.success("删除成功") : Result.fail("删除失败");
@@ -117,7 +118,7 @@ public class AdoptController {
     }
 
     @PostMapping("/getAdopt")
-    public Result getAdopt (Long adoptId) {
+    public Result getAdopt (@RequestBody Long adoptId) {
 
         Adopt adopt = adoptService.getById (adoptId);
         adopt.setImgs (adopt.getImgsDir ().split ("::"));
@@ -128,7 +129,7 @@ public class AdoptController {
     }
 
     @PostMapping("/success")
-    public Result finish (Long adoptId) {
+    public Result finish (@RequestBody Long adoptId) {
         Adopt adopt = adoptService.getById (adoptId);
         Title title = titleService.getById (adopt.getTitleId ());
 
@@ -145,7 +146,7 @@ public class AdoptController {
     }
 
     @PostMapping("/getAllUserAdopts")
-    public Result getAllUserAdopts (Long userId) {
+    public Result getAllUserAdopts (@RequestBody Long userId) {
         List<Adopt> adoptList = adoptService.getAdoptsByUserId (userId);
         PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 10, 0);
 
@@ -155,7 +156,7 @@ public class AdoptController {
     }
 
     @PostMapping("/getAllTitleAdopts")
-    public Result getAllTitleAdopts (Long titleId) {
+    public Result getAllTitleAdopts (@RequestBody Long titleId) {
         List<Adopt> adoptList = adoptService.getAllAdoptsByTitleId (titleId);
         PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 10, 0);
 

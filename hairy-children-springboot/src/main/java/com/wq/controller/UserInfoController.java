@@ -13,10 +13,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -47,7 +44,7 @@ public class UserInfoController {
     private String appCode;
 
     @PostMapping("/updateUserInfo")
-    public Result updateUserInfo (UserInfo userInfo) {
+    public Result updateUserInfo (@RequestBody UserInfo userInfo) {
         QueryWrapper<UserInfo> wrapper = new QueryWrapper<> ();
         wrapper.eq ("user_id", ShiroUtils.getUserId ());
         boolean update = userInfoService.update (userInfo, wrapper);
@@ -84,15 +81,19 @@ public class UserInfoController {
     }
 
     @PostMapping("/authentication")
-    public Result authenticate(String realName, String identityCard) {
+    public Result authenticate(@RequestBody Map<String, String> params) {
+
+        String realName = String.valueOf (params.get ("realName"));
+        String identityCard = String.valueOf (params.get ("identityCard"));
+
         String url = "https://puhui.shumaidata.com/id_card/check/puhui";
 
-        Map<String, String> params = new HashMap<>(16);
-        params.put("idcard", identityCard);
-        params.put("name", realName);
+        Map<String, String> args = new HashMap<>(16);
+        args.put("idcard", identityCard);
+        args.put("name", realName);
 
         try {
-            url = url + buildRequestUrl(params);
+            url = url + buildRequestUrl(args);
             OkHttpClient client = new OkHttpClient.Builder().build();
             Request request = new Request.Builder().url(url).addHeader("Authorization", "APPCODE " + appCode).build();
             Response response = client.newCall(request).execute();

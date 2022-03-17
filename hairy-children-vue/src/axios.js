@@ -10,10 +10,11 @@ var s = window.location.toString();
 var s1 = s.substr(7, s.length);
 var s2 = s1.indexOf("/");
 s = s.substr(0, 8 + s2);
-var a = "http://175.24.229.41:9421/";//获取连接前缀相当于 http://localhost:8081/
+var a = "http://localhost:9421/";//获取连接前缀相当于 http://localhost:8081/
 
 //配置默认前缀
 axios.defaults.baseURL = a
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 //配置前置拦截
 axios.interceptors.request.use(config => {
@@ -23,17 +24,20 @@ axios.interceptors.request.use(config => {
 //配置后置拦截
 axios.interceptors.response.use(response => {
   let res = response.data;
-  if (res.status == 0) {
+  console.log(res.code)
+  // eslint-disable-next-line no-constant-condition
+  if (res.code == 200) {
     return response
   } else {
     Element.Message.error(res.msg, { duration: 2 * 1000 })
     //返回一个异常提示就不会继续往下走了 不+的话 res=>的里面 还是会继续走的
+    console.log("4546464646456")
     return Promise.reject(response.data.msg)
   }
   // 捕获并处理后台异常信息
 }, error => {
   // 使得异常信息更加友好
-  console.log(error)
+  console.log("error : ", error)
   if (error.response.data) { //data不为空时
     error.message = error.response.data.msg
     console.log("-------------------------")

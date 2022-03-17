@@ -14,10 +14,11 @@ import 'mavon-editor/dist/css/index.css'
 Vue.config.productionTip = false
 
 Vue.use(VueAxios, axios)
-Vue.use(ElementUi);
+Vue.use(ElementUi)
 Vue.use(mavonEditor)
 Vue.use(router)
 
+Vue.prototype.$axios=axios
 
 new Vue({
   router,

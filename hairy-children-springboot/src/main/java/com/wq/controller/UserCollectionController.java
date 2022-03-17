@@ -10,6 +10,7 @@ import com.wq.service.UserCollectionService;
 import com.wq.util.PageUtils;
 import com.wq.util.shiro.ShiroUtils;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,7 +37,7 @@ public class UserCollectionController {
     private CollectionTitleService collectionTitleService;
 
     @PostMapping("/createFavorites")
-    public Result createFavorites (UserCollection userCollection) {
+    public Result createFavorites (@RequestBody UserCollection userCollection) {
         userCollection.setUserId (ShiroUtils.getUserId ());
         boolean save = userCollectionService.save (userCollection);
 
@@ -44,14 +45,14 @@ public class UserCollectionController {
     }
 
     @PostMapping("/updateFavorites")
-    public Result updateFavorites (UserCollection userCollection) {
+    public Result updateFavorites (@RequestBody UserCollection userCollection) {
         boolean update = userCollectionService.updateById (userCollection);
 
         return update ? Result.success ("修改收藏夹成功 !") : Result.fail ("修改收藏夹失败");
     }
 
     @PostMapping("/deleteFavorites")
-    public Result deleteFavorites (Long userCollectionId) {
+    public Result deleteFavorites (@RequestBody Long userCollectionId) {
         boolean remove = userCollectionService.removeById (userCollectionId);
 
         return remove ? Result.success ("删除收藏夹成功 !") : Result.fail ("删除收藏夹失败");
@@ -70,7 +71,7 @@ public class UserCollectionController {
     }
 
     @PostMapping("/addCollection")
-    public Result addCollection (CollectionTitle collectionTitle) {
+    public Result addCollection (@RequestBody CollectionTitle collectionTitle) {
         Long collectionId = collectionTitle.getCollectionId ();
         Long titleId = collectionTitle.getTitleId ();
 
@@ -92,7 +93,7 @@ public class UserCollectionController {
     }
 
     @PostMapping("/deleteCollection")
-    public Result deleteCollection (Long collectionTitleId) {
+    public Result deleteCollection (@RequestBody Long collectionTitleId) {
         CollectionTitle collectionTitle = collectionTitleService.getById (collectionTitleId);
 
         if (collectionTitle == null) {
@@ -108,7 +109,7 @@ public class UserCollectionController {
     }
 
     @PostMapping("/getAllCollections")
-    public Result getAllCollections (Long userCollectionId) {
+    public Result getAllCollections (@RequestBody Long userCollectionId) {
         List<CollectionTitle> collectionTitleList = collectionTitleService.
                 getAllCollectionTitle (userCollectionId);
 

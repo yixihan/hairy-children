@@ -1,26 +1,20 @@
 <template>
   <div>
-    <template>
-      <main-navbar />
-      <div>
-        <main-conetnt />
-      </div>
-    </template>
+    <main-navbar />
+    <el-main>
+      <router-view></router-view>
+    </el-main>
   </div>
 </template>
 
 <script>
-import MainNavbar from './main-navbar.vue'
-import MainConetnt from './main-content.vue'
-
+import MainNavbar from "../components/main-navbar.vue";
 export default {
   components: {
     MainNavbar,
-    MainConetnt
-  }
-}
+  },
+};
 </script>
 
 <style>
-
 </style>

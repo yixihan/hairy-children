@@ -1,6 +1,6 @@
 <template>
   <div>
-    主页
+    这里是认证测试页面
   </div>
 </template>
 

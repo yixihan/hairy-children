@@ -15,6 +15,7 @@ import com.wq.util.shiro.SaltUtils;
 import com.wq.util.shiro.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
@@ -95,6 +96,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public Map<String, Object> login(User user) throws AuthenticationException {
 
+        if (user == null) {
+            throw new UnknownAccountException ();
+        }
         // 生成 JwtToken
         Map<String, String> payload = new HashMap<> (16);
         payload.put("userId", String.valueOf(user.getUserId()));

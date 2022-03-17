@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +27,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author wq
@@ -55,61 +56,59 @@ public class TitleController {
     private static final String USER_TITLE_LIKE_KEY = "title_like:%s:%s";
 
     @PostMapping("/createTitle")
-    public Result createTitle (Title title) {
+    public Result createTitle(@RequestBody Title title) {
 
         Boolean creat = titleService.createTitle (title);
 
         if (creat) {
             QueryWrapper<Title> wrapper = new QueryWrapper<> ();
-            wrapper.eq ("user_id", title.getUserId ())
-                    .eq ("title_type", title.getTitleType ())
-                    .eq ("title_name", title.getTitleName ());
+            wrapper.eq ("user_id", title.getUserId ()).eq ("title_type", title.getTitleType ()).eq ("title_name", title.getTitleName ());
 
             Title one = titleService.getOne (wrapper);
 
             Map<String, Object> map = new HashMap<> (16);
-            map.put("titleId", one.getTitleId ());
-            return Result.success("创建成功", map);
+            map.put ("titleId", one.getTitleId ());
+            return Result.success ("创建成功", map);
         }
 
         return Result.fail ("创建失败, 请重新尝试");
     }
 
     @PostMapping("/updateTitle")
-    public Result updateTitle (Title title) {
+    public Result updateTitle(@RequestBody Title title) {
         boolean update = titleService.updateById (title);
 
-        return update ? Result.success("更新文章成功") : Result.fail("更新文章失败");
+        return update ? Result.success ("更新文章成功") : Result.fail ("更新文章失败");
     }
 
     @PostMapping("/deleteTitle")
-    public Result deleteTitle (Long titleId) {
+    public Result deleteTitle(@RequestBody Long titleId) {
         boolean remove = titleService.removeById (titleId);
 
-        return remove ? Result.success("删除文章成功") : Result.fail("删除文章失败");
+        return remove ? Result.success ("删除文章成功") : Result.fail ("删除文章失败");
     }
 
     @PostMapping("/updateImg")
-    public Result updateImg (Long titleId, @Param("file") MultipartFile img) {
+    public Result updateImg(Long titleId, @Param("file") MultipartFile img) {
         String titleImg = titleService.uploadTitleImg (titleId, img);
 
-        Map<String, Object> map = new HashMap<>(16);
-        map.put("titleImg", photoProperties.getUrlPaths () + titleImg);
-        return Result.success(map);
+        Map<String, Object> map = new HashMap<> (16);
+        map.put ("titleImg", photoProperties.getUrlPaths () + titleImg);
+        return Result.success (map);
     }
 
     @PostMapping("/getTitle")
-    public Result getTitle (Long titleId) {
+    public Result getTitle(@RequestBody Long titleId) {
 
         Title title = titleService.getById (titleId);
 
-        Map<String, Object> map = new HashMap<>(16);
-        map.put("title", title);
-        return Result.success("获取文章成功", map);
+        Map<String, Object> map = new HashMap<> (16);
+        map.put ("title", title);
+        return Result.success ("获取文章成功", map);
     }
 
     @PostMapping("/finish")
-    public Result finish (Long titleId) {
+    public Result finish(@RequestBody Long titleId) {
         Title title = titleService.getById (titleId);
         title.setIsFinish (2);
         boolean update = titleService.updateById (title);
@@ -118,23 +117,23 @@ public class TitleController {
     }
 
     @PostMapping("/getAllUserTitles")
-    public Result getAllUserTitles (Long userId) {
+    public Result getAllUserTitles(@RequestBody Long userId) {
         List<Title> titleList = titleService.getTitleByUserId (userId);
         PageUtils titlePage = new PageUtils (titleList, titleList.size (), 10, 0);
 
-        Map<String, Object> map = new HashMap<>(16);
-        map.put("titlePage", titlePage);
-        return Result.success("获取文章成功", map);
+        Map<String, Object> map = new HashMap<> (16);
+        map.put ("titlePage", titlePage);
+        return Result.success ("获取文章成功", map);
     }
 
     @PostMapping("/selectTitle")
-    public Result selectTitle (String titleName) {
+    public Result selectTitle(@RequestBody String titleName) {
         QueryWrapper<Title> wrapper = new QueryWrapper<> ();
         wrapper.like ("title_name", titleName);
 
         List<Title> titleList = titleService.list (wrapper);
 
-        Map<String, Object> map = new HashMap<>(16);
+        Map<String, Object> map = new HashMap<> (16);
         map.put ("titleList", titleList);
 
         return Result.success (map);
@@ -142,25 +141,36 @@ public class TitleController {
 
     /**
      * 查询文章
-     * @param titleType 文章类型, 1 : 领养, 2 : 寻宠
-     * @param timeLimit 实现限制, 1 : 今日, 2 : 本周, 3 : 半年内, 4 : 不限
-     * @param city 城市, 为空 ("") 则是不限
-     * @param isFinish 完成状态, 1 : 未完成, 2 : 完成, 3 : 不限
-     * @param time 是否按时间排序
-     * @param like 是否按点赞排序
-     * @param reply 是否按回复数排序
-     * @param collection 是否按收藏数排序
+     *
+     *  titleType  文章类型, 1 : 领养, 2 : 寻宠
+     *  timeLimit  实现限制, 1 : 今日, 2 : 本周, 3 : 半年内, 4 : 不限
+     *  city       城市, 为空 ("") 则是不限
+     *  isFinish   完成状态, 1 : 未完成, 2 : 完成, 3 : 不限
+     *  time       是否按时间排序
+     *  like       是否按点赞排序
+     *  reply      是否按回复数排序
+     *  collection 是否按收藏数排序
      */
     @PostMapping("/getAllTitles")
-    public Result getAllTitles (Integer titleType, Integer timeLimit, String city, Integer isFinish,
-                                Boolean time, Boolean like, Boolean reply, Boolean collection) {
+    public Result getAllTitles(@RequestBody Map<String, Object> params) {
+
+
+        Integer titleType = (Integer) params.get ("titleType");
+        Integer timeLimit = (Integer) params.get ("titleType");
+        String city = String.valueOf (params.get ("titleType"));
+        Integer isFinish = (Integer) params.get ("titleType");
+
+        Boolean time = (Boolean) params.get ("titleType");
+        Boolean like = (Boolean) params.get ("titleType");
+        Boolean reply = (Boolean) params.get ("titleType");
+        Boolean collection = (Boolean) params.get ("titleType");
 
         QueryWrapper<Title> wrapper = new QueryWrapper<> ();
         // 文章类型限制
         wrapper.eq ("title_type", titleType);
 
         // 城市限制
-        if (! "".equals (city)) {
+        if (!"".equals (city)) {
             wrapper.eq ("user_address", city);
         }
 
@@ -209,14 +219,14 @@ public class TitleController {
         });
 
         PageUtils titlePage = new PageUtils (titleList, titleList.size (), 10, 0);
-        Map<String, Object> map = new HashMap<>(16);
+        Map<String, Object> map = new HashMap<> (16);
         map.put ("titlePage", titlePage);
         return Result.success (map);
     }
 
     @PostMapping("/like")
     @Transactional(rollbackFor = RuntimeException.class)
-    public Result like (Long titleId, Long userId) {
+    public Result like(Long titleId, Long userId) {
         Title title = titleService.getById (titleId);
 
         if (title == null) {
@@ -240,7 +250,7 @@ public class TitleController {
         title.setLikeCount (Math.toIntExact (redisService.getLikeValueAll (key)));
         boolean update = titleService.updateById (title);
 
-        if (! update) {
+        if (!update) {
             log.error ("文章更新失败");
             throw new RuntimeException ("文章更新失败");
         }
@@ -253,14 +263,12 @@ public class TitleController {
 
         boolean save = titleLikeMailboxService.save (titleLikeMailbox);
 
-        if (! save) {
+        if (!save) {
             log.error ("消息持久化失败");
             throw new RuntimeException ("消息持久化失败");
         }
         QueryWrapper<TitleLikeMailbox> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("title_id", titleLikeMailbox.getTitleId ())
-                .eq ("send_user_id", titleLikeMailbox.getSendUserId ())
-                .like ("receive_user_id", titleLikeMailbox.getReceiveUserId ());
+        wrapper.eq ("title_id", titleLikeMailbox.getTitleId ()).eq ("send_user_id", titleLikeMailbox.getSendUserId ()).like ("receive_user_id", titleLikeMailbox.getReceiveUserId ());
 
         TitleLikeMailbox one = titleLikeMailboxService.getOne (wrapper);
 

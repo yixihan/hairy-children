@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,7 +47,7 @@ public class UserController {
     private RedisTemplate<String, Object> redisTemplate;
 
     @PostMapping("/bindEmail")
-    public Result bindEmail (String email) {
+    public Result bindEmail (@RequestBody String email) {
         // 判断该邮箱是否已被绑定
         if (! codeService.verifyUserEmail (email)) {
             return Result.fail ("该邮箱已被绑定");
@@ -83,7 +84,7 @@ public class UserController {
     }
 
     @PostMapping("/bindPhone")
-    public Result bindPhone (String phone) {
+    public Result bindPhone (@RequestBody String phone) {
         // 判断该电话是否已被绑定
         if (! codeService.verifyUserPhone (phone)) {
             return Result.fail ("该电话已被绑定");
@@ -120,9 +121,13 @@ public class UserController {
     }
 
     @PostMapping("/getUserInfo")
-    public Result getUserInfo (Long userId) {
+    public Result getUserInfo (@RequestBody Long userId) {
+
 
         User user = userService.getById (userId);
+        if (user == null) {
+            return Result.fail ("无此用户信息");
+        }
         UserInfo info = userInfoService.getUserInfoById (userId);
 
         Map<String, Object> userInfo = new HashMap<>(16);
@@ -146,7 +151,7 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public Result logout(String token) {
+    public Result logout() {
         Subject subject = ShiroUtils.getSubject ();
 
         subject.logout ();

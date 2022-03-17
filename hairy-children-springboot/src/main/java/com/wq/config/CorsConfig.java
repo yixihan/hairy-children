@@ -33,7 +33,7 @@ public class CorsConfig extends WebMvcConfigurationSupport {
                 // 项目中的所有接口都支持跨域
                 .addMapping("/**")
                 // 可以访问的具体地址
-                .allowedOrigins("http://localhost:9001")
+                .allowedOrigins("*")
                 // 是否允许请求带有验证信息
                 .allowCredentials(true)
                 .allowedMethods("GET", "POST", "DELETE", "PUT")

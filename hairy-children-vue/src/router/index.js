@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import Main from '../views/main.vue'
 import Register from '../views/v/register.vue'
 import Login from '../views/v/login.vue'
+import Test from '../views/v/test.vue'
 
 Vue.use(VueRouter);
 
@@ -29,23 +30,34 @@ const routes = [
     component: Main,
     meta: {
       requireAuth: false
-    }
+    },
+    children: [
+      {
+        path: '/login',
+        name: 'login',
+        component: Login,
+        meta: {
+          requireAuth: false
+        }
+      },
+    ]
 
   },
-  {
-    path: '/login',
-    name: 'login',
-    component: Login,
-    meta: {
-      requireAuth: false
-    }
-  },
+  
   {
     path: '/register',
     name: 'register',
     component: Register,
     meta: {
       requireAuth: false
+    }
+  },
+  {
+    path: '/test',
+    name: 'test',
+    component: Test,
+    meta: {
+      requireAuth: true
     }
   },
 ]

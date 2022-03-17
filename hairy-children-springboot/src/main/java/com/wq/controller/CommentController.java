@@ -1,6 +1,7 @@
 package com.wq.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.pojo.Result;
 import com.wq.pojo.*;
@@ -17,12 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -64,7 +67,7 @@ public class CommentController {
     private static final String USER_COMMENT_LIKE_KEY = "comment_like:%s:%s";
 
     @PostMapping("/addRootComment")
-    public Result addRootComment (CommentRoot commentRoot) {
+    public Result addRootComment (@RequestBody CommentRoot commentRoot) {
 
         // 设置 用户 id
         commentRoot.setUserId (ShiroUtils.getUserId ());
@@ -93,8 +96,13 @@ public class CommentController {
         return add ? Result.success ("评论成功") : Result.fail ("评论失败");
     }
 
+
     @PostMapping("/addSonComment")
-    public Result addSonComment (CommentReply commentReply, Long titleId) {
+    public Result addSonComment (@RequestBody Map<String, Object> params) {
+        //TODO : 未验证此做法是否正确
+        CommentReply commentReply = JSONObject.parseObject (String.valueOf (params.get ("commentReply")), CommentReply.class);
+        Long titleId = JSONObject.parseObject (String.valueOf (params.get ("titleId")), Long.class);
+
         // 设置 用户 id
         commentReply.setUserId (ShiroUtils.getUserId ());
 
@@ -126,7 +134,10 @@ public class CommentController {
     }
 
     @PostMapping ("/removeRootComment")
-    public Result removeRootComment (Long rootId, Long titleId) {
+    public Result removeRootComment (@RequestBody Map<String, Object> params) {
+
+        Long rootId = JSONObject.parseObject (String.valueOf (params.get ("rootId")), Long.class);
+        Long titleId = JSONObject.parseObject (String.valueOf (params.get ("titleId")), Long.class);
         Integer replyCount = commentRootService.removeRootComment (rootId);
 
         // 更新回复数
@@ -138,7 +149,11 @@ public class CommentController {
     }
 
     @PostMapping ("/removeSonComment")
-    public Result removeSonComment (Long replyId, Long titleId) {
+    public Result removeSonComment (@RequestBody Map<String, Object> params) {
+
+        Long replyId = JSONObject.parseObject (String.valueOf (params.get ("replyId")), Long.class);
+        Long titleId = JSONObject.parseObject (String.valueOf (params.get ("titleId")), Long.class);
+
         CommentReply commentReply = commentReplyService.getById (replyId);
         Integer count = commentRootService.removeSonComment (replyId);
 
@@ -150,7 +165,7 @@ public class CommentController {
     }
 
     @PostMapping("/getAllTitleComment")
-    public Result getAllTitleComment (Long titleId) {
+    public Result getAllTitleComment (@RequestBody Long titleId) {
         List<CommentRoot> commentRootList = commentRootService.getAll (titleId);
         PageUtils commentPage = new PageUtils (commentRootList, commentRootList.size (), 10, 0);
 
@@ -160,7 +175,7 @@ public class CommentController {
     }
 
     @PostMapping("/getAllUserComment")
-    public Result getAllUserComment (Long userId) {
+    public Result getAllUserComment (@RequestBody Long userId) {
         List<UserComments> userCommentList = commentRootService.getUserComments (userId);
         PageUtils commentPage = new PageUtils (userCommentList, userCommentList.size (), 10, 0);
 
@@ -171,7 +186,11 @@ public class CommentController {
 
     @PostMapping("/likeComment")
     @Transactional(rollbackFor = RuntimeException.class)
-    public Result likeComment (Long rootId, Long userId) {
+    public Result likeComment (@RequestBody Map<String, Object> params) {
+
+        Long rootId = JSONObject.parseObject (String.valueOf (params.get ("rootId")), Long.class);
+        Long userId = JSONObject.parseObject (String.valueOf (params.get ("userId")), Long.class);
+
         CommentRoot commentRoot = commentRootService.getById (rootId);
 
         if (commentRoot == null) {

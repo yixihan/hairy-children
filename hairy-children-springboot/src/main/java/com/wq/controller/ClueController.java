@@ -16,6 +16,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +52,7 @@ public class ClueController {
     private PhotoProperties photoProperties;
 
     @PostMapping("/creatClue")
-    public Result createClue (Clue clue) {
+    public Result createClue (@RequestBody Clue clue) {
 
         if (! clueService.isExists (clue.getTitleId (), clue.getUserId ())) {
             return Result.fail ("请勿重复创建线索贴");
@@ -74,7 +75,7 @@ public class ClueController {
     }
 
     @PostMapping("/updateClue")
-    public Result updateClue (Clue clue) {
+    public Result updateClue (@RequestBody Clue clue) {
         boolean update = clueService.updateById (clue);
         clue = clueService.getById (clue.getClueId ());
 
@@ -92,7 +93,7 @@ public class ClueController {
     }
 
     @PostMapping("/deleteClue")
-    public Result deleteClue (Long clueId) {
+    public Result deleteClue (@RequestBody Long clueId) {
         boolean remove = clueService.removeById (clueId);
 
         return remove ? Result.success("删除成功") : Result.fail("删除失败");
@@ -116,7 +117,7 @@ public class ClueController {
     }
 
     @PostMapping("/getClue")
-    public Result getClue (Long clueId) {
+    public Result getClue (@RequestBody Long clueId) {
 
         Clue clue = clueService.getById (clueId);
         clue.setImgs (clue.getImgsDir ().split ("::"));
@@ -127,7 +128,7 @@ public class ClueController {
     }
 
     @PostMapping("/success")
-    public Result finish (Long clueId) {
+    public Result finish (@RequestBody Long clueId) {
         Clue clue = clueService.getById (clueId);
         Title title = titleService.getById (clue.getTitleId ());
 
@@ -144,7 +145,7 @@ public class ClueController {
     }
 
     @PostMapping("/getAllUserClues")
-    public Result getAllUserClues (Long userId) {
+    public Result getAllUserClues (@RequestBody Long userId) {
         List<Clue> clueList = clueService.getCluesByUserId (userId);
         PageUtils cluePage = new PageUtils (clueList, clueList.size (), 10, 0);
 
@@ -154,7 +155,7 @@ public class ClueController {
     }
 
     @PostMapping("/getAllTitleClues")
-    public Result getAllTitleClues (Long titleId) {
+    public Result getAllTitleClues (@RequestBody Long titleId) {
         List<Clue> clueList = clueService.getCluesByTitleId (titleId);
         PageUtils cluePage = new PageUtils (clueList, clueList.size (), 10, 0);
 

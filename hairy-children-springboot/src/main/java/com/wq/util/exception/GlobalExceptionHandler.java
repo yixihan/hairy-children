@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(value = ShiroException.class)
     public Result handler(ShiroException e) {
-        log.warn ("无权限访问. 异常信息 : " + e.getMessage () + ", 异常原因 : " + e.getCause ());
+        log.warn ("无权限访问. 异常信息 : " + e.getMessage () + ", 异常原因 : " + e.toString ());
         return Result.fail (e.getMessage ());
     }
 
@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = RuntimeException.class)
     @ResponseBody
     public Result handler(HttpServletRequest req, RuntimeException e) {
-        log.warn ("运行时异常. 异常信息 : " + e.getMessage () + ", 异常原因 : " + e.getCause ());
+        log.warn ("运行时异常. 异常信息 : " + e.getMessage () + ", 异常原因 : " + e.toString ());
         return Result.fail (e.getMessage ());
     }
 
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = IllegalArgumentException.class)
     public Result handler(IllegalArgumentException e) {
-        log.warn ("断言异常. 异常信息 : " + e.getMessage () + ", 异常原因 : " + e.getCause ());
+        log.warn ("断言异常. 异常信息 : " + e.getMessage () + ", 异常原因 : " + e.toString ());
         return Result.fail (e.getMessage ());
     }
 
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value =NullPointerException.class)
     @ResponseBody
     public Result exceptionHandler(HttpServletRequest req, NullPointerException e){
-        log.error("空指针异常. 异常信息 : " + e.getMessage () + ", 异常原因 : " + e.getCause ());
+        log.error("空指针异常. 异常信息 : " + e.getMessage () + ", 异常原因 : " + e.toString ());
         e.printStackTrace ();
         return Result.fail (e.getMessage ());
     }
@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value =Exception.class)
     @ResponseBody
     public Result exceptionHandler(HttpServletRequest req, Exception e){
-        log.error("未知异常. 异常信息 : " + e.getMessage () + ", 异常原因 : " + e.getCause ());
+        log.error("未知异常. 异常信息 : " + e.getMessage () + ", 异常原因 : " + e.toString ());
         return Result.fail (e.getMessage ());
     }
 }

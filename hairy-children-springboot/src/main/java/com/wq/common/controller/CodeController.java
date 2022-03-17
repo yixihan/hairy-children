@@ -3,11 +3,10 @@ package com.wq.common.controller;
 import com.wq.common.pojo.Result;
 import com.wq.common.service.CodeService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * @author : yixihan
@@ -22,7 +21,7 @@ public class CodeController {
     private CodeService codeService;
 
     @PostMapping("/sendCodeByEmail")
-    public Result sendCodeByEmail (String email) {
+    public Result sendCodeByEmail (@RequestBody String email) {
 
         boolean b = codeService.sendCodeByEmail(email);
 
@@ -31,7 +30,7 @@ public class CodeController {
 
 
     @PostMapping("/sendCodeByPhone")
-    public Result sendCodeByPhone (String phone) {
+    public Result sendCodeByPhone (@RequestBody String phone) {
 
         boolean b = codeService.sendCodeByPhone(phone);
 
@@ -40,7 +39,11 @@ public class CodeController {
 
 
     @PostMapping("/verifyPhoneCode")
-    public Result verifyPhoneCode (String phone, String code) {
+    public Result verifyPhoneCode (@RequestBody Map<String, Object> params) {
+
+        String phone = String.valueOf (params.get ("phone"));
+        String code = String.valueOf (params.get ("code"));
+        log.info ("phone : " + phone + ", code : " + code);
 
         boolean b = codeService.verifyCode(phone, code);
 
@@ -49,15 +52,19 @@ public class CodeController {
 
 
     @PostMapping("/verifyEmailCode")
-    public Result verifyEmailCode (String email, String code) {
+    public Result verifyEmailCode (@RequestBody Map<String, Object> params) {
 
+        String email = String.valueOf (params.get ("email"));
+        String code = String.valueOf (params.get ("code"));
+        log.info ("email : " + email + ", code : " + code);
         boolean b = codeService.verifyCode(email, code);
 
         return b ? Result.success("验证码校验正确") : Result.fail("验证码错误或验证码已过期");
     }
 
     @PostMapping("/verifyUserName")
-    public Result verifyUserName (String userName) {
+    public Result verifyUserName (@RequestBody String userName) {
+
 
         boolean b = codeService.verifyUserName(userName);
 
@@ -66,7 +73,7 @@ public class CodeController {
 
 
     @PostMapping("/verifyUserEmail")
-    public Result verifyUserEmail (String email) {
+    public Result verifyUserEmail (@RequestBody String email) {
 
         boolean b = codeService.verifyUserEmail(email);
 
@@ -75,7 +82,7 @@ public class CodeController {
 
 
     @PostMapping("/verifyUserPhone")
-    public Result verifyUserPhone (String phone) {
+    public Result verifyUserPhone (@RequestBody String phone) {
 
         boolean b = codeService.verifyUserPhone(phone);
 
