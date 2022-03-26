@@ -40,26 +40,27 @@ const routes = [
           requireAuth: false
         }
       },
+      {
+        path: '/register',
+        name: 'register',
+        component: Register,
+        meta: {
+          requireAuth: false
+        }
+      },
+      {
+        path: '/test',
+        name: 'test',
+        component: Test,
+        meta: {
+          requireAuth: true
+        }
+      },
     ]
 
   },
   
-  {
-    path: '/register',
-    name: 'register',
-    component: Register,
-    meta: {
-      requireAuth: false
-    }
-  },
-  {
-    path: '/test',
-    name: 'test',
-    component: Test,
-    meta: {
-      requireAuth: true
-    }
-  },
+  
 ]
 
 const router = new VueRouter({

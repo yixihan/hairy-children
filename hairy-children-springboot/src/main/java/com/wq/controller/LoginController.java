@@ -156,6 +156,7 @@ public class LoginController {
     @ApiOperation(value = "注册")
     @PostMapping("/register")
     public Result register(@RequestBody User user) {
+        log.info ("user : " + user);
 
         boolean name = codeService.verifyUserName (user.getUserName ());
 

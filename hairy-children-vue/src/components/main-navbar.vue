@@ -27,12 +27,16 @@
       <el-menu-item index="test">
         <span>点击</span>
       </el-menu-item>
+      <el-menu-item index=" " @click="logout">
+        <span>注销</span>
+      </el-menu-item>
     </el-menu>
   </div>
 </template>
 
 <script>
 export default {
+  inject: ["reload"],
   data() {
     return {
       activeIndex: "1",
@@ -47,19 +51,34 @@ export default {
       console.log(key, keyPath);
     },
     getUserInfo() {
-      let userInfo = this.$store.getters.getUser;
-      console.log("userInfo : ", userInfo)
-      if (userInfo != null) {
+      this.isLogin = this.$store.getters.isLogin;
+      console.log("isLogin : ", this.isLogin);
+
+      if (this.isLogin) {
         this.userName = this.$store.getters.getUser.userName;
-        this.avatar = "http://" + this.$store.getters.getUser.userAvatar;
-        console.log(this.userName);
-        console.log(this.avatar);
-        this.isLogin = true;
+        if (
+          this.$store.getters.getUser.userAvatar == null ||
+          this.$store.getters.getUser.userAvatar == ""
+        ) {
+          this.avatar = this.userName;
+        } else {
+          this.avatar = "http://" + this.$store.getters.getUser.userAvatar;
+        }
       } else {
         this.userName = "";
         this.avatar = "";
-        this.isLogin = false;
       }
+
+      console.log(this.userName);
+      console.log(this.avatar);
+    },
+    logout() {
+      this.$store.commit("REMOVE_INFO");
+      this.userName = "";
+      this.avatar = "";
+      this.isLogin = false;
+      this.reload();
+      this.$router.push("/");
     },
   },
   mounted() {
@@ -71,7 +90,7 @@ export default {
 <style>
 #me,
 #message,
-#index ,
+#index,
 #login {
   float: right;
 }

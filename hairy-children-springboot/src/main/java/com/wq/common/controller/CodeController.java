@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -46,8 +47,10 @@ public class CodeController {
         log.info ("phone : " + phone + ", code : " + code);
 
         boolean b = codeService.verifyCode(phone, code);
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("verify", b);
 
-        return b ? Result.success("验证码校验正确") : Result.fail("验证码错误或验证码已过期");
+        return Result.success(map);
     }
 
 
@@ -59,7 +62,10 @@ public class CodeController {
         log.info ("email : " + email + ", code : " + code);
         boolean b = codeService.verifyCode(email, code);
 
-        return b ? Result.success("验证码校验正确") : Result.fail("验证码错误或验证码已过期");
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("verify", b);
+
+        return Result.success(map);
     }
 
     @PostMapping("/verifyUserName")
@@ -67,8 +73,10 @@ public class CodeController {
 
 
         boolean b = codeService.verifyUserName(userName);
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("verify", b);
 
-        return b ? Result.success("该用户名还未注册") : Result.fail("该用户名已被注册");
+        return Result.success(map);
     }
 
 
@@ -77,7 +85,10 @@ public class CodeController {
 
         boolean b = codeService.verifyUserEmail(email);
 
-        return b ? Result.success("该邮箱未被绑定") : Result.fail("该邮箱已被绑定");
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("verify", b);
+
+        return Result.success(map);
     }
 
 
@@ -86,6 +97,9 @@ public class CodeController {
 
         boolean b = codeService.verifyUserPhone(phone);
 
-        return b ? Result.success("该电话未被绑定") : Result.fail("该电话已被绑定");
+        Map<String, Object> map = new HashMap<>(16);
+        map.put ("verify", b);
+
+        return Result.success(map);
     }
 }

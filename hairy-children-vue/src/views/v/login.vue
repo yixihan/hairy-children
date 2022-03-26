@@ -15,32 +15,53 @@
           :model="user"
           label-width="80px"
           label-position="left"
+          :rules="rules"
         >
-          <el-form-item :label="msg1">
-            <el-input
-              v-show="msg1 == '用户名'"
-              v-model="user.userName"
-            ></el-input>
+          <el-form-item
+            label="用户名"
+            v-if="msg1 == '用户名'"
+            prop="userName"
+            placeholder="请输入用户名"
+          >
+            <el-input v-model="user.userName"></el-input>
+          </el-form-item>
+          <el-form-item
+            label="邮箱"
+            v-if="msg1 == '邮箱'"
+            prop="email"
+            placeholder="请输入邮箱"
+          >
             <el-input v-show="msg1 == '邮箱'" v-model="user.email"></el-input>
+          </el-form-item>
+          <el-form-item
+            label="电话"
+            v-if="msg1 == '电话'"
+            prop="phone"
+            placeholder="请输入电话"
+          >
             <el-input v-show="msg1 == '电话'" v-model="user.phone"></el-input>
           </el-form-item>
-          <el-form-item :label="msg2">
-            <el-input
-              v-model="user.password"
-              v-show="msg2 == '密码'"
-            ></el-input>
-            <el-input
-              v-model="user.code"
-              v-if="msg2 != '密码'"
-              class="verify"
-            ></el-input>
-            <el-button type="primary" v-if="msg2 != '密码'" @click="sendCode"
-              >发送验证码</el-button
-            >
+
+          <el-form-item
+            label="密码"
+            v-if="msg2 == '密码'"
+            prop="password"
+            placeholder="请输入密码 (8-16位)"
+          >
+            <el-input v-model="user.password" type="password"></el-input>
+          </el-form-item>
+          <el-form-item
+            label="验证码"
+            v-if="msg2 != '密码'"
+            prop="code"
+            placeholder="请输入验证码"
+          >
+            <el-input v-model="user.code" class="verify"></el-input>
+            <el-button type="primary" @click="sendCode">发送验证码</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button @click="register">注册</el-button>
-            <el-button type="success" @click="onSubmit">登录</el-button>
+            <el-button @click="toRegister">注册</el-button>
+            <el-button type="success" @click="onSubmit('user')">登录</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -64,27 +85,69 @@ export default {
         password: "",
         code: "",
       },
+      rules: {
+        userName: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          {
+            min: 2,
+            max: 10,
+            message: "长度在 2 到 10 个字符",
+            trigger: "blur",
+          },
+        ],
+        phone: [
+          { required: true, message: "请输入电话", trigger: "blur" },
+          { min: 11, max: 11, message: "请正确输入", trigger: "blur" },
+        ],
+        email: [{ required: true, message: "请输入邮箱", trigger: "blur" }],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          {
+            min: 8,
+            max: 16,
+            message: "长度在 8 到 16 个字符",
+            trigger: "blur",
+          },
+        ],
+        code: [
+          { required: true, message: "请输入验证码", trigger: "blur" },
+          { min: 5, max: 5, message: "请正确输入", trigger: "blur" },
+        ],
+      },
     };
   },
   methods: {
     // 登录
-    onSubmit() {
-      console.log("登录方式 : ");
-      if (this.type == 1) {
-        console.log("用户名 + 密码 ");
-        this.loginByName();
-      } else if (this.type == 2) {
-        console.log("邮箱 + 验证码");
-        this.loginByEmail();
-      } else if (this.type == 3) {
-        console.log("电话 + 验证码 ");
-        this.loginByPhone();
-      } else {
-        this.$messgae({
-          message: "未知错误, 请刷新页面重试",
-          type: "error",
-        });
-      }
+    onSubmit(formName) {
+      // 数据校验
+      this.$refs[formName].validate((valid) => {
+        // 数据校验成功
+        if (valid) {
+          console.log("登录方式 : ");
+          if (this.type == 1) {
+            console.log("用户名 + 密码 ");
+            this.loginByName();
+          } else if (this.type == 2) {
+            console.log("邮箱 + 验证码");
+            this.loginByEmail();
+          } else if (this.type == 3) {
+            console.log("电话 + 验证码 ");
+            this.loginByPhone();
+          } else {
+            this.$messgae({
+              message: "未知错误, 请刷新页面重试",
+              type: "error",
+            });
+          }
+        } else {
+          // 数据校验失败
+          this.$message({
+            message: "请正确输入",
+            type: "error",
+          });
+          return false;
+        }
+      });
     },
     // 切换登录方式
     changeLoginWay(type) {
@@ -159,160 +222,95 @@ export default {
         });
       }
     },
-    // 校验验证码
-    verifyCode() {
-      // 校验验证码是否为空
-      if (this.user.code == null || this.user.code == "") {
-        this.$message({
-          message: "请输入验证码",
-          type: "error",
-        });
-        return false;
-      }
-
-      if (this.msg1 == "邮箱") {
-        // 校验邮箱输入是否正确
-        if (!this.isEmail(this.user.email)) {
-          this.$message({
-            message: "邮箱格式不正确, 请重新输入",
-            type: "error",
-          });
-          return false;
-        }
-
-        // 校验验证码
-        this.axios({
-          url: "/code/verifyEmailCode",
-          data: {
-            email: this.user.email,
-            code: this.user.code,
-          },
-          method: "post",
-        }).then(({ data }) => {
-          console.log(data);
-          this.flag = true;
-        });
-      } else if (this.msg1 == "电话") {
-        // 校验手机号输入是否正确
-        if (!this.isMobile(this.user.phone)) {
-          this.$message({
-            message: "手机号格式不正确, 请重新输入",
-            type: "error",
-          });
-          return false;
-        }
-
-        // 校验验证码
-        this.axios({
-          url: "/code/verifyPhoneCode",
-          data: {
-            phone: this.user.phone,
-            code: this.user.code,
-          },
-          method: "post",
-        }).then(({ data }) => {
-          console.log(data);
-          return data.code == 200;
-        });
-      }
-    },
     // 通过用户名 + 密码登录
     loginByName() {
-      // 校验用户名是否输入
-      if (this.user.userName == null || this.user.userName == "") {
-        this.$message({
-          message: "请输入用户名",
-          type: "error",
-        });
-        return;
-      }
-
-      // 校验密码是否输入
-      if (this.user.password == null || this.user.password == "") {
-        this.$message({
-          message: "请输入密码",
-          type: "error",
-        });
-        return;
-      }
-
       this.axios({
         url: "/v/login",
         method: "post",
         data: {
-          'userName': this.user.userName,
-          'password': this.user.password 
-        }
-      }).then( ({data}) => {
+          userName: this.user.userName,
+          password: this.user.password,
+        },
+      }).then(({ data }) => {
         this.setInfo(data);
-      })
+      });
     },
     // 通过邮箱 + 验证码登录
     loginByEmail() {
-      // 校验邮箱
-      if (this.user.email == null || this.user.email == "") {
-        this.$message({
-          message: "请输入邮箱",
-          type: "error",
-        });
-        return;
-      }
-      // 校验邮箱正确性
+      // 校验邮箱输入是否正确
       if (!this.isEmail(this.user.email)) {
         this.$message({
           message: "邮箱格式不正确, 请重新输入",
           type: "error",
         });
-        return;
+        return false;
       }
 
-      // 校验验证码是否正确
-      this.verifyCode();
-      if (!this.flag) {
-        return;
-      }
-
-      // 登录
+      // 校验验证码
       this.axios({
-        url: "/v/loginByEmail",
-        data: this.user.email,
+        url: "/code/verifyEmailCode",
+        data: {
+          email: this.user.email,
+          code: this.user.code,
+        },
         method: "post",
       }).then(({ data }) => {
-        this.setInfo(data);
+        console.log(data);
+        this.flag = data.data.verify;
+        if (this.flag) {
+          // 登录
+          this.axios({
+            url: "/v/loginByEmail",
+            data: this.user.email,
+            method: "post",
+          }).then(({ data }) => {
+            this.setInfo(data);
+          });
+        } else {
+          this.$messgae({
+            message: "验证码有误, 请仔细检查",
+            type: "error",
+          });
+        }
       });
     },
     // 通过电话 + 验证码登录
     loginByPhone() {
-      // 校验电话
-      if (this.user.phone == null || this.user.phone == "") {
-        this.$message({
-          message: "请输入电话",
-          type: "error",
-        });
-        return;
-      }
       // 校验手机号输入是否正确
       if (!this.isMobile(this.user.phone)) {
         this.$message({
           message: "手机号格式不正确, 请重新输入",
           type: "error",
         });
-        return;
+        return false;
       }
 
-      // 校验验证码是否正确
-      this.verifyCode();
-      if (!this.flag) {
-        return;
-      }
-
-      // 登录
+      // 校验验证码
       this.axios({
-        url: "/v/loginByPhone",
-        data: this.user.phone,
+        url: "/code/verifyPhoneCode",
+        data: {
+          phone: this.user.phone,
+          code: this.user.code,
+        },
         method: "post",
       }).then(({ data }) => {
-        this.setInfo(data);
+        console.log(data);
+        this.flag = data.data.verify;
+        if (this.flag) {
+          // 登录
+          this.axios({
+            url: "/v/loginByPhone",
+            data: this.user.phone,
+            method: "post",
+          }).then(({ data }) => {
+            this.setInfo(data);
+          });
+        } else {
+          this.$messgae({
+            message: "验证码有误, 请仔细检查",
+            type: "error",
+          });
+        }
       });
     },
     // 登录成功后, 将 userInfo 和 token 存入全局库
@@ -353,9 +351,9 @@ export default {
         s
       );
     },
-    // 跳转到主页界面
-    register() {
-      this.$router.push("/registry");
+    // 跳转到注册界面
+    toRegister() {
+      this.$router.push("/register");
     },
   },
 };
