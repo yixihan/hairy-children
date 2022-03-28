@@ -22,4 +22,9 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-*.yaml
+hairy-children-springboot/src/main/resources/application.yaml
+
+hairy-children-springboot/src/main/resources/application.yaml
+**/**.application.yaml
+*.application.yaml
+hairy-children-springboot/src/main/resources/application.yaml
