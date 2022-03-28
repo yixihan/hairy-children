@@ -1,38 +1,30 @@
 <template>
   <div class="login">
-    <el-row :gutter="20">
-      <el-col :span="6" :offset="8">
-        <div class="way">
-          <span>注册</span>
-        </div>
-        <el-form
-          ref="user"
-          :model="user"
-          label-width="80px"
-          label-position="left"
-          :rules="rules"
-        >
-          <el-form-item
-            label="用户名"
-            prop="userName"
-            placeholder="请输入用户名"
-          >
-            <el-input v-model="user.userName"></el-input>
-          </el-form-item>
-          <el-form-item
-            label="密码"
-            prop="userPassword"
-            placeholder="请输入密码 (8-16位)"
-          >
-            <el-input v-model="user.userPassword" type="password"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button @click="toLogin">登录</el-button>
-            <el-button type="success" @click="onSubmit('user')">注册</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-    </el-row>
+    <div class="way">
+      <span>注册</span>
+    </div>
+    <el-form
+      ref="user"
+      :model="user"
+      label-width="80px"
+      label-position="left"
+      :rules="rules"
+    >
+      <el-form-item label="用户名" prop="userName" placeholder="请输入用户名">
+        <el-input v-model="user.userName"></el-input>
+      </el-form-item>
+      <el-form-item
+        label="密码"
+        prop="userPassword"
+        placeholder="请输入密码 (8-16位)"
+      >
+        <el-input v-model="user.userPassword" type="password"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="toLogin">登录</el-button>
+        <el-button type="success" @click="onSubmit('user')">注册</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
@@ -129,15 +121,21 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .login {
   padding-top: 60px;
   margin: 0 auto;
+  .way {
+    margin: 0 auto;
+    padding: 10px;
+    padding-bottom: 20px;
+  }
+  .el-form-item__content ::deep {
+    margin-left: 80px;
+    position: relative;
+  }
 }
-.el-form-item__content ::deep {
-  margin-left: 80px;
-  position: relative;
-}
+
 .verify {
   position: absolute !important;
   left: 0 !important;
@@ -149,12 +147,13 @@ export default {
   right: 0;
   display: inline-block;
 }
-.way {
-  margin: 0 auto;
-  padding: 10px;
-  padding-bottom: 20px;
-}
+
 #code {
   display: none;
+}
+.el-step {
+  flex-basis: 50%;
+  margin-right: 0px;
+  width: 150px !important;
 }
 </style>

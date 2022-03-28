@@ -1,39 +1,37 @@
 <template>
   <div class="login">
-    <el-row :gutter="20">
-      <el-col :span="6" :offset="8">
-        <div class="way">
-          <span>重置密码</span>
-        </div>
-        <el-steps :active="active" finish-status="success">
-          <el-step title="步骤 1"> </el-step>
-          <el-step title="步骤 2"></el-step>
-          <el-step title="步骤 3"></el-step>
-        </el-steps>
-        <el-form
-          ref="user"
-          :model="user"
-          label-width="100px"
-          label-position="left"
-          :rules="rules"
-          :v-if="active == 0"
-        >
-          <el-form-item label="邮箱 / 电话" prop="val" placeholder="请输入邮箱">
-            <el-input v-model="user.val"></el-input>
-          </el-form-item>
+    <div class="way">
+      <span>重置密码</span>
+    </div>
 
-          <el-form-item label="验证码" prop="code" placeholder="请输入验证码">
-            <el-input v-model="user.code" class="verify"></el-input>
-            <el-button type="primary" @click="sendCode">发送验证码</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-button @click="toLogin">登录</el-button>
-            <el-button type="success" @click="onSubmit('user')">重置</el-button>
-          </el-form-item>
-        </el-form>
-        <el-button style="margin-top: 12px" @click="next">下一步</el-button>
-      </el-col>
-    </el-row>
+    <el-steps :active="active" finish-status="success" space="150px">
+      <el-step title="步骤 1"></el-step>
+      <el-step title="步骤 2"></el-step>
+      <el-step title="步骤 2"></el-step>
+     
+    </el-steps>
+
+    <el-form
+      ref="user"
+      :model="user"
+      label-width="100px"
+      label-position="left"
+      :rules="rules"
+      :v-if="active == 0"
+    >
+      <el-form-item label="邮箱 / 电话" prop="val" placeholder="请输入邮箱">
+        <el-input v-model="user.val"></el-input>
+      </el-form-item>
+
+      <el-form-item label="验证码" prop="code" placeholder="请输入验证码">
+        <el-input v-model="user.code" class="verify"></el-input>
+        <el-button type="primary" @click="sendCode">发送验证码</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="toLogin">登录</el-button>
+        <el-button type="success" @click="onSubmit('user')">重置</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
@@ -58,10 +56,7 @@ export default {
     };
   },
   methods: {
-    next() {
-      if (this.active++ > 2) this.active = 0;
-    },
-    // 登录
+    // 提交表单, 校验验证码是否正确
     onSubmit(formName) {
       // 数据校验
       this.$refs[formName].validate((valid) => {
@@ -192,7 +187,6 @@ export default {
         s
       );
     },
-
     // 跳转到注册界面
     toLogin() {
       this.$router.push("/login");
@@ -214,6 +208,18 @@ export default {
     margin-left: 80px;
     position: relative;
   }
+  .el-steps {
+    margin: 0 auto;
+    display: contents !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 20px;
+
+    .is-horizontal {
+      margin: 0 auto;
+      padding-bottom: 10px;
+    }
+  }
 }
 
 .verify {
@@ -231,7 +237,7 @@ export default {
 #code {
   display: none;
 }
- .el-step {
+.el-step {
   flex-basis: 50%;
   margin-right: 0px;
   width: 150px !important;
