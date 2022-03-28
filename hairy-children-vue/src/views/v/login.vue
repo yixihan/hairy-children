@@ -1,71 +1,74 @@
 <template>
   <div class="login">
-    <el-row :gutter="20">
-      <el-col :span="6" :offset="8">
-        <div class="way">
-          <span @click="changeLoginWay(1)">用户名登录</span>
-          <el-divider direction="vertical"></el-divider>
-          <span @click="changeLoginWay(2)">邮箱登录</span>
-          <el-divider direction="vertical"></el-divider>
-          <span @click="changeLoginWay(3)">电话登录</span>
-        </div>
+    <div class="way">
+      <span @click="changeLoginWay(1)">用户名登录</span>
+      <el-divider direction="vertical"></el-divider>
+      <span @click="changeLoginWay(2)">邮箱登录</span>
+      <el-divider direction="vertical"></el-divider>
+      <span @click="changeLoginWay(3)">电话登录</span>
+    </div>
 
-        <el-form
-          ref="user"
-          :model="user"
-          label-width="80px"
-          label-position="left"
-          :rules="rules"
+    <el-form
+      ref="user"
+      :model="user"
+      label-width="80px"
+      label-position="left"
+      :rules="rules"
+    >
+      <el-form-item
+        label="用户名"
+        v-if="msg1 == '用户名'"
+        prop="userName"
+        placeholder="请输入用户名"
+      >
+        <el-input v-model="user.userName"></el-input>
+      </el-form-item>
+      <el-form-item
+        label="邮箱"
+        v-if="msg1 == '邮箱'"
+        prop="email"
+        placeholder="请输入邮箱"
+      >
+        <el-input v-show="msg1 == '邮箱'" v-model="user.email"></el-input>
+      </el-form-item>
+      <el-form-item
+        label="电话"
+        v-if="msg1 == '电话'"
+        prop="phone"
+        placeholder="请输入电话"
+      >
+        <el-input v-show="msg1 == '电话'" v-model="user.phone"></el-input>
+      </el-form-item>
+
+      <el-form-item
+        label="密码"
+        v-if="msg2 == '密码'"
+        prop="password"
+        placeholder="请输入密码 (8-16位)"
+      >
+        <el-input v-model="user.password" type="password"></el-input>
+      </el-form-item>
+      <el-form-item
+        label="验证码"
+        v-if="msg2 != '密码'"
+        prop="code"
+        placeholder="请输入验证码"
+      >
+        <el-input v-model="user.code" class="verify"></el-input>
+        <el-button type="primary" @click="sendCode">发送验证码</el-button>
+      </el-form-item>
+
+      <el-form-item label="" class="pa">
+        <router-link to="/resetPassword" class="resetPassword"
+          >忘记密码?</router-link
         >
-          <el-form-item
-            label="用户名"
-            v-if="msg1 == '用户名'"
-            prop="userName"
-            placeholder="请输入用户名"
-          >
-            <el-input v-model="user.userName"></el-input>
-          </el-form-item>
-          <el-form-item
-            label="邮箱"
-            v-if="msg1 == '邮箱'"
-            prop="email"
-            placeholder="请输入邮箱"
-          >
-            <el-input v-show="msg1 == '邮箱'" v-model="user.email"></el-input>
-          </el-form-item>
-          <el-form-item
-            label="电话"
-            v-if="msg1 == '电话'"
-            prop="phone"
-            placeholder="请输入电话"
-          >
-            <el-input v-show="msg1 == '电话'" v-model="user.phone"></el-input>
-          </el-form-item>
+      </el-form-item>
 
-          <el-form-item
-            label="密码"
-            v-if="msg2 == '密码'"
-            prop="password"
-            placeholder="请输入密码 (8-16位)"
-          >
-            <el-input v-model="user.password" type="password"></el-input>
-          </el-form-item>
-          <el-form-item
-            label="验证码"
-            v-if="msg2 != '密码'"
-            prop="code"
-            placeholder="请输入验证码"
-          >
-            <el-input v-model="user.code" class="verify"></el-input>
-            <el-button type="primary" @click="sendCode">发送验证码</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-button @click="toRegister">注册</el-button>
-            <el-button type="success" @click="onSubmit('user')">登录</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-    </el-row>
+      <el-form-item class="submit">
+        <el-button @click="toRegister">注册</el-button>
+        <el-button type="success" @click="onSubmit('user')">登录</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
@@ -374,6 +377,26 @@ export default {
   width: 150px !important;
   display: inline-block !important;
 }
+.pa {
+  height: 40px;
+  line-height: 40px;
+}
+.submit>.el-form-item__content {
+  margin: 0  !important;
+}
+.el-form-item__content {
+  width: auto;
+  height: 100%;
+  position: relative;
+}
+.el-form {
+  width: 25%;
+  margin: 0 auto;
+}
+.el-form-item__content > a {
+  position: absolute;
+  right: 0;
+}
 .el-button--primary {
   position: absolute;
   right: 0;
@@ -386,5 +409,10 @@ export default {
 }
 #code {
   display: none;
+}
+.resetPassword {
+  position: absolute !important;
+  flex: right !important;
+  margin-bottom: 50px;
 }
 </style>

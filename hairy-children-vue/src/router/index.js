@@ -5,6 +5,7 @@ import Main from '../views/main.vue'
 import Register from '../views/v/register.vue'
 import Login from '../views/v/login.vue'
 import Test from '../views/v/test.vue'
+import ResetPassword from '../views/v/resetPassword.vue'
 
 Vue.use(VueRouter);
 
@@ -56,6 +57,14 @@ const routes = [
           requireAuth: true
         }
       },
+      {
+        path: '/resetPassword',
+        name: 'resetPassword',
+        component: ResetPassword,
+        meta: {
+          requireAuth: false
+        }
+      }
     ]
 
   },

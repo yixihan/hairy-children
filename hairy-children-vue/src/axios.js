@@ -24,14 +24,12 @@ axios.interceptors.request.use(config => {
 //配置后置拦截
 axios.interceptors.response.use(response => {
   let res = response.data;
-  console.log(res.code)
   // eslint-disable-next-line no-constant-condition
   if (res.code == 200) {
     return response
   } else {
     Element.Message.error(res.msg, { duration: 2 * 1000 })
     //返回一个异常提示就不会继续往下走了 不+的话 res=>的里面 还是会继续走的
-    console.log("4546464646456")
     return Promise.reject(response.data.msg)
   }
   // 捕获并处理后台异常信息
