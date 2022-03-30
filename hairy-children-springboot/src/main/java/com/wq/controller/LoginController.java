@@ -6,9 +6,7 @@ import com.wq.common.service.CodeService;
 import com.wq.pojo.User;
 import com.wq.service.UserService;
 import com.wq.util.StringUtils;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.wq.util.VerifyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -42,20 +40,18 @@ public class LoginController {
 
     /**
      * 通过 用户名 密码 登录
-     *
-     *  userName 用户名
-     *  password 密码
+     * <p>
+     * 参数
+     * <ul>userName 用户名</ul>
+     * <ul>password 密码</ul>
      */
-    @ApiOperation(value = "通过 用户名 密码 登录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userName", value = "用户名", dataTypeClass = String.class, required = true),
-            @ApiImplicitParam(name = "password", value = "密码", dataTypeClass = String.class, required = true)
-    })
     @PostMapping("/login")
     public Result loginByUserName(@RequestBody Map<String, Object> params) {
 
+        // 从 json 中提取参数
         String userName = String.valueOf (params.get ("userName"));
         String password = String.valueOf (params.get ("password"));
+        log.info ("userName : " + userName + ", password : " + password);
 
         // 查询数据库
         User user = userService.getUserByName (userName);
@@ -88,15 +84,18 @@ public class LoginController {
 
     /**
      * 通过 邮箱 登录
-     *
-     * @param email 邮箱
+     * <p>
+     * 参数
+     * <ul>email 邮箱</ul>
      */
-    @ApiOperation(value = "通过 邮箱 登录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "email", value = "邮箱", dataTypeClass = String.class, required = true),
-    })
     @PostMapping("/loginByEmail")
-    public Result loginByEmail(@RequestBody String email) {
+    public Result loginByEmail(@RequestBody Map<String, Object> params) {
+        // 从 json 中提取参数
+        String email = String.valueOf (params.get ("email"));
+        log.info ("email : " + email);
+        if (!VerifyUtils.isEmail (email)) {
+            return Result.fail (555, "邮箱格式错误");
+        }
 
         // 查询数据库
         QueryWrapper<User> wrapper = new QueryWrapper<> ();
@@ -118,17 +117,19 @@ public class LoginController {
 
     /**
      * 通过 电话 登录
-     *
-     * @param phone 电话
+     * <p>
+     * phone 电话
      */
-    @ApiOperation(value = "通过 电话 登录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "phone", value = "电话", dataTypeClass = String.class, required = true),
-    })
     @PostMapping("/loginByPhone")
-    public Result loginByPhone(@RequestBody String phone) {
+    public Result loginByPhone(@RequestBody Map<String, Object> params) {
 
-        log.info (phone);
+        // 从 json 中提取参数
+        String phone = String.valueOf (params.get ("phone"));
+        log.info ("phone : " + phone);
+        if (!VerifyUtils.isModel (phone)) {
+            return Result.fail (555, "电话格式错误");
+        }
+
         // 查询数据库
         QueryWrapper<User> wrapper = new QueryWrapper<> ();
         wrapper.eq ("user_phone", phone);
@@ -153,30 +154,35 @@ public class LoginController {
      *
      * @param user user
      */
-    @ApiOperation(value = "注册")
     @PostMapping("/register")
     public Result register(@RequestBody User user) {
         log.info ("user : " + user);
 
         boolean name = codeService.verifyUserName (user.getUserName ());
 
-        if (! name) {
-            return Result.fail ("该用户名已被注册");
+        if (!name) {
+            return Result.fail (555, "该用户名已被注册");
         }
 
-        if (! StringUtils.isEmpty (user.getUserEmail ())) {
-            boolean email = codeService.verifyUserEmail (user.getUserEmail ());
+        if (!StringUtils.isEmpty (user.getUserEmail ())) {
 
-            if (! email) {
-                return Result.fail ("该邮箱已被注册");
+            if (!VerifyUtils.isEmail (user.getUserEmail ())) {
+                return Result.fail (555, "邮箱格式错误");
+            }
+
+            if (!codeService.verifyUserEmail (user.getUserEmail ())) {
+                return Result.fail (555, "该邮箱已被注册");
             }
         }
 
-        if (! StringUtils.isEmpty (user.getUserPhone ())) {
-            boolean phone = codeService.verifyUserPhone (user.getUserPhone ());
+        if (!StringUtils.isEmpty (user.getUserPhone ())) {
 
-            if (! phone) {
-                return Result.fail ("该电话已被注册");
+            if (!VerifyUtils.isModel (user.getUserPhone ())) {
+                return Result.fail (555, "电话格式错误");
+            }
+
+            if (!codeService.verifyUserPhone (user.getUserPhone ())) {
+                return Result.fail (555, "该电话已被注册");
             }
         }
 
@@ -187,21 +193,22 @@ public class LoginController {
 
     /**
      * 通过 邮箱 重置 密码
-     *
-     *  email    邮箱
-     *  password 密码
+     * <p>
+     * email    邮箱
+     * <p>
+     * password 密码
      */
-    @ApiOperation(value = "通过 邮箱 重置 密码")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "email", value = "邮箱", dataTypeClass = String.class, required = true),
-            @ApiImplicitParam(name = "password", value = "密码", dataTypeClass = String.class, required = true),
-    })
     @PostMapping("/resetPasswordByEmail")
     public Result resetPasswordByEmail(@RequestBody Map<String, Object> params) {
 
-
+        // 从 json 中提取参数
         String email = String.valueOf (params.get ("email"));
         String password = String.valueOf (params.get ("password"));
+        log.info ("email : " + email + ", password : " + password);
+
+        if (!VerifyUtils.isEmail (email)) {
+            return Result.fail (555, "邮箱格式错误");
+        }
 
         // 查询数据库
         QueryWrapper<User> wrapper = new QueryWrapper<> ();
@@ -215,20 +222,22 @@ public class LoginController {
 
     /**
      * 通过 电话 重置 密码
-     *
-     *  phone    电话
-     *  password 密码
+     * <p>
+     * phone    电话
+     * <p>
+     * password 密码
      */
-    @ApiOperation(value = "通过 电话 重置 密码")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "email", value = "电话", dataTypeClass = String.class, required = true),
-            @ApiImplicitParam(name = "password", value = "密码", dataTypeClass = String.class, required = true),
-    })
     @PostMapping("/resetPasswordByPhone")
     public Result resetPasswordByPhone(@RequestBody Map<String, Object> params) {
 
+        // 从 json 中提取参数
         String phone = String.valueOf (params.get ("phone"));
         String password = String.valueOf (params.get ("password"));
+        log.info ("phone : " + phone + ", password : " + password);
+
+        if (!VerifyUtils.isModel (phone)) {
+            return Result.fail (555, "电话格式错误");
+        }
 
         // 查询数据库
         QueryWrapper<User> wrapper = new QueryWrapper<> ();

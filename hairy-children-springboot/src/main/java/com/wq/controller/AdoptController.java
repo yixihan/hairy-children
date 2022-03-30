@@ -7,18 +7,16 @@ import com.wq.common.pojo.Result;
 import com.wq.pojo.Adopt;
 import com.wq.pojo.AdoptMailbox;
 import com.wq.pojo.Title;
+import com.wq.pojo.User;
 import com.wq.service.AdoptService;
 import com.wq.service.TitleService;
+import com.wq.service.UserService;
 import com.wq.service.message.AdoptMailboxService;
 import com.wq.util.PageUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -49,10 +47,21 @@ public class AdoptController {
     private TitleService titleService;
 
     @Resource
+    private UserService userService;
+
+    @Resource
     private PhotoProperties photoProperties;
 
     @PostMapping("/creatAdopt")
     public Result createAdopt (@RequestBody Adopt adopt) {
+
+        if (userService.count (new QueryWrapper<User> ().eq ("user_id", adopt.getUserId ())) <= 0) {
+            return Result.fail (555, "没有该用户");
+        }
+
+        if (titleService.count (new QueryWrapper<Title> ().eq ("title_id", adopt.getTitleId ())) <= 0) {
+            return Result.fail (555, "没有该文章");
+        }
 
         if (! adoptService.isExists (adopt.getTitleId (), adopt.getUserId ())) {
             return Result.fail ("请勿重复申请领养贴");
@@ -94,19 +103,21 @@ public class AdoptController {
     }
 
     @PostMapping("/deleteAdopt")
-    public Result deleteAdopt (@RequestBody Long adoptId) {
+    public Result deleteAdopt (@RequestBody Map<String, Object> params) {
+        long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
+
         boolean remove = adoptService.removeById (adoptId);
 
         return remove ? Result.success("删除成功") : Result.fail("删除失败");
     }
 
-    @PostMapping("/updateImg")
-    public Result updateImg (Long adoptId, @Param("file") MultipartFile[] imgs) {
+    @PostMapping("/updateImg/{adoptId}")
+    public Result updateImg (@PathVariable Long adoptId, @RequestParam("imgs") MultipartFile[] imgs) {
         StringBuilder adoptImgs = new StringBuilder();
 
         for (MultipartFile img : imgs) {
             String adoptImg = adoptService.uploadImg (adoptId, img);
-            adoptImgs.append (photoProperties.getUrlPaths ()).append (adoptImg).append ("::");
+            adoptImgs.append (adoptImg).append ("::");
         }
         adoptImgs.deleteCharAt (adoptImgs.length () - 1);
 
@@ -118,7 +129,8 @@ public class AdoptController {
     }
 
     @PostMapping("/getAdopt")
-    public Result getAdopt (@RequestBody Long adoptId) {
+    public Result getAdopt (@RequestBody Map<String, Object> params) {
+        long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
 
         Adopt adopt = adoptService.getById (adoptId);
         adopt.setImgs (adopt.getImgsDir ().split ("::"));
@@ -129,12 +141,13 @@ public class AdoptController {
     }
 
     @PostMapping("/success")
-    public Result finish (@RequestBody Long adoptId) {
+    public Result finish (@RequestBody Map<String, Object> params) {
+        long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
         Adopt adopt = adoptService.getById (adoptId);
         Title title = titleService.getById (adopt.getTitleId ());
 
         if (adopt.getIsSuccess () == 1) {
-            return Result.fail ("请勿重复同意申请");
+            return Result.fail (555, "请勿重复同意申请");
         }
 
         adopt.setIsSuccess (1);
@@ -146,22 +159,34 @@ public class AdoptController {
     }
 
     @PostMapping("/getAllUserAdopts")
-    public Result getAllUserAdopts (@RequestBody Long userId) {
+    public Result getAllUserAdopts (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+
+        if (userService.count (new QueryWrapper<User> ().eq ("user_id", userId)) <= 0) {
+            return Result.fail (555, "没有该用户");
+        }
+
         List<Adopt> adoptList = adoptService.getAdoptsByUserId (userId);
         PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put("adoptPage", adoptPage);
+        map.put("page", adoptPage);
         return Result.success("获取成功", map);
     }
 
     @PostMapping("/getAllTitleAdopts")
-    public Result getAllTitleAdopts (@RequestBody Long titleId) {
+    public Result getAllTitleAdopts (@RequestBody Map<String, Object> params) {
+        long titleId = Long.parseLong (String.valueOf (params.get ("titleId")));
+
+        if (titleService.count (new QueryWrapper<Title> ().eq ("title_id", titleId)) <= 0) {
+            return Result.fail (555, "没有该文章");
+        }
+
         List<Adopt> adoptList = adoptService.getAllAdoptsByTitleId (titleId);
         PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put("adoptPage", adoptPage);
+        map.put("page", adoptPage);
         return Result.success("获取成功", map);
     }
 

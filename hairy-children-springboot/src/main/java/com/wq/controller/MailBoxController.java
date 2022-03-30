@@ -46,7 +46,9 @@ public class MailBoxController {
 
     /**************adopt**************/
     @PostMapping("/readAdoptMailBox")
-    public Result readAdoptMailBox (@RequestBody Long id) {
+    public Result readAdoptMailBox (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         Boolean read = adoptMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -76,12 +78,14 @@ public class MailBoxController {
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messagesPage", messagesPage);
+        map.put ("page", messagesPage);
         return Result.success (map);
     }
 
     @PostMapping("/getAdoptMessage")
-    public Result getAdoptMessage (@RequestBody Long id) {
+    public Result getAdoptMessage (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         AdoptMailbox message = adoptMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -91,7 +95,9 @@ public class MailBoxController {
 
     /**************clue**************/
     @PostMapping("/readClueMailBox")
-    public Result readClueMailBox (@RequestBody Long id) {
+    public Result readClueMailBox (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         Boolean read = clueMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -121,12 +127,14 @@ public class MailBoxController {
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messagesPage", messagesPage);
+        map.put ("page", messagesPage);
         return Result.success (map);
     }
 
     @PostMapping("/getClueMessage")
-    public Result getClueMessage (@RequestBody Long id) {
+    public Result getClueMessage (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         ClueMailbox message = clueMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -137,7 +145,9 @@ public class MailBoxController {
 
     /**************comment**************/
     @PostMapping("/readCommentMailBox")
-    public Result readCommentMailBox (@RequestBody Long id) {
+    public Result readCommentMailBox (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         Boolean read = commentMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -167,12 +177,14 @@ public class MailBoxController {
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messagesPage", messagesPage);
+        map.put ("page", messagesPage);
         return Result.success (map);
     }
 
     @PostMapping("/getCommentMessage")
-    public Result getCommentMessage (@RequestBody Long id) {
+    public Result getCommentMessage (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         CommentMailbox message = commentMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -183,7 +195,9 @@ public class MailBoxController {
 
     /**************reply**************/
     @PostMapping("/readReplyMailBox")
-    public Result readReplyMailBox (@RequestBody Long id) {
+    public Result readReplyMailBox (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         Boolean read = replyMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -213,12 +227,14 @@ public class MailBoxController {
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messagesPage", messagesPage);
+        map.put ("page", messagesPage);
         return Result.success (map);
     }
 
     @PostMapping("/getReplyMessage")
-    public Result getReplyMessage (@RequestBody Long id) {
+    public Result getReplyMessage (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         ReplyMailbox message = replyMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -229,7 +245,9 @@ public class MailBoxController {
 
     /**************commentLike**************/
     @PostMapping("/readCommentLikeMailBox")
-    public Result readCommentLikeMailBox (@RequestBody Long id) {
+    public Result readCommentLikeMailBox (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         Boolean read = commentLikeMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -259,12 +277,14 @@ public class MailBoxController {
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messagesPage", messagesPage);
+        map.put ("page", messagesPage);
         return Result.success (map);
     }
 
     @PostMapping("/getCommentLikeMessage")
-    public Result getCommentLikeMessage (@RequestBody Long id) {
+    public Result getCommentLikeMessage (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         CommentLikeMailbox message = commentLikeMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -275,7 +295,9 @@ public class MailBoxController {
 
     /**************titleLike**************/
     @PostMapping("/readTitleLikeMailBox")
-    public Result readTitleLikeMailBox (@RequestBody Long id) {
+    public Result readTitleLikeMailBox (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         Boolean read = titleLikeMailboxService.read (id);
 
         return read ? Result.success () : Result.fail ();
@@ -305,12 +327,14 @@ public class MailBoxController {
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put ("messagesPage", messagesPage);
+        map.put ("page", messagesPage);
         return Result.success (map);
     }
 
     @PostMapping("/getTitleLikeMessage")
-    public Result getTitleLikeMessage (@RequestBody Long id) {
+    public Result getTitleLikeMessage (@RequestBody Map<String, Object> params) {
+        long id = Long.parseLong (String.valueOf (params.get ("id")));
+
         TitleLikeMailbox message = titleLikeMailboxService.getMessage (id);
 
         Map<String, Object> map = new HashMap<>(16);

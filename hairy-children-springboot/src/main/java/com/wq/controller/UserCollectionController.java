@@ -4,8 +4,10 @@ package com.wq.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.pojo.Result;
 import com.wq.pojo.CollectionTitle;
+import com.wq.pojo.Title;
 import com.wq.pojo.UserCollection;
 import com.wq.service.CollectionTitleService;
+import com.wq.service.TitleService;
 import com.wq.service.UserCollectionService;
 import com.wq.util.PageUtils;
 import com.wq.util.shiro.ShiroUtils;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -36,6 +39,9 @@ public class UserCollectionController {
     @Resource
     private CollectionTitleService collectionTitleService;
 
+    @Resource
+    private TitleService titleService;
+
     @PostMapping("/createFavorites")
     public Result createFavorites (@RequestBody UserCollection userCollection) {
         userCollection.setUserId (ShiroUtils.getUserId ());
@@ -52,21 +58,26 @@ public class UserCollectionController {
     }
 
     @PostMapping("/deleteFavorites")
-    public Result deleteFavorites (@RequestBody Long userCollectionId) {
+    public Result deleteFavorites (@RequestBody Map<String, Object> params) {
+        long userCollectionId = Long.parseLong (String.valueOf (params.get ("userCollectionId")));
+
         boolean remove = userCollectionService.removeById (userCollectionId);
 
         return remove ? Result.success ("删除收藏夹成功 !") : Result.fail ("删除收藏夹失败");
     }
 
     @PostMapping("/getAllFavorites")
-    public Result getAllFavorites () {
-        List<UserCollection> userCollectionList = userCollectionService.
-                getAllCollectionById (ShiroUtils.getUserId ());
+    public Result getAllFavorites (@RequestBody Map<String, Object> params) {
+
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+
+        List<UserCollection> userCollectionList = userCollectionService.getAllCollectionById (userId);
+
         PageUtils userCollectionPage =
                 new PageUtils (userCollectionList, userCollectionList.size (), 10, 0);
 
         HashMap<String, Object> map = new HashMap<> (16);
-        map.put ("userCollectionPage", userCollectionPage);
+        map.put ("page", userCollectionPage);
         return Result.success (map);
     }
 
@@ -75,13 +86,17 @@ public class UserCollectionController {
         Long collectionId = collectionTitle.getCollectionId ();
         Long titleId = collectionTitle.getTitleId ();
 
+        if (titleService.count (new QueryWrapper<Title> ().eq ("title_id", titleId)) <= 0) {
+            return Result.fail (555, "没有此文章");
+        }
+
         QueryWrapper<CollectionTitle> wrapper = new QueryWrapper<> ();
         wrapper.eq ("collection_id", collectionId)
                 .eq ("title_id", titleId);
         CollectionTitle one = collectionTitleService.getOne (wrapper);
 
         if (one != null) {
-            return Result.fail ("该文章已被收藏");
+            return Result.fail (555, "该文章已被收藏");
         }
 
         UserCollection userCollection = userCollectionService.getById (collectionId);
@@ -93,11 +108,13 @@ public class UserCollectionController {
     }
 
     @PostMapping("/deleteCollection")
-    public Result deleteCollection (@RequestBody Long collectionTitleId) {
+    public Result deleteCollection (@RequestBody Map<String, Object> params) {
+        long collectionTitleId = Long.parseLong (String.valueOf (params.get ("collectionTitleId")));
+
         CollectionTitle collectionTitle = collectionTitleService.getById (collectionTitleId);
 
         if (collectionTitle == null) {
-            return Result.fail ("取消收藏失败, 改文章未被收藏");
+            return Result.fail (555, "取消收藏失败, 改文章未被收藏");
         }
 
         UserCollection userCollection = userCollectionService.getById (collectionTitle.getCollectionId ());
@@ -109,7 +126,9 @@ public class UserCollectionController {
     }
 
     @PostMapping("/getAllCollections")
-    public Result getAllCollections (@RequestBody Long userCollectionId) {
+    public Result getAllCollections (@RequestBody Map<String, Object> params) {
+        long userCollectionId = Long.parseLong (String.valueOf (params.get ("userCollectionId")));
+
         List<CollectionTitle> collectionTitleList = collectionTitleService.
                 getAllCollectionTitle (userCollectionId);
 
@@ -117,7 +136,7 @@ public class UserCollectionController {
                 new PageUtils (collectionTitleList, collectionTitleList.size (), 10, 0);
 
         HashMap<String, Object> map = new HashMap<> (16);
-        map.put ("collectionTitlePage", collectionTitlePage);
+        map.put ("page", collectionTitlePage);
         return Result.success (map);
     }
 

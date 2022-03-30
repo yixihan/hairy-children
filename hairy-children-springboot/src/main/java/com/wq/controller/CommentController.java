@@ -8,6 +8,7 @@ import com.wq.pojo.*;
 import com.wq.service.CommentReplyService;
 import com.wq.service.CommentRootService;
 import com.wq.service.TitleService;
+import com.wq.service.UserService;
 import com.wq.service.message.CommentLikeMailboxService;
 import com.wq.service.message.CommentMailboxService;
 import com.wq.service.message.ReplyMailboxService;
@@ -17,10 +18,7 @@ import com.wq.util.shiro.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -29,7 +27,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author wq
@@ -50,6 +48,9 @@ public class CommentController {
     private TitleService titleService;
 
     @Resource
+    private UserService userService;
+
+    @Resource
     private RedisService redisService;
 
     @Resource
@@ -67,7 +68,7 @@ public class CommentController {
     private static final String USER_COMMENT_LIKE_KEY = "comment_like:%s:%s";
 
     @PostMapping("/addRootComment")
-    public Result addRootComment (@RequestBody CommentRoot commentRoot) {
+    public Result addRootComment(@RequestBody CommentRoot commentRoot) {
 
         // 设置 用户 id
         commentRoot.setUserId (ShiroUtils.getUserId ());
@@ -75,9 +76,7 @@ public class CommentController {
         Boolean add = commentRootService.addRootComment (commentRoot);
 
         QueryWrapper<CommentRoot> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("answer_id", commentRoot.getAnswerId ())
-                .eq ("user_id", commentRoot.getUserId ())
-                .eq ("content", commentRoot.getContent ());
+        wrapper.eq ("answer_id", commentRoot.getAnswerId ()).eq ("user_id", commentRoot.getUserId ()).eq ("content", commentRoot.getContent ());
         CommentRoot one = commentRootService.getOne (wrapper);
 
         Title title = titleService.getById (commentRoot.getAnswerId ());
@@ -97,21 +96,13 @@ public class CommentController {
     }
 
 
-    @PostMapping("/addSonComment")
-    public Result addSonComment (@RequestBody Map<String, Object> params) {
-        //TODO : 未验证此做法是否正确
-        CommentReply commentReply = JSONObject.parseObject (String.valueOf (params.get ("commentReply")), CommentReply.class);
-        Long titleId = JSONObject.parseObject (String.valueOf (params.get ("titleId")), Long.class);
-
-        // 设置 用户 id
-        commentReply.setUserId (ShiroUtils.getUserId ());
+    @PostMapping("/addSonComment/{titleId}")
+    public Result addSonComment(@PathVariable Long titleId, @RequestBody CommentReply commentReply) {
 
         Boolean add = commentRootService.addSonComment (commentReply, titleId);
 
         QueryWrapper<CommentReply> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("root_id", commentReply.getRootId ())
-                .eq ("user_id", commentReply.getUserId ())
-                .eq ("content", commentReply.getContent ());
+        wrapper.eq ("root_id", commentReply.getRootId ()).eq ("user_id", commentReply.getUserId ()).eq ("content", commentReply.getContent ());
 
         if (commentReply.getReplyCommentId () != null) {
             wrapper.eq ("reply_comment_id", commentReply.getReplyCommentId ());
@@ -133,60 +124,71 @@ public class CommentController {
         return add ? Result.success ("评论成功") : Result.fail ("评论失败");
     }
 
-    @PostMapping ("/removeRootComment")
-    public Result removeRootComment (@RequestBody Map<String, Object> params) {
+    @PostMapping("/removeRootComment")
+    public Result removeRootComment(@RequestBody Map<String, Object> params) {
 
-        Long rootId = JSONObject.parseObject (String.valueOf (params.get ("rootId")), Long.class);
-        Long titleId = JSONObject.parseObject (String.valueOf (params.get ("titleId")), Long.class);
+        long rootId = Long.parseLong (String.valueOf (params.get ("rootId")));
+        long titleId = Long.parseLong (String.valueOf (params.get ("titleId")));
         Integer replyCount = commentRootService.removeRootComment (rootId);
 
         // 更新回复数
-        updateCommentRootCount (rootId, -replyCount);
-        updateCommentTitleCount (titleId, - (replyCount + 1));
+        updateCommentTitleCount (titleId, -(replyCount + 1));
 
         return Result.success ("删除评论成功");
 
     }
 
-    @PostMapping ("/removeSonComment")
-    public Result removeSonComment (@RequestBody Map<String, Object> params) {
+    @PostMapping("/removeSonComment")
+    public Result removeSonComment(@RequestBody Map<String, Object> params) {
 
-        Long replyId = JSONObject.parseObject (String.valueOf (params.get ("replyId")), Long.class);
-        Long titleId = JSONObject.parseObject (String.valueOf (params.get ("titleId")), Long.class);
+        long replyId = Long.parseLong (String.valueOf (params.get ("replyId")));
+        long titleId = Long.parseLong (String.valueOf (params.get ("titleId")));
 
         CommentReply commentReply = commentReplyService.getById (replyId);
         Integer count = commentRootService.removeSonComment (replyId);
 
         // 更新回复数
         updateCommentRootCount (commentReply.getRootId (), -count);
-        updateCommentTitleCount (titleId, - count);
+        updateCommentTitleCount (titleId, -count);
 
         return Result.success ("删除评论成功");
     }
 
     @PostMapping("/getAllTitleComment")
-    public Result getAllTitleComment (@RequestBody Long titleId) {
+    public Result getAllTitleComment(@RequestBody Map<String, Object> params) {
+        long titleId = Long.parseLong (String.valueOf (params.get ("titleId")));
+
+        if (titleService.count (new QueryWrapper<Title> ().eq ("title_id", titleId)) <= 0) {
+            return Result.fail (555, "没有该文章");
+        }
+
         List<CommentRoot> commentRootList = commentRootService.getAll (titleId);
         PageUtils commentPage = new PageUtils (commentRootList, commentRootList.size (), 10, 0);
 
         HashMap<String, Object> map = new HashMap<> (8);
-        map.put ("commentPage", commentPage);
+        map.put ("page", commentPage);
         return Result.success (map);
     }
 
     @PostMapping("/getAllUserComment")
-    public Result getAllUserComment (@RequestBody Long userId) {
+    public Result getAllUserComment(@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+
+        if (userService.count (new QueryWrapper<User> ().eq ("user_id", userId)) <= 0) {
+            return Result.fail (555, "没有该用户");
+        }
+
         List<UserComments> userCommentList = commentRootService.getUserComments (userId);
         PageUtils commentPage = new PageUtils (userCommentList, userCommentList.size (), 10, 0);
 
         HashMap<String, Object> map = new HashMap<> (8);
-        map.put ("commentPage", commentPage);
+        map.put ("page", commentPage);
         return Result.success (map);
     }
 
     @PostMapping("/likeComment")
     @Transactional(rollbackFor = RuntimeException.class)
-    public Result likeComment (@RequestBody Map<String, Object> params) {
+    public Result likeComment(@RequestBody Map<String, Object> params) {
 
         Long rootId = JSONObject.parseObject (String.valueOf (params.get ("rootId")), Long.class);
         Long userId = JSONObject.parseObject (String.valueOf (params.get ("userId")), Long.class);
@@ -194,8 +196,13 @@ public class CommentController {
         CommentRoot commentRoot = commentRootService.getById (rootId);
 
         if (commentRoot == null) {
-            log.error ("无此评论");
-            throw new RuntimeException ("无此评论");
+            log.error ("没有该评论");
+            throw new RuntimeException ("没有该评论");
+        }
+
+        if (userService.count (new QueryWrapper<User> ().eq ("user_id", userId)) <= 0) {
+            log.error ("没有该用户");
+            throw new RuntimeException ("没有该用户");
         }
 
         // 点赞
@@ -203,7 +210,7 @@ public class CommentController {
         Boolean bit = redisService.getBit (key, userId);
         if (bit) {
             log.warn ("已点赞, 请勿重复点赞");
-            return Result.success ("已点赞, 请勿重复点赞");
+            return Result.fail (555, "已点赞, 请勿重复点赞");
         }
         Boolean setBit = redisService.setBit (key, userId, true);
         if (setBit) {
@@ -214,9 +221,9 @@ public class CommentController {
         commentRoot.setLikeCount (Math.toIntExact (redisService.getLikeValueAll (key)));
         boolean update = commentRootService.updateById (commentRoot);
 
-        if (! update) {
+        if (!update) {
             log.error ("评论更新失败");
-            throw new RuntimeException ("评论更新失败");
+            throw new RuntimeException ("点赞失败");
         }
 
         // 发送消息
@@ -228,29 +235,28 @@ public class CommentController {
 
         boolean save = commentLikeMailboxService.save (commentLikeMailbox);
 
-        if (! save) {
+        if (!save) {
             log.error ("消息持久化失败");
-            throw new RuntimeException ("消息持久化失败");
+            throw new RuntimeException ("点赞失败");
         }
         QueryWrapper<CommentLikeMailbox> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("title_id", commentLikeMailbox.getTitleId ())
-                .eq ("send_user_id", commentLikeMailbox.getSendUserId ())
-                .like ("receive_user_id", commentLikeMailbox.getReceiveUserId ());
+        wrapper.eq ("title_id", commentLikeMailbox.getTitleId ()).eq ("send_user_id", commentLikeMailbox.getSendUserId ()).like ("receive_user_id", commentLikeMailbox.getReceiveUserId ());
 
         CommentLikeMailbox one = commentLikeMailboxService.getOne (wrapper);
 
         if (one == null) {
             log.error ("无此消息");
-            throw new RuntimeException ("无此消息");
+            throw new RuntimeException ("点赞失败");
         }
 
         commentLikeMailboxService.sendMailbox (one);
 
-        return Result.success ("发送成功");
+        return Result.success ("点赞成功");
     }
 
     /**
      * 发送父评论 消息
+     *
      * @param mailbox
      */
     @Async
@@ -260,14 +266,14 @@ public class CommentController {
         // 添加文章回复数
         boolean titleCount = updateCommentTitleCount (mailbox.getTitleId (), 1);
 
-        if (! titleCount) {
+        if (!titleCount) {
             log.warn ("文章回复添加失败");
             throw new RuntimeException ("文章回复添加失败");
         }
 
         boolean save = commentMailboxService.save (mailbox);
 
-        if (! save) {
+        if (!save) {
             log.warn ("消息持久化失败");
             throw new RuntimeException ("消息持久化失败");
         }
@@ -278,6 +284,7 @@ public class CommentController {
 
     /**
      * 发送子评论 消息
+     *
      * @param mailbox
      */
     @Async
@@ -286,7 +293,7 @@ public class CommentController {
         // 添加文章回复数
         boolean titleCount = updateCommentTitleCount (mailbox.getTitleId (), 1);
 
-        if (! titleCount) {
+        if (!titleCount) {
             log.warn ("文章回复添加失败");
             throw new RuntimeException ("文章回复添加失败");
         }
@@ -294,14 +301,14 @@ public class CommentController {
         // 添加评论回复数
         boolean rootCount = updateCommentRootCount (mailbox.getRootId (), 1);
 
-        if (! rootCount) {
+        if (!rootCount) {
             log.warn ("评论回复添加失败");
             throw new RuntimeException ("评论回复添加失败");
         }
 
         boolean save = replyMailboxService.save (mailbox);
 
-        if (! save) {
+        if (!save) {
             log.warn ("消息持久化失败");
             throw new RuntimeException ("消息持久化失败");
         }
@@ -313,7 +320,7 @@ public class CommentController {
     /**
      * 添加文章回复数
      */
-    private boolean updateCommentTitleCount (Long titleId, Integer count) {
+    private boolean updateCommentTitleCount(Long titleId, Integer count) {
         Title title = titleService.getById (titleId);
         title.setCommentCount (title.getCommentCount () + count);
         return titleService.updateById (title);
@@ -322,12 +329,11 @@ public class CommentController {
     /**
      * 添加父评论回复数
      */
-    private boolean updateCommentRootCount (Long rootId, Integer count) {
+    private boolean updateCommentRootCount(Long rootId, Integer count) {
         CommentRoot commentRoot = commentRootService.getById (rootId);
         commentRoot.setReplyCount (commentRoot.getReplyCount () + count);
         return commentRootService.updateById (commentRoot);
     }
-
 
 
 }

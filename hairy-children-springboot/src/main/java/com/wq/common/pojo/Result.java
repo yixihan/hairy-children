@@ -110,7 +110,7 @@ public class Result {
      * @return 信息
      */
     public static Result fail(String msg) {
-        return fail (0, msg, null);
+        return fail (444, msg, null);
     }
 
 
@@ -121,7 +121,7 @@ public class Result {
      * @return 数据
      */
     public static Result fail(Map<String, Object> data) {
-        return fail (0, "fail !", data);
+        return fail (444, "fail !", data);
     }
 
 
@@ -133,7 +133,7 @@ public class Result {
      * @return 信息 + 数据
      */
     public static Result fail(String msg, Map<String, Object> data) {
-        return fail (0, msg, data);
+        return fail (444, msg, data);
     }
 
 
@@ -167,6 +167,6 @@ public class Result {
      * @return null
      */
     public static Result fail() {
-        return new Result (0, "fail !", null);
+        return new Result (444, "fail !", null);
     }
 }

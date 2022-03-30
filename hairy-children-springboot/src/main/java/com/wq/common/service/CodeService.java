@@ -10,15 +10,18 @@ import com.tencentcloudapi.sms.v20210111.models.SendSmsRequest;
 import com.tencentcloudapi.sms.v20210111.models.SendSmsResponse;
 import com.wq.mapper.UserMapper;
 import com.wq.pojo.User;
+import com.wq.util.VerifyUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.validation.constraints.Email;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +30,7 @@ import java.util.concurrent.TimeUnit;
  * @create : 2022-02-09-9:10
  */
 @Service("CodeService")
+@Validated
 public class CodeService {
 
     private static final String CODE_KEY_NAME = "%s_CODE";
@@ -66,7 +70,7 @@ public class CodeService {
      * 向指定邮箱发送验证码, 10 分钟有效期
      * @param email 邮箱
      */
-    public boolean sendCodeByEmail(String email) {
+    public boolean sendCodeByEmail(@Email String email) {
 
         // 生成 keyName
         String keyName = String.format(CODE_KEY_NAME, email);
@@ -106,6 +110,11 @@ public class CodeService {
      * @param phone 电话
      */
     public boolean sendCodeByPhone(String phone) {
+
+        // 校验
+        if (! VerifyUtils.isModel (phone)) {
+            return false;
+        }
 
         // 生成 keyName
         String keyName = String.format(CODE_KEY_NAME, phone);
@@ -156,6 +165,11 @@ public class CodeService {
      */
     public boolean verifyCode(String phoneOrEmail, String code) {
 
+        // 校验
+        if (! VerifyUtils.isEmail (phoneOrEmail) && ! VerifyUtils.isModel (phoneOrEmail)) {
+            return false;
+        }
+
         // 生成 key
         String key = String.format (CODE_KEY_NAME, phoneOrEmail);
 
@@ -187,7 +201,7 @@ public class CodeService {
      * 校验邮箱是否已被绑定
      * @param email 邮箱
      */
-    public boolean verifyUserEmail(String email) {
+    public boolean verifyUserEmail(@Email String email) {
         QueryWrapper<User> wrapper = new QueryWrapper<User>().eq("user_email", email);
 
         // 获取 user_email 为 email 的记录数
@@ -202,6 +216,12 @@ public class CodeService {
      * @param phone 电话
      */
     public boolean verifyUserPhone(String phone) {
+
+        // 校验
+        if (! VerifyUtils.isModel (phone)) {
+            return false;
+        }
+
         QueryWrapper<User> wrapper = new QueryWrapper<User>().eq("user_phone", phone);
 
         // 获取 user_phone 为 phone 的记录数
@@ -231,4 +251,5 @@ public class CodeService {
         return code;
 
     }
+
 }

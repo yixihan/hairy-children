@@ -381,8 +381,8 @@ export default {
   height: 40px;
   line-height: 40px;
 }
-.submit>.el-form-item__content {
-  margin: 0  !important;
+.submit > .el-form-item__content {
+  margin: 0 !important;
 }
 .el-form-item__content {
   width: auto;

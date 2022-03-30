@@ -60,7 +60,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
             FileUtils.uploadFile (file, fileName, filePath);
 
-            return photoProperties.getUrlPaths () + "/" + photoProperties.getAvatarPaths () + "/" + fileName;
+            return photoProperties.getAvatarPaths () + "/" + fileName;
         } catch (IOException e) {
             e.printStackTrace ();
             log.error ("文件上传失败", e.getCause ());

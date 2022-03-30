@@ -68,7 +68,7 @@ public class UserInfoController {
 
         boolean b = userInfoService.update (userInfo, wrapper);
 
-        return b ? Result.success() : Result.fail();
+        return b ? Result.success("头像上传成功") : Result.fail("头像上传失败");
     }
 
     @PostMapping("/getUserAddress")
@@ -85,6 +85,7 @@ public class UserInfoController {
 
         String realName = String.valueOf (params.get ("realName"));
         String identityCard = String.valueOf (params.get ("identityCard"));
+        log.info ("realName : " + realName + ", identityCard : " + identityCard);
 
         String url = "https://puhui.shumaidata.com/id_card/check/puhui";
 

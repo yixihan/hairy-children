@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * <p>
@@ -36,13 +35,13 @@ public class ClueServiceImpl extends ServiceImpl<ClueMapper, Clue> implements Cl
     @Override
     public Boolean createClue(Clue clue) {
         // 获取文件路径 以文章id - 用户id 作为目录
-        String fileName = clue.getTitleId () + "-" + clue.getUserId () + "-" + UUID.randomUUID ().toString ();
+        String fileName = clue.getTitleId () + "-" + clue.getUserId ().toString ();
         File cluePath = new File (photoProperties.getCluePaths () + "/" + fileName);
 
         // 生成图片目录
         String imageName = String.format (FileUtils.TITLE_DIR, System.currentTimeMillis ());
 
-        // 创建图片上传路径 src/resources/static/photoDir/clue/titleId-userId-UUID/时间戳.assets
+        // 创建图片上传路径 src/resources/static/photoDir/clue/titleId-userId/时间戳.assets
         File imagePath = new File (photoProperties.getPaths () + "/" + cluePath + "/" + imageName);
         FileUtils.isFileExists (imagePath);
 

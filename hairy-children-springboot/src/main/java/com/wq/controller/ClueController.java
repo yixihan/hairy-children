@@ -7,18 +7,16 @@ import com.wq.common.pojo.Result;
 import com.wq.pojo.Clue;
 import com.wq.pojo.ClueMailbox;
 import com.wq.pojo.Title;
+import com.wq.pojo.User;
 import com.wq.service.ClueService;
 import com.wq.service.TitleService;
+import com.wq.service.UserService;
 import com.wq.service.message.ClueMailboxService;
 import com.wq.util.PageUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -46,6 +44,9 @@ public class ClueController {
     private TitleService titleService;
 
     @Resource
+    private UserService userService;
+
+    @Resource
     private ClueMailboxService clueMailboxService;
 
     @Resource
@@ -53,6 +54,14 @@ public class ClueController {
 
     @PostMapping("/creatClue")
     public Result createClue (@RequestBody Clue clue) {
+
+        if (userService.count (new QueryWrapper<User> ().eq ("user_id", clue.getUserId ())) <= 0) {
+            return Result.fail (555, "没有该用户");
+        }
+
+        if (titleService.count (new QueryWrapper<Title> ().eq ("title_id", clue.getTitleId ())) <= 0) {
+            return Result.fail (555, "没有该文章");
+        }
 
         if (! clueService.isExists (clue.getTitleId (), clue.getUserId ())) {
             return Result.fail ("请勿重复创建线索贴");
@@ -93,19 +102,20 @@ public class ClueController {
     }
 
     @PostMapping("/deleteClue")
-    public Result deleteClue (@RequestBody Long clueId) {
+    public Result deleteClue (@RequestBody Map<String, Object> params) {
+        long clueId = Long.parseLong (String.valueOf (params.get ("clueId")));
         boolean remove = clueService.removeById (clueId);
 
         return remove ? Result.success("删除成功") : Result.fail("删除失败");
     }
 
-    @PostMapping("/updateImg")
-    public Result updateImg (Long clueId, @Param("file") MultipartFile[] imgs) {
+    @PostMapping("/updateImg/{clueId}")
+    public Result updateImg (@PathVariable Long clueId, @RequestParam("imgs") MultipartFile[] imgs) {
         StringBuilder clueImgs = new StringBuilder();
 
         for (MultipartFile img : imgs) {
             String clueImg = clueService.uploadImg (clueId, img);
-            clueImgs.append (photoProperties.getUrlPaths ()).append (clueImg).append ("::");
+            clueImgs.append (clueImg).append ("::");
         }
         clueImgs.deleteCharAt (clueImgs.length () - 1);
 
@@ -117,8 +127,8 @@ public class ClueController {
     }
 
     @PostMapping("/getClue")
-    public Result getClue (@RequestBody Long clueId) {
-
+    public Result getClue (@RequestBody Map<String, Object> params) {
+        long clueId = Long.parseLong (String.valueOf (params.get ("clueId")));
         Clue clue = clueService.getById (clueId);
         clue.setImgs (clue.getImgsDir ().split ("::"));
 
@@ -128,12 +138,13 @@ public class ClueController {
     }
 
     @PostMapping("/success")
-    public Result finish (@RequestBody Long clueId) {
+    public Result finish (@RequestBody Map<String, Object> params) {
+        long clueId = Long.parseLong (String.valueOf (params.get ("clueId")));
         Clue clue = clueService.getById (clueId);
         Title title = titleService.getById (clue.getTitleId ());
 
         if (clue.getIsSuccess () == 1) {
-            return Result.fail ("请勿重复同意线索");
+            return Result.fail (555, "请勿重复同意线索");
         }
 
         clue.setIsSuccess (1);
@@ -145,22 +156,34 @@ public class ClueController {
     }
 
     @PostMapping("/getAllUserClues")
-    public Result getAllUserClues (@RequestBody Long userId) {
+    public Result getAllUserClues (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+
+        if (userService.count (new QueryWrapper<User> ().eq ("user_id", userId)) <= 0) {
+            return Result.fail (555, "没有该用户");
+        }
+
         List<Clue> clueList = clueService.getCluesByUserId (userId);
         PageUtils cluePage = new PageUtils (clueList, clueList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<> (16);
-        map.put("cluePage", cluePage);
+        map.put("page", cluePage);
         return Result.success("获取成功", map);
     }
 
     @PostMapping("/getAllTitleClues")
-    public Result getAllTitleClues (@RequestBody Long titleId) {
+    public Result getAllTitleClues (@RequestBody Map<String, Object> params) {
+        long titleId = Long.parseLong (String.valueOf (params.get ("titleId")));
+
+        if (titleService.count (new QueryWrapper<Title> ().eq ("title_id", titleId)) <= 0) {
+            return Result.fail (555, "没有该文章");
+        }
+
         List<Clue> clueList = clueService.getCluesByTitleId (titleId);
         PageUtils cluePage = new PageUtils (clueList, clueList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
-        map.put("cluePage", cluePage);
+        map.put("page", cluePage);
         return Result.success("获取成功", map);
     }
 
