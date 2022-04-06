@@ -26,11 +26,15 @@
       <post-list title="领养" :list="adoptList"></post-list>
       <post-list title="寻宠" :list="clueList"></post-list>
     </div>
+    <div class="bottom">
+      <n-button type="info" secondary>我要反馈</n-button>
+      <img src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel4.jpeg" alt="" />
+    </div>
   </div>
 </template>
 <script>
 import { defineComponent, reactive, toRefs } from 'vue'
-import { NCarousel, NCarouselItem } from 'naive-ui'
+import { NCarousel, NCarouselItem, NButton } from 'naive-ui'
 import postList from '../components/post-list.vue'
 import { getArticleList } from '../api/index'
 
@@ -39,14 +43,15 @@ export default defineComponent({
   components: {
     NCarousel,
     NCarouselItem,
-    postList
+    postList,
+    NButton
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.GetArticleList({
-        timeLimit: '2',
+        timeLimit: '3', // 不限
         city: '',
-        isFinish: '3',
+        isFinish: '3', // 不限
         reply: true
       })
     })
@@ -68,12 +73,24 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .home {
-  height: 100%;
+  // height: 3000px;
+  margin-bottom: 20px;
 }
 .hot-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
   margin: 20px 0;
+}
+.bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  img {
+    margin-top: 10px;
+    height: 200px;
+    width: 800px;
+  }
 }
 </style>

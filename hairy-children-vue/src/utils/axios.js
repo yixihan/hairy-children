@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getData } from './tools'
 
 const Axios = axios.create({
   baseURL: 'http://175.24.229.41:9421',
@@ -6,14 +7,15 @@ const Axios = axios.create({
 })
 
 // 不需要认证的页面
-const noAuthUrls = ['/login']
+const noAuthUrls = ['/v/login', '/title/getAllTitles']
 
 Axios.interceptors.request.use(
   (config) => {
     // Do something before request is sent
+    console.log(config.url)
     if (!noAuthUrls.includes(config.url)) {
-      const token = localStorage.getItem('jwt-token')
-      config.headers['jwt-token'] = token
+      const token = getData('token')
+      config.headers['jwt-token'] = token.token
     }
     return config
   },
