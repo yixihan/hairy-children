@@ -188,20 +188,20 @@ public class TitleController {
     @PostMapping("/getAllTitles")
     public Result getAllTitles(@RequestBody Map<String, Object> params) {
 
-
-        int titleType =  Integer.parseInt (String.valueOf (params.get ("titleType")));
+        String titleName = String.valueOf (params.get ("titleName"));
+        int titleType = Integer.parseInt (String.valueOf (params.get ("titleType")));
         int timeLimit = Integer.parseInt (String.valueOf (params.get ("timeLimit")));
         String city = String.valueOf (params.get ("city"));
         int isFinish = Integer.parseInt (String.valueOf (params.get ("isFinish")));
 
         boolean time = Boolean.parseBoolean (String.valueOf (params.get ("time")));
-        boolean like = Boolean.parseBoolean (String.valueOf (params.get ("like"))) ;
-        boolean reply = Boolean.parseBoolean (String.valueOf (params.get ("reply"))) ;
-        boolean collection = Boolean.parseBoolean (String.valueOf (params.get ("collection"))) ;
+        boolean like = Boolean.parseBoolean (String.valueOf (params.get ("like")));
+        boolean reply = Boolean.parseBoolean (String.valueOf (params.get ("reply")));
+        boolean collection = Boolean.parseBoolean (String.valueOf (params.get ("collection")));
 
         QueryWrapper<Title> wrapper = new QueryWrapper<> ();
         // 文章类型限制
-        wrapper.eq ("title_type", titleType);
+        wrapper.eq ("title_type", titleType).like ("title_name", titleName);
 
         // 城市限制
         if (!"".equals (city)) {
