@@ -222,7 +222,9 @@ public class TitleController {
 
         // 完成状态限制
         if (isFinish != 3) {
-            wrapper.eq ("is_finish", isFinish);
+            wrapper.eq ("is_finish", isFinish).notIn ("is_finish", -1);
+        } else {
+            wrapper.notIn ("is_finish", -1);
         }
 
         // 时间限制
