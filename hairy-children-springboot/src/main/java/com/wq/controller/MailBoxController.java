@@ -2,6 +2,8 @@ package com.wq.controller;
 
 import com.wq.common.pojo.Result;
 import com.wq.pojo.*;
+import com.wq.service.UserInfoService;
+import com.wq.service.UserService;
 import com.wq.service.message.*;
 import com.wq.util.PageUtils;
 import com.wq.util.shiro.ShiroUtils;
@@ -43,6 +45,12 @@ public class MailBoxController {
     @Resource
     private TitleLikeMailboxService titleLikeMailboxService;
 
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private UserInfoService userInfoService;
+
 
     /**************adopt**************/
     @PostMapping("/readAdoptMailBox")
@@ -75,9 +83,14 @@ public class MailBoxController {
     @PostMapping("/getAdoptMessages")
     public Result getAdoptMessages () {
         List<AdoptMailbox> messages = adoptMailboxService.getMessages (ShiroUtils.getUserId ());
+
+        for (AdoptMailbox message : messages) {
+            setUserInfo (message);
+        }
+
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
-        Map<String, Object> map = new HashMap<>(16);
+            Map<String, Object> map = new HashMap<>(16);
         map.put ("page", messagesPage);
         return Result.success (map);
     }
@@ -87,6 +100,7 @@ public class MailBoxController {
         long id = Long.parseLong (String.valueOf (params.get ("id")));
 
         AdoptMailbox message = adoptMailboxService.getMessage (id);
+        setUserInfo (message);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("message", message);
@@ -124,6 +138,11 @@ public class MailBoxController {
     @PostMapping("/getClueMessages")
     public Result getClueMessages () {
         List<ClueMailbox> messages = clueMailboxService.getMessages (ShiroUtils.getUserId ());
+
+        for (ClueMailbox message : messages) {
+            setUserInfo (message);
+        }
+
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -136,7 +155,7 @@ public class MailBoxController {
         long id = Long.parseLong (String.valueOf (params.get ("id")));
 
         ClueMailbox message = clueMailboxService.getMessage (id);
-
+        setUserInfo (message);
         Map<String, Object> map = new HashMap<>(16);
         map.put ("message", message);
         return Result.success (map);
@@ -174,6 +193,10 @@ public class MailBoxController {
     @PostMapping("/getCommentMessages")
     public Result getCommentMessages () {
         List<CommentMailbox> messages = commentMailboxService.getMessages (ShiroUtils.getUserId ());
+
+        for (CommentMailbox message : messages) {
+            setUserInfo (message);
+        }
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -186,7 +209,7 @@ public class MailBoxController {
         long id = Long.parseLong (String.valueOf (params.get ("id")));
 
         CommentMailbox message = commentMailboxService.getMessage (id);
-
+        setUserInfo (message);
         Map<String, Object> map = new HashMap<>(16);
         map.put ("message", message);
         return Result.success (map);
@@ -224,6 +247,9 @@ public class MailBoxController {
     @PostMapping("/getReplyMessages")
     public Result getReplyMessages () {
         List<ReplyMailbox> messages = replyMailboxService.getMessages (ShiroUtils.getUserId ());
+        for (ReplyMailbox message : messages) {
+            setUserInfo (message);
+        }
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -236,7 +262,7 @@ public class MailBoxController {
         long id = Long.parseLong (String.valueOf (params.get ("id")));
 
         ReplyMailbox message = replyMailboxService.getMessage (id);
-
+        setUserInfo (message);
         Map<String, Object> map = new HashMap<>(16);
         map.put ("message", message);
         return Result.success (map);
@@ -274,6 +300,11 @@ public class MailBoxController {
     @PostMapping("/getCommentLikeMessages")
     public Result getCommentLikeMessages () {
         List<CommentLikeMailbox> messages = commentLikeMailboxService.getMessages (ShiroUtils.getUserId ());
+
+        for (CommentLikeMailbox message : messages) {
+            setUserInfo (message);
+        }
+
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -286,7 +317,7 @@ public class MailBoxController {
         long id = Long.parseLong (String.valueOf (params.get ("id")));
 
         CommentLikeMailbox message = commentLikeMailboxService.getMessage (id);
-
+        setUserInfo (message);
         Map<String, Object> map = new HashMap<>(16);
         map.put ("message", message);
         return Result.success (map);
@@ -324,6 +355,9 @@ public class MailBoxController {
     @PostMapping("/getTitleLikeMessages")
     public Result getTitleLikeMessages () {
         List<TitleLikeMailbox> messages = titleLikeMailboxService.getMessages (ShiroUtils.getUserId ());
+        for (TitleLikeMailbox message : messages) {
+            setUserInfo (message);
+        }
         PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -336,10 +370,82 @@ public class MailBoxController {
         long id = Long.parseLong (String.valueOf (params.get ("id")));
 
         TitleLikeMailbox message = titleLikeMailboxService.getMessage (id);
-
+        setUserInfo (message);
         Map<String, Object> map = new HashMap<>(16);
         map.put ("message", message);
         return Result.success (map);
     }
 
+
+    private void setUserInfo (AdoptMailbox message) {
+        UserInfo sendInfo = userInfoService.getUserInfoById (message.getSendUserId ());
+        User sendUser = userService.getById (message.getSendUserId ());
+        UserInfo receiveInfo = userInfoService.getUserInfoById (message.getReceiveUserId ());
+        User receiveUser = userService.getById (message.getReceiveUserId ());
+
+        message.setSendUserAvatar (sendInfo.getUserAvatar ());
+        message.setSendUserName (sendUser.getUserName ());
+        message.setReceiveUserAvatar (receiveInfo.getUserAvatar ());
+        message.setReceiveUserName (receiveUser.getUserName ());
+    }
+
+    private void setUserInfo (ClueMailbox message) {
+        UserInfo sendInfo = userInfoService.getUserInfoById (message.getSendUserId ());
+        User sendUser = userService.getById (message.getSendUserId ());
+        UserInfo receiveInfo = userInfoService.getUserInfoById (message.getReceiveUserId ());
+        User receiveUser = userService.getById (message.getReceiveUserId ());
+
+        message.setSendUserAvatar (sendInfo.getUserAvatar ());
+        message.setSendUserName (sendUser.getUserName ());
+        message.setReceiveUserAvatar (receiveInfo.getUserAvatar ());
+        message.setReceiveUserName (receiveUser.getUserName ());
+    }
+
+    private void setUserInfo (CommentMailbox message) {
+        UserInfo sendInfo = userInfoService.getUserInfoById (message.getSendUserId ());
+        User sendUser = userService.getById (message.getSendUserId ());
+        UserInfo receiveInfo = userInfoService.getUserInfoById (message.getReceiveUserId ());
+        User receiveUser = userService.getById (message.getReceiveUserId ());
+
+        message.setSendUserAvatar (sendInfo.getUserAvatar ());
+        message.setSendUserName (sendUser.getUserName ());
+        message.setReceiveUserAvatar (receiveInfo.getUserAvatar ());
+        message.setReceiveUserName (receiveUser.getUserName ());
+    }
+
+    private void setUserInfo (ReplyMailbox message) {
+        UserInfo sendInfo = userInfoService.getUserInfoById (message.getSendUserId ());
+        User sendUser = userService.getById (message.getSendUserId ());
+        UserInfo receiveInfo = userInfoService.getUserInfoById (message.getReceiveUserId ());
+        User receiveUser = userService.getById (message.getReceiveUserId ());
+
+        message.setSendUserAvatar (sendInfo.getUserAvatar ());
+        message.setSendUserName (sendUser.getUserName ());
+        message.setReceiveUserAvatar (receiveInfo.getUserAvatar ());
+        message.setReceiveUserName (receiveUser.getUserName ());
+    }
+
+    private void setUserInfo (CommentLikeMailbox message) {
+        UserInfo sendInfo = userInfoService.getUserInfoById (message.getSendUserId ());
+        User sendUser = userService.getById (message.getSendUserId ());
+        UserInfo receiveInfo = userInfoService.getUserInfoById (message.getReceiveUserId ());
+        User receiveUser = userService.getById (message.getReceiveUserId ());
+
+        message.setSendUserAvatar (sendInfo.getUserAvatar ());
+        message.setSendUserName (sendUser.getUserName ());
+        message.setReceiveUserAvatar (receiveInfo.getUserAvatar ());
+        message.setReceiveUserName (receiveUser.getUserName ());
+    }
+
+    private void setUserInfo (TitleLikeMailbox message) {
+        UserInfo sendInfo = userInfoService.getUserInfoById (message.getSendUserId ());
+        User sendUser = userService.getById (message.getSendUserId ());
+        UserInfo receiveInfo = userInfoService.getUserInfoById (message.getReceiveUserId ());
+        User receiveUser = userService.getById (message.getReceiveUserId ());
+
+        message.setSendUserAvatar (sendInfo.getUserAvatar ());
+        message.setSendUserName (sendUser.getUserName ());
+        message.setReceiveUserAvatar (receiveInfo.getUserAvatar ());
+        message.setReceiveUserName (receiveUser.getUserName ());
+    }
 }

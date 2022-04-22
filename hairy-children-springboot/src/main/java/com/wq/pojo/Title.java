@@ -36,6 +36,14 @@ public class Title implements Serializable {
     @ApiModelProperty(value = "作者 id")
     private Long userId;
 
+    @ApiModelProperty(value = "作者用户名")
+    @TableField(exist = false)
+    private String userName;
+
+    @ApiModelProperty(value = "作者头像")
+    @TableField(exist = false)
+    private String userAvatar;
+
     @ApiModelProperty(value = "作者 城市")
     private String userAddress;
 
