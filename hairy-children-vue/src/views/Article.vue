@@ -45,7 +45,9 @@
   <div v-if="title.titleType === 1">
     <adopt-item v-for="item in list" :key="item.adoptId" :item="item"></adopt-item>
   </div>
-  <div v-else></div>
+  <div v-else>
+    <clue-item v-for="item in list" :key="item.clueId" :item="item"></clue-item>
+  </div>
   <n-h2>评论</n-h2>
   <n-space vertical justify="center">
     <n-input
@@ -104,19 +106,32 @@
       </n-form-item>
     </n-form>
   </n-modal>
-  <n-modal v-model:show="showImgUploadModal" preset="card">
-    <!-- <n-card style="width: 600px" title="模态框" :bordered="false" size="huge" role="dialog" aria-modal="true"> -->
-    <n-upload
-      :action="`http://175.24.229.41:9421/adopt/updateImg/${adoptInfo?.adoptId}`"
-      :custom-request="customRequest"
-      :default-file-list="fileList"
-      list-type="image-card"
-    >
-      点击上传
-    </n-upload>
-    <!-- </n-card> -->
+  <n-modal v-model:show="showImgUploadModal" preset="card" style="width: 600px">
+    <n-upload :custom-request="customRequest" :default-file-list="fileList" list-type="image-card"> 点击上传 </n-upload>
   </n-modal>
   <!-- 线索 -->
+  <n-modal
+    v-model:show="showClueModal"
+    :mask-closable="false"
+    preset="dialog"
+    title="新增线索"
+    size="huge"
+    :bordered="false"
+    style="width: 600px"
+    positive-text="确认"
+    negative-text="算了"
+    @positive-click="onCreateClueClick"
+  >
+    <n-input
+      v-model:value="clueInfo.clueContent"
+      type="textarea"
+      placeholder="请输入你的线索"
+      :autosize="{
+        minRows: 3,
+        maxRows: 3
+      }"
+    />
+  </n-modal>
 </template>
 <script>
 import { defineComponent, reactive, toRefs } from 'vue'
@@ -152,9 +167,13 @@ import {
   getArticleAdoptions,
   createAdoption,
   updateAdoption,
-  uploadAdoptionImg
+  uploadAdoptionImg,
+  createClue,
+  updateClue,
+  uploadClueImg
 } from '../api/index'
 import adoptItem from '../components/adopt-item.vue'
+import clueItem from '../components/clue-item.vue'
 import { getData } from '../utils/tools'
 
 export default defineComponent({
@@ -181,7 +200,8 @@ export default defineComponent({
     NFormItem,
     NSwitch,
     adoptItem,
-    NUpload
+    NUpload,
+    clueItem
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -200,7 +220,9 @@ export default defineComponent({
       showAdoptModal: false,
       adoptInfo: {},
       showImgUploadModal: false,
-      fileList: []
+      fileList: [],
+      showClueModal: false,
+      clueInfo: {}
     })
     const GetArticle = async (data) => {
       const { data: res } = await getArticle({ titleId: data })
@@ -245,13 +267,22 @@ export default defineComponent({
     const customRequest = async ({ file }) => {
       const formData = new FormData()
       formData.append('imgs', file.file)
-      const { data: res } = await uploadAdoptionImg(state.adoptInfo.adoptId, formData)
-      if (res.code === 200) {
-        message.success('上传成功')
-        // state.showImgUploadModal = false
-        // state.adoptInfo.adoptImg = res.data.adoptImg
+      if (state.title.titleType === 1) {
+        const { data: res } = await uploadAdoptionImg(state.adoptInfo.adoptId, formData)
+        if (res.code === 200) {
+          message.success('上传成功')
+          // state.adoptInfo.imgs.push(res.data)
+        } else {
+          message.error(res.msg)
+        }
       } else {
-        message.error(res.msg)
+        const { data: res } = await uploadClueImg(state.clueInfo.clueId, formData)
+        if (res.code === 200) {
+          message.success('上传成功')
+          // state.clueInfo.imgs.push(res.data)
+        } else {
+          message.error(res.msg)
+        }
       }
     }
     const onPositiveClick = () => {
@@ -280,7 +311,40 @@ export default defineComponent({
         })
       }
     }
-    return { ...toRefs(state), GetArticle, GetUserInfo, AddRootComment, getData, EditArticle, onPositiveClick, customRequest }
+    const onCreateClueClick = () => {
+      state.showClueModal = false
+      createClue({
+        userId: getData('userInfo').userId,
+        titleId: state.title.titleId
+      }).then((res) => {
+        state.clueInfo.clueId = res.data.data.clueId
+        updateClue({
+          clueId: state.clueInfo.clueId,
+          isSuccess: '0',
+          ...state.clueInfo
+        }).then((ress) => {
+          if (ress.data.code === 200) {
+            message.success('申请成功')
+            // router.go(0)
+            state.showClueModal = false
+            state.showImgUploadModal = true
+          } else {
+            message.error(res.data.msg)
+          }
+        })
+      })
+    }
+    return {
+      ...toRefs(state),
+      GetArticle,
+      GetUserInfo,
+      AddRootComment,
+      getData,
+      EditArticle,
+      onPositiveClick,
+      customRequest,
+      onCreateClueClick
+    }
   }
 })
 </script>

@@ -129,6 +129,45 @@ export function getArticleClues(data) {
   })
 }
 
+// 新建线索
+export function createClue(data) {
+  return Axios({
+    url: '/clue/creatClue',
+    method: 'post',
+    data
+  })
+}
+
+// 更新线索
+export function updateClue(data) {
+  return Axios({
+    url: '/clue/updateClue',
+    method: 'post',
+    data
+  })
+}
+
+// 删除线索
+export function deleteClue(data) {
+  return Axios({
+    url: '/clue/deleteClue',
+    method: 'post',
+    data
+  })
+}
+
+// 上传线索图片
+export function uploadClueImg(clueId, data) {
+  return Axios({
+    url: `/clue/updateImg/${clueId}`,
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data
+  })
+}
+
 // 获取文章所有领养申请
 export function getArticleAdoptions(data) {
   return Axios({

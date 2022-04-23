@@ -24,18 +24,6 @@
           <n-space justify="flex-end">
             <n-time :time="item.gmtCreate" type="relative" />
             <n-button v-if="getData('userInfo').userId === item.userId" text @click="showDeleteModal = true">删除</n-button>
-            <!-- <div class="center">
-              <n-icon size="16">
-                <Favorite />
-              </n-icon>
-              <span class="like"> {{ item.likeCount }}</span>
-            </div>
-            <div class="center" @click="replyDisplay(item.rootId)">
-              <n-icon size="16">
-                <Chat />
-              </n-icon>
-              <span class="comment"> {{ item.replyCount }}</span>
-            </div> -->
           </n-space>
         </n-space>
       </n-gi>
