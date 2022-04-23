@@ -12,7 +12,6 @@ const noAuthUrls = ['/v/login', '/title/getAllTitles']
 Axios.interceptors.request.use(
   (config) => {
     // Do something before request is sent
-    console.log(config.url)
     if (!noAuthUrls.includes(config.url)) {
       const token = getData('token')
       config.headers['jwt-token'] = token.token

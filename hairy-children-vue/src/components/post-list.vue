@@ -4,8 +4,8 @@
     <div class="list">
       <div v-for="item in list" :key="item.titleId" class="list-item">
         <span class="item-title">{{ item.titleName }}</span>
-        <!-- <span class="item-content">{{ item.titleContent }}</span> -->
-        <span class="item-content">this is a test content</span>
+        <span class="item-content">{{ abstractFn(item.titleContent) + ' ……' }}</span>
+        <!-- <span class="item-content">this is a test content</span> -->
         <n-space>
           <span class="user-address">{{ item.userAddress }}</span>
           <n-time :time="item.gmtCreate" type="relative" />
@@ -42,6 +42,7 @@ import { defineComponent, reactive, toRefs } from 'vue'
 import { NTime, NSpace, NIcon, NButton } from 'naive-ui'
 import { Favorite, Star, Chat } from '@vicons/carbon'
 import { useRouter } from 'vue-router'
+import { abstractFn } from '../utils/tools'
 
 export default defineComponent({
   components: {
@@ -74,13 +75,14 @@ export default defineComponent({
     const gotoPage = (path) => {
       router.push(path)
     }
-    return { ...toRefs(state), gotoPage }
+
+    return { ...toRefs(state), gotoPage, abstractFn }
   }
 })
 </script>
 <style lang="scss" scoped>
 .box {
-  // width: 400px;
+  width: 400px;
   padding: 20px;
   // border: 3px solid #000;
   box-shadow: 0px 0px 5px 2px #ddd;

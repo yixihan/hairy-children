@@ -67,7 +67,6 @@ export default defineComponent({
           validator(rule, value) {
             switch (state.loginType) {
               case 'username':
-                console.log(value)
                 if (!value) return new Error('请输入账号')
                 if (value.length < 4 || value.length > 12) return new Error('账号长度为4-12位')
                 break

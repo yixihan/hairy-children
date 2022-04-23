@@ -562,9 +562,9 @@
     "isobject" "^3.0.0"
     "static-extend" "^0.1.1"
 
-"codemirror@^5.61.1":
+"codemirror@^5.61.1", "codemirror@^5.65.2":
   "integrity" "sha512-SZM4Zq7XEC8Fhroqe3LxbEEX1zUPWH1wMr5zxiBuiUF64iYOUH/JI88v4tBag8MiBS8B8gRv8O1pPXGYXQ4ErA=="
-  "resolved" "https://registry.npmmirror.com/codemirror/-/codemirror-5.65.2.tgz"
+  "resolved" "https://registry.npmjs.org/codemirror/-/codemirror-5.65.2.tgz"
   "version" "5.65.2"
 
 "collection-visit@^1.0.0":

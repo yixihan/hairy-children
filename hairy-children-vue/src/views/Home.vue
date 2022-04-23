@@ -49,7 +49,8 @@ export default defineComponent({
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.GetArticleList({
-        timeLimit: '3', // 不限
+        titleName: '',
+        timeLimit: '4', // 不限
         city: '',
         isFinish: '3', // 不限
         reply: true

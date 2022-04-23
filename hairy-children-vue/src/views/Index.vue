@@ -5,7 +5,7 @@
       <div class="header">
         <img src="https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web/e08da34488b114bd4c665ba2fa520a31.svg" @click="gotoPage('/')" />
         <n-space v-if="isLogin" align="center">
-          <n-button type="primary">我要发布</n-button>
+          <n-button type="primary" @click="showModal = true">我要发布</n-button>
           <n-button type="primary">个人中心</n-button>
           <n-text>{{ userInfo.userName }}，欢迎回来！</n-text>
           <n-button type="info" secondary @click="logout()"> 注销 </n-button>
@@ -19,27 +19,52 @@
     <n-layout-content>
       <router-view></router-view>
     </n-layout-content>
-    <!-- <n-layout-footer>成府路</n-layout-footer> -->
   </n-layout>
-  <!-- </div> -->
+  <n-modal
+    v-model:show="showModal"
+    :mask-closable="false"
+    preset="dialog"
+    title="确认"
+    content="你确认"
+    positive-text="确认"
+    negative-text="算了"
+    @positive-click="onPositiveClick"
+  >
+    <n-form ref="formRef" :model="postInfo">
+      <n-form-item path="userName" label="类别">
+        <n-select v-model:value="postInfo.titleType" :options="typeOptions"></n-select>
+      </n-form-item>
+      <n-form-item path="userName" label="城市">
+        <n-input v-model:value="postInfo.userAddress" @keydown.enter.prevent />
+      </n-form-item>
+      <n-form-item path="userName" label="标题">
+        <n-input v-model:value="postInfo.titleName" @keydown.enter.prevent />
+      </n-form-item>
+    </n-form>
+  </n-modal>
 </template>
 <script>
 import { defineComponent, reactive, toRefs } from 'vue'
-import { NLayout, NLayoutHeader, NLayoutContent, NSpace, NButton, NText } from 'naive-ui'
+import { NInput, NLayout, NLayoutHeader, NLayoutContent, NSpace, NButton, NText, NModal, NForm, NFormItem, NSelect } from 'naive-ui'
 import { useRouter, RouterView } from 'vue-router'
-import { getUserInfo } from '../api'
+import { getUserInfo, createArticle } from '../api'
 import { getData, saveData } from '../utils/tools'
 
 export default defineComponent({
   name: 'IndexPage',
   components: {
+    NInput,
     NLayout,
     NLayoutHeader,
     NLayoutContent,
     NSpace,
     NButton,
     NText,
-    RouterView
+    RouterView,
+    NModal,
+    NForm,
+    NFormItem,
+    NSelect
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -53,7 +78,17 @@ export default defineComponent({
     const router = useRouter()
     const state = reactive({
       isLogin: false,
-      userInfo: {}
+      userInfo: {},
+      showModal: false,
+      typeOptions: [
+        { value: '1', label: '领养' },
+        { value: '2', label: '寻宠' }
+      ],
+      postInfo: {
+        userAddress: '成都',
+        titleType: '1',
+        titleName: 'Test'
+      }
     })
     const setState = (name, data) => {
       state[name] = data
@@ -74,11 +109,25 @@ export default defineComponent({
     const gotoPage = (path) => {
       router.push(path)
     }
-    return { ...toRefs(state), setState, GetUserInfo, gotoPage, logout }
+    const onPositiveClick = async () => {
+      const { data: res } = await createArticle({
+        userId: getData('token').userId,
+        titleType: state.postInfo.titleType,
+        userAddress: state.postInfo.userAddress,
+        titleName: state.postInfo.titleName
+      })
+      router.push({
+        name: 'write',
+        params: {
+          id: res.data.titleId
+        }
+      })
+    }
+    return { ...toRefs(state), setState, GetUserInfo, gotoPage, logout, onPositiveClick }
   }
 })
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .n-layout {
   // height: 100%;
   // margin-bottom: 20px;

@@ -6,7 +6,7 @@
     </n-breadcrumb>
     <div class="search">
       <n-space justify="space-between">
-        <n-input style="width: 1000px"></n-input>
+        <n-input v-model:value="requestInfo.titleName" type="text" style="width: 1000px"></n-input>
         <n-button type="primary" secondary @click="searchHandle"> 搜索 </n-button>
       </n-space>
     </div>
@@ -160,6 +160,7 @@ export default defineComponent({
         }
       ],
       requestInfo: {
+        titleName: '',
         titleType: 1,
         city: '',
         isFinish: 3,

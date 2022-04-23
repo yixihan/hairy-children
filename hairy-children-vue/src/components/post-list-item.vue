@@ -1,9 +1,8 @@
 <template>
   <div class="list">
-    <div v-for="item in list" :key="item.titleId" class="list-item">
+    <div v-for="item in list" :key="item.titleId" class="list-item" @click="gotoPage('/article/' + item.titleId)">
       <span class="item-title">{{ item.titleName }}</span>
-      <!-- <span class="item-content">{{ item.titleContent }}</span> -->
-      <span class="item-content">this is a test content</span>
+      <span class="item-content">{{ abstractFn(item.titleContent) + ' ……' }}</span>
       <n-space>
         <span class="user-address">{{ item.userAddress }}</span>
         <n-time :time="item.gmtCreate" type="relative" />
@@ -35,6 +34,8 @@
 import { defineComponent, reactive, toRefs } from 'vue'
 import { NTime, NSpace, NIcon } from 'naive-ui'
 import { Favorite, Star, Chat } from '@vicons/carbon'
+import { useRouter } from 'vue-router'
+import { abstractFn } from '../utils/tools'
 
 export default defineComponent({
   components: {
@@ -57,8 +58,12 @@ export default defineComponent({
     }
   },
   setup() {
+    const router = useRouter()
     const state = reactive({})
-    return { ...toRefs(state) }
+    const gotoPage = (path) => {
+      router.push(path)
+    }
+    return { ...toRefs(state), abstractFn, gotoPage }
   }
 })
 </script>
@@ -72,12 +77,7 @@ export default defineComponent({
 }
 .list-item {
   padding: 20px 0;
-  // width: 100%;
-  // margin: 10px 0;
-  // padding: 10px;
-  // border-top: 1px solid #000;
   border-bottom: 1px solid #999;
-  // border-radius: 5px;
   background-color: #fff;
   .item-title {
     display: block;
@@ -88,7 +88,4 @@ export default defineComponent({
     font-size: 16px;
   }
 }
-// .list-item:hover {
-//   box-shadow: 0px 0px 2px 2px rgb(255, 255, 255);
-// }
 </style>
