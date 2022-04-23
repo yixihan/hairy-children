@@ -1,11 +1,11 @@
 <template>
   <div class="box">
-    <span class="title">{{ title }}</span>
+    <span v-if="title !== '标题'" class="title">{{ title }}</span>
     <div class="list">
       <div v-for="item in list" :key="item.titleId" class="list-item">
         <span class="item-title">{{ item.titleName }}</span>
-        <!-- <span class="item-content">{{ item.titleContent }}</span> -->
-        <span class="item-content">this is a test content</span>
+        <span class="item-content">{{ abstractFn(item.titleContent) + ' ……' }}</span>
+        <!-- <span class="item-content">this is a test content</span> -->
         <n-space>
           <span class="user-address">{{ item.userAddress }}</span>
           <n-time :time="item.gmtCreate" type="relative" />
@@ -32,12 +32,17 @@
         </n-space>
       </div>
     </div>
+    <n-space justify="flex-end" style="margin-top: 10px">
+      <n-button @click="title === '领养' ? gotoPage('/list?titleType=1') : gotoPage('/list?titleType=2')">more</n-button>
+    </n-space>
   </div>
 </template>
 <script>
 import { defineComponent, reactive, toRefs } from 'vue'
-import { NTime, NSpace, NIcon } from 'naive-ui'
+import { NTime, NSpace, NIcon, NButton } from 'naive-ui'
 import { Favorite, Star, Chat } from '@vicons/carbon'
+import { useRouter } from 'vue-router'
+import { abstractFn } from '../utils/tools'
 
 export default defineComponent({
   components: {
@@ -46,7 +51,8 @@ export default defineComponent({
     NIcon,
     Favorite,
     Star,
-    Chat
+    Chat,
+    NButton
   },
   props: {
     title: {
@@ -64,15 +70,23 @@ export default defineComponent({
     }
   },
   setup() {
+    const router = useRouter()
     const state = reactive({})
-    return { ...toRefs(state) }
+    const gotoPage = (path) => {
+      router.push(path)
+    }
+
+    return { ...toRefs(state), gotoPage, abstractFn }
   }
 })
 </script>
 <style lang="scss" scoped>
 .box {
   width: 400px;
-  border: 3px solid #000;
+  padding: 20px;
+  // border: 3px solid #000;
+  box-shadow: 0px 0px 5px 2px #ddd;
+  border-radius: 5px;
   // background-color: rgb(235, 235, 235);
 }
 .list {
@@ -86,7 +100,7 @@ export default defineComponent({
   font-size: 34px;
   font-weight: bold;
   text-align: center;
-  border: 3px solid #000;
+  // border: 3px solid #000;
 }
 .center {
   display: flex;
@@ -98,10 +112,11 @@ export default defineComponent({
 .list-item {
   // padding: 20px;
   // width: 100%;
-  margin: 10px;
-  padding: 10px;
-  border: 2px solid #000;
-  border-radius: 5px;
+  // margin: 10px 0;
+  // padding: 10px;
+  // border-top: 1px solid #000;
+  border-bottom: 1px solid #999;
+  // border-radius: 5px;
   background-color: #fff;
   .item-title {
     display: block;
@@ -112,7 +127,7 @@ export default defineComponent({
     font-size: 16px;
   }
 }
-.list-item:hover {
-  // box-shadow: 0px 0px 2px 2px rgb(255, 255, 255);
-}
+// .list-item:hover {
+//   box-shadow: 0px 0px 2px 2px rgb(255, 255, 255);
+// }
 </style>

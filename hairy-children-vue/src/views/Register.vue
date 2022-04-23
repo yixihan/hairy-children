@@ -58,7 +58,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .register {
-  height: 100%;
+  height: calc(100vh - 60px);
   // background-color: rgb(89, 147, 165);
   display: flex;
   justify-content: center;
@@ -69,7 +69,7 @@ export default defineComponent({
   padding: 30px 40px;
   background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0px 0px 100px 40px rgb(209, 222, 240);
+  box-shadow: 2px 2px 10px 3px rgb(209, 222, 240);
   .head {
     display: flex;
     justify-content: space-between;
