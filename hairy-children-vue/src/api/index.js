@@ -119,3 +119,60 @@ export function addSonComment(titleId, data) {
     data
   })
 }
+
+// 获取文章所有线索
+export function getArticleClues(data) {
+  return Axios({
+    url: '/clue/getAllTitleClues',
+    method: 'post',
+    data
+  })
+}
+
+// 获取文章所有领养申请
+export function getArticleAdoptions(data) {
+  return Axios({
+    url: '/adopt/getAllTitleAdopts',
+    method: 'post',
+    data
+  })
+}
+
+// 新建领养申请
+export function createAdoption(data) {
+  return Axios({
+    url: '/adopt/creatAdopt',
+    method: 'post',
+    data
+  })
+}
+
+// 更新领养申请
+export function updateAdoption(data) {
+  return Axios({
+    url: '/adopt/updateAdopt',
+    method: 'post',
+    data
+  })
+}
+
+// 删除领养申请
+export function deleteAdoption(data) {
+  return Axios({
+    url: '/adopt/deleteAdopt',
+    method: 'post',
+    data
+  })
+}
+
+// 上传领养申请图片
+export function uploadAdoptionImg(adoptId, data) {
+  return Axios({
+    url: `/adopt/updateImg/${adoptId}`,
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data
+  })
+}

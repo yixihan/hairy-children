@@ -40,6 +40,13 @@
       </n-gi>
     </n-grid>
   </n-card>
+  <n-h2>{{ title.titleType === 1 ? '领养' : '线索' }}</n-h2>
+  <n-button @click="title.titleType === 1 ? (showAdoptModal = true) : (showClueModal = true)">新建</n-button>
+  <div v-if="title.titleType === 1">
+    <adopt-item v-for="item in list" :key="item.adoptId" :item="item"></adopt-item>
+  </div>
+  <div v-else></div>
+  <n-h2>评论</n-h2>
   <n-space vertical justify="center">
     <n-input
       v-model:value="comment"
@@ -53,14 +60,101 @@
     <n-button @click="AddRootComment">发布</n-button>
   </n-space>
   <comment-item v-for="item in comments?.list" :key="item.rootId" :item="item"> </comment-item>
+  <!-- 领养 -->
+  <n-modal
+    v-model:show="showAdoptModal"
+    :mask-closable="false"
+    preset="dialog"
+    title="确认"
+    content="你确认"
+    positive-text="确认"
+    negative-text="算了"
+    @positive-click="onPositiveClick"
+  >
+    <n-form ref="formRef" :model="adoptInfo">
+      <n-form-item path="userName" label="申请理由">
+        <n-input v-model:value="adoptInfo.adoptReason"></n-input>
+      </n-form-item>
+      <n-form-item path="userName" label="城市">
+        <n-input v-model:value="adoptInfo.adoptUserAddress" @keydown.enter.prevent />
+      </n-form-item>
+      <n-form-item path="userName" label="年龄">
+        <n-input v-model:value="adoptInfo.adoptUserAge" @keydown.enter.prevent />
+      </n-form-item>
+      <n-form-item path="userName" label="联系方式">
+        <n-input v-model:value="adoptInfo.adoptUserPhone" @keydown.enter.prevent />
+      </n-form-item>
+      <n-form-item path="userName" label="养宠理念">
+        <n-input v-model:value="adoptInfo.adoptConcept" @keydown.enter.prevent />
+      </n-form-item>
+      <n-form-item path="userName" label="接动物方式">
+        <n-input v-model:value="adoptInfo.adoptWay" @keydown.enter.prevent />
+      </n-form-item>
+      <n-form-item path="userName" label="是否接受定期回访">
+        <n-switch checked-value="1" unchecked-value="0" @update:value="adoptInfo.isReturnVisit">
+          <template #checked>同意</template>
+          <template #unchecked>不同意</template>
+        </n-switch>
+      </n-form-item>
+      <n-form-item path="userName" label="是否能够定期反馈领养情况">
+        <n-switch checked-value="1" unchecked-value="0" @update:value="adoptInfo.isFeedback">
+          <template #checked>同意</template>
+          <template #unchecked>不同意</template>
+        </n-switch>
+      </n-form-item>
+    </n-form>
+  </n-modal>
+  <n-modal v-model:show="showImgUploadModal" preset="card">
+    <!-- <n-card style="width: 600px" title="模态框" :bordered="false" size="huge" role="dialog" aria-modal="true"> -->
+    <n-upload
+      :action="`http://175.24.229.41:9421/adopt/updateImg/${adoptInfo?.adoptId}`"
+      :custom-request="customRequest"
+      :default-file-list="fileList"
+      list-type="image-card"
+    >
+      点击上传
+    </n-upload>
+    <!-- </n-card> -->
+  </n-modal>
+  <!-- 线索 -->
 </template>
 <script>
 import { defineComponent, reactive, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
-import { NCard, NGrid, NGi, NSpace, NAvatar, NText, NTime, NIcon, NH1, NInput, NButton, useMessage } from 'naive-ui'
+import {
+  NCard,
+  NGrid,
+  NGi,
+  NSpace,
+  NAvatar,
+  NText,
+  NTime,
+  NIcon,
+  NH1,
+  NInput,
+  NButton,
+  useMessage,
+  NH2,
+  NForm,
+  NFormItem,
+  NModal,
+  NSwitch,
+  NUpload
+} from 'naive-ui'
 import { Favorite, Star, Chat } from '@vicons/carbon'
 import commentItem from '../components/comment-item.vue'
-import { getArticle, getUserInfo, addRootComment, getArticleComments } from '../api/index'
+import {
+  getArticle,
+  getUserInfo,
+  addRootComment,
+  getArticleComments,
+  getArticleClues,
+  getArticleAdoptions,
+  createAdoption,
+  updateAdoption,
+  uploadAdoptionImg
+} from '../api/index'
+import adoptItem from '../components/adopt-item.vue'
 import { getData } from '../utils/tools'
 
 export default defineComponent({
@@ -80,7 +174,14 @@ export default defineComponent({
     NH1,
     NInput,
     NButton,
-    commentItem
+    commentItem,
+    NH2,
+    NModal,
+    NForm,
+    NFormItem,
+    NSwitch,
+    adoptItem,
+    NUpload
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -94,16 +195,28 @@ export default defineComponent({
       title: {},
       userInfo: {},
       comment: '',
-      comments: []
+      comments: [],
+      list: [],
+      showAdoptModal: false,
+      adoptInfo: {},
+      showImgUploadModal: false,
+      fileList: []
     })
     const GetArticle = async (data) => {
       const { data: res } = await getArticle({ titleId: data })
-      state.title = res.data.title
+      state.title = res.data?.title
       const { data: ress } = await getUserInfo({ userId: state.title.userId })
       state.userInfo = ress.data
       const { data: resss } = await getArticleComments({ titleId: state.title.titleId })
       // ?.可选参数，防止无评论时报错
       state.comments = resss.data?.page
+      if (state.title.titleType === 1) {
+        const { data: ressss } = await getArticleAdoptions({ titleId: state.title.titleId })
+        state.list = ressss.data.page?.list
+      } else {
+        const { data: ressss } = await getArticleClues({ titleId: state.title.titleId })
+        state.list = ressss.data.page?.list
+      }
     }
     const GetUserInfo = async () => {
       const { data: res } = await getUserInfo()
@@ -129,7 +242,45 @@ export default defineComponent({
         }
       })
     }
-    return { ...toRefs(state), GetArticle, GetUserInfo, AddRootComment, getData, EditArticle }
+    const customRequest = async ({ file }) => {
+      const formData = new FormData()
+      formData.append('imgs', file.file)
+      const { data: res } = await uploadAdoptionImg(state.adoptInfo.adoptId, formData)
+      if (res.code === 200) {
+        message.success('上传成功')
+        // state.showImgUploadModal = false
+        // state.adoptInfo.adoptImg = res.data.adoptImg
+      } else {
+        message.error(res.msg)
+      }
+    }
+    const onPositiveClick = () => {
+      if (state.title.titleType === 1) {
+        state.showAdoptModal = false
+        createAdoption({
+          userId: state.userInfo.userId,
+          titleId: state.title.titleId
+        }).then((res) => {
+          state.adoptInfo.adoptId = res.data.data.adoptId
+          updateAdoption({
+            userId: state.userInfo.userId,
+            adoptId: state.adoptInfo.adoptId,
+            isSuccess: '0',
+            ...state.adoptInfo
+          }).then((ress) => {
+            if (ress.data.code === 200) {
+              message.success('申请成功')
+              // router.go(0)
+              state.showAdoptModal = false
+              state.showImgUploadModal = true
+            } else {
+              message.error(res.data.msg)
+            }
+          })
+        })
+      }
+    }
+    return { ...toRefs(state), GetArticle, GetUserInfo, AddRootComment, getData, EditArticle, onPositiveClick, customRequest }
   }
 })
 </script>
