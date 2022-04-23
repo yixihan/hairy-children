@@ -35,6 +35,14 @@ public class Adopt implements Serializable {
     @ApiModelProperty(value = "申请人 id")
     private Long userId;
 
+    @ApiModelProperty(value = "申请人用户名")
+    @TableField(exist = false)
+    private String userName;
+
+    @ApiModelProperty(value = "申请人头像")
+    @TableField(exist = false)
+    private String userAvatar;
+
     @ApiModelProperty(value = "文章 id")
     private Long titleId;
 

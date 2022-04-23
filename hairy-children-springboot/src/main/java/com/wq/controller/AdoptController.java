@@ -4,12 +4,10 @@ package com.wq.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.PhotoProperties;
 import com.wq.common.pojo.Result;
-import com.wq.pojo.Adopt;
-import com.wq.pojo.AdoptMailbox;
-import com.wq.pojo.Title;
-import com.wq.pojo.User;
+import com.wq.pojo.*;
 import com.wq.service.AdoptService;
 import com.wq.service.TitleService;
+import com.wq.service.UserInfoService;
 import com.wq.service.UserService;
 import com.wq.service.message.AdoptMailboxService;
 import com.wq.util.PageUtils;
@@ -48,6 +46,9 @@ public class AdoptController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private UserInfoService userInfoService;
 
     @Resource
     private PhotoProperties photoProperties;
@@ -131,9 +132,10 @@ public class AdoptController {
     @PostMapping("/getAdopt")
     public Result getAdopt (@RequestBody Map<String, Object> params) {
         long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
-
         Adopt adopt = adoptService.getById (adoptId);
+
         adopt.setImgs (adopt.getImgsDir ().split ("::"));
+        setUserInfo (adopt);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put("adopt", adopt);
@@ -167,6 +169,11 @@ public class AdoptController {
         }
 
         List<Adopt> adoptList = adoptService.getAdoptsByUserId (userId);
+
+        for (Adopt adopt : adoptList) {
+            setUserInfo (adopt);
+        }
+
         PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -183,6 +190,11 @@ public class AdoptController {
         }
 
         List<Adopt> adoptList = adoptService.getAllAdoptsByTitleId (titleId);
+
+        for (Adopt adopt : adoptList) {
+            setUserInfo (adopt);
+        }
+
         PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -205,5 +217,13 @@ public class AdoptController {
         }
 
         adoptMailboxService.sendMailbox (mailbox);
+    }
+
+    private void setUserInfo (Adopt adopt) {
+        UserInfo info = userInfoService.getUserInfoById (adopt.getUserId ());
+        User user = userService.getById (adopt.getUserId ());
+
+        adopt.setUserAvatar (info.getUserAvatar ());
+        adopt.setUserName (user.getUserName ());
     }
 }

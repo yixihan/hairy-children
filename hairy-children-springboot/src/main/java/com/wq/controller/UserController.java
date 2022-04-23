@@ -146,6 +146,7 @@ public class UserController {
 
         long userId = Long.parseLong (String.valueOf (params.get ("userId")));
 
+
         User user = userService.getById (userId);
         if (user == null) {
             return Result.fail (555, "无此用户信息");
@@ -155,19 +156,29 @@ public class UserController {
         Map<String, Object> userInfo = new HashMap<> (16);
         userInfo.put ("userId", user.getUserId ());
         userInfo.put ("userName", user.getUserName ());
-        userInfo.put ("userPhone", user.getUserPhone ());
-        userInfo.put ("userEmail", user.getUserEmail ());
-        userInfo.put ("userRealName", info.getUserRealName ());
-        userInfo.put ("userIdentityCard", info.getUserIdentityCard ());
-        userInfo.put ("userAddress", info.getUserAddress ());
-        userInfo.put ("AddressShow", info.getAddressShow ());
-        userInfo.put ("userGender", info.getUserGender ());
-        userInfo.put ("GenderShow", info.getGenderShow ());
-        userInfo.put ("userBirth", info.getUserBirth ());
-        userInfo.put ("BirthShow", info.getBirthShow ());
         userInfo.put ("userAvatar", info.getUserAvatar ());
         userInfo.put ("userAutograph", info.getUserAutograph ());
         userInfo.put ("userPetCond", info.getUserPetCond ());
+        if (ShiroUtils.getUserId () == userId) {
+            userInfo.put ("userPhone", user.getUserPhone ());
+            userInfo.put ("userEmail", user.getUserEmail ());
+            userInfo.put ("userRealName", info.getUserRealName ());
+            userInfo.put ("userIdentityCard", info.getUserIdentityCard ());
+            userInfo.put ("userAddress", info.getUserAddress ());
+            userInfo.put ("userGender", info.getUserGender ());
+            userInfo.put ("userBirth", info.getUserBirth ());
+        } else {
+            if (info.getAddressShow () == 1) {
+                userInfo.put ("userAddress", info.getUserAddress ());
+            }
+            if (info.getGenderShow () == 1) {
+                userInfo.put ("userGender", info.getUserGender ());
+            }
+            if (info.getBirthShow () == 1) {
+                userInfo.put ("userBirth", info.getUserBirth ());
+            }
+        }
+
 
         return Result.success ("用户信息获取成功", userInfo);
     }

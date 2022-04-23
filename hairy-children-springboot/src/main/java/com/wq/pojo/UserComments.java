@@ -18,18 +18,33 @@ import java.util.Date;
 public class UserComments implements Serializable {
 
     @ApiModelProperty(value = "用户 id")
-    private Integer userId;
+    private Long userId;
+
+    @ApiModelProperty(value = "用户名")
+    private String userName;
+
+    @ApiModelProperty(value = "用户头像")
+    private String userAvatar;
 
     @ApiModelProperty(value = "回答(文章) id")
-    private Integer answerId;
+    private Long answerId;
 
     @ApiModelProperty(value = "评论 id")
-    private Integer commentId;
+    private Long commentId;
 
-    @ApiModelProperty(value = "回复评论 id")
-    private Integer rootId;
+    @ApiModelProperty(value = "父评论 id")
+    private Long rootId;
 
-    @ApiModelProperty(value = "回复评论 内容")
+    @ApiModelProperty(value = "父评论 用户id")
+    private Long rootUserId;
+
+    @ApiModelProperty(value = "父评论 用户名")
+    private String rootUserName;
+
+    @ApiModelProperty(value = "父评论 用户头像")
+    private String rootUserAvatar;
+
+    @ApiModelProperty(value = "父评论 内容")
     private String replyContent;
 
     @ApiModelProperty(value = "评论 内容")

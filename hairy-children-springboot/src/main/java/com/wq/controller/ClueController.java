@@ -4,12 +4,10 @@ package com.wq.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.PhotoProperties;
 import com.wq.common.pojo.Result;
-import com.wq.pojo.Clue;
-import com.wq.pojo.ClueMailbox;
-import com.wq.pojo.Title;
-import com.wq.pojo.User;
+import com.wq.pojo.*;
 import com.wq.service.ClueService;
 import com.wq.service.TitleService;
+import com.wq.service.UserInfoService;
 import com.wq.service.UserService;
 import com.wq.service.message.ClueMailboxService;
 import com.wq.util.PageUtils;
@@ -45,6 +43,9 @@ public class ClueController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private UserInfoService userInfoService;
 
     @Resource
     private ClueMailboxService clueMailboxService;
@@ -131,6 +132,7 @@ public class ClueController {
         long clueId = Long.parseLong (String.valueOf (params.get ("clueId")));
         Clue clue = clueService.getById (clueId);
         clue.setImgs (clue.getImgsDir ().split ("::"));
+        setUserInfo (clue);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put("clue", clue);
@@ -164,6 +166,11 @@ public class ClueController {
         }
 
         List<Clue> clueList = clueService.getCluesByUserId (userId);
+
+        for (Clue clue : clueList) {
+            setUserInfo (clue);
+        }
+
         PageUtils cluePage = new PageUtils (clueList, clueList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<> (16);
@@ -180,6 +187,11 @@ public class ClueController {
         }
 
         List<Clue> clueList = clueService.getCluesByTitleId (titleId);
+
+        for (Clue clue : clueList) {
+            setUserInfo (clue);
+        }
+
         PageUtils cluePage = new PageUtils (clueList, clueList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<>(16);
@@ -200,4 +212,12 @@ public class ClueController {
         clueMailboxService.sendMailbox (mailbox);
     }
 
+
+    private void setUserInfo (Clue clue) {
+        UserInfo info = userInfoService.getUserInfoById (clue.getUserId ());
+        User user = userService.getById (clue.getUserId ());
+
+        clue.setUserAvatar (info.getUserAvatar ());
+        clue.setUserName (user.getUserName ());
+    }
 }

@@ -41,8 +41,24 @@ public class CommentLikeMailbox implements Serializable {
     @ApiModelProperty(value = "发送者 id")
     private Long sendUserId;
 
+    @ApiModelProperty(value = "发送者用户名")
+    @TableField(exist = false)
+    private String sendUserName;
+
+    @ApiModelProperty(value = "发送者头像")
+    @TableField(exist = false)
+    private String sendUserAvatar;
+
     @ApiModelProperty(value = "接收者 id")
     private Long receiveUserId;
+
+    @ApiModelProperty(value = "接收者用户名")
+    @TableField(exist = false)
+    private String receiveUserName;
+
+    @ApiModelProperty(value = "接收者头像")
+    @TableField(exist = false)
+    private String receiveUserAvatar;
 
     @ApiModelProperty(value = "是否已读, 0 : 未读, 1 : 已读")
     private Integer isRead;

@@ -39,6 +39,14 @@ public class CommentRoot implements Serializable {
     @ApiModelProperty(value = "评论者 id")
     private Long userId;
 
+    @ApiModelProperty(value = "评论者用户名")
+    @TableField(exist = false)
+    private String userName;
+
+    @ApiModelProperty(value = "评论者头像")
+    @TableField(exist = false)
+    private String userAvatar;
+
     @ApiModelProperty(value = "评论内容")
     private String content;
 
