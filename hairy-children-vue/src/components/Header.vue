@@ -4,6 +4,7 @@
       <li class="logo" @click="toMain"></li>
       <li class="col" v-if="!isLogin" @click="toLogin">登录</li>
       <li class="col" v-if="!isLogin" @click="toRegister">注册</li>
+      <span class="col" v-if="isLogin">{{userName}}, 欢迎回来</span>
       <li class="col" v-if="isLogin">个人中心</li>
       <li class="col" v-if="isLogin">我要发布</li>
       <li class="col" v-if="isLogin" @click="cancellation">注销</li>
@@ -17,7 +18,6 @@ export default {
   name: 'Header',
   data() {
     return {
-      
     }
   },
   methods: {
@@ -40,8 +40,12 @@ export default {
   computed: {
     isLogin () {
       return this.$store.getters.getToken != null && this.$store.getters.getToken != ''
+    },
+    userName () {
+      return this.$store.getters.getUser.userName
     }
-  }
+  },
+  
 }
 </script>
 
