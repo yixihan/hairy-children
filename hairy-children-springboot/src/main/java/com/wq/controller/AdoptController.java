@@ -120,7 +120,6 @@ public class AdoptController {
             String adoptImg = adoptService.uploadImg (adoptId, img);
             adoptImgs.append (adoptImg).append ("::");
         }
-        adoptImgs.deleteCharAt (adoptImgs.length () - 1);
 
         Adopt adopt = adoptService.getById (adoptId);
         adopt.setImgsDir (adoptImgs.toString ());
@@ -171,6 +170,7 @@ public class AdoptController {
         List<Adopt> adoptList = adoptService.getAdoptsByUserId (userId);
 
         for (Adopt adopt : adoptList) {
+            adopt.setImgs (adopt.getImgsDir ().split ("::"));
             setUserInfo (adopt);
         }
 
@@ -192,7 +192,9 @@ public class AdoptController {
         List<Adopt> adoptList = adoptService.getAllAdoptsByTitleId (titleId);
 
         for (Adopt adopt : adoptList) {
+            adopt.setImgs (adopt.getImgsDir ().split ("::"));
             setUserInfo (adopt);
+
         }
 
         PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 10, 0);

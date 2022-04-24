@@ -118,7 +118,7 @@ public class ClueController {
             String clueImg = clueService.uploadImg (clueId, img);
             clueImgs.append (clueImg).append ("::");
         }
-        clueImgs.deleteCharAt (clueImgs.length () - 1);
+
 
         Clue clue = clueService.getById (clueId);
         clue.setImgsDir (clueImgs.toString ());
@@ -168,6 +168,7 @@ public class ClueController {
         List<Clue> clueList = clueService.getCluesByUserId (userId);
 
         for (Clue clue : clueList) {
+            clue.setImgs (clue.getImgsDir ().split ("::"));
             setUserInfo (clue);
         }
 
@@ -189,6 +190,7 @@ public class ClueController {
         List<Clue> clueList = clueService.getCluesByTitleId (titleId);
 
         for (Clue clue : clueList) {
+            clue.setImgs (clue.getImgsDir ().split ("::"));
             setUserInfo (clue);
         }
 
