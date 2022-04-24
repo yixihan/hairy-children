@@ -135,7 +135,7 @@ export default defineComponent({
                   RouterLink,
                   {
                     to: {
-                      path: '/space/history/adopt',
+                      name: 'space-history-adopt',
                       query: {
                         userId: getData('token').userId
                       }
