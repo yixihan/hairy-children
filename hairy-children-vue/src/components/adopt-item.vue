@@ -8,19 +8,25 @@
           <n-text>{{ item.userName }}</n-text>
         </n-space>
       </n-gi>
-      <n-gi :span="18">
+      <n-gi :span="18" style="padding: 0 32px">
         <n-space vertical>
           <!-- 防止内容为空时控制台报错 -->
-          <n-form label-placement="left" label-width="auto">
+          <n-form label-align="left" label-placement="left" label-width="auto">
             <n-form-item label="理由">{{ item.adoptReason }}</n-form-item>
             <n-form-item label="城市">{{ item.adoptUserAddress }}</n-form-item>
             <n-form-item label="年龄">{{ item.adoptUserAge }}</n-form-item>
             <n-form-item label="联系方式">{{ item.adoptUserPhone }}</n-form-item>
             <n-form-item label="养宠理念">{{ item.adoptConcept }}</n-form-item>
             <n-form-item label="接动物方式">{{ item.adoptWay }}</n-form-item>
-            <n-form-item label="是否接受定期回访">{{ item.isReturnVisit ? '是' : '否' }}</n-form-item>
-            <n-form-item label="是否能够定期反馈领养情况">{{ item.isFeedback ? '是' : '否' }}</n-form-item>
+            <n-form-item label="是否接受定期回访">{{ item.isReturnVisit === '1' ? '是' : '否' }}</n-form-item>
+            <n-form-item label="是否能够定期反馈领养情况">{{ item.isFeedback === '1' ? '是' : '否' }}</n-form-item>
           </n-form>
+          <n-image-group>
+            <n-space>
+              <!-- imgs url最后一张末尾有':'，所以分隔字符串后选取第一个 -->
+              <n-image v-for="img in item.imgs" :key="img" :src="'http://175.24.229.41:9421/' + img.split(':')[0]" width="200"></n-image>
+            </n-space>
+          </n-image-group>
           <n-space justify="flex-end">
             <n-time :time="item.gmtCreate" type="relative" />
             <n-button v-if="getData('userInfo').userId === item.userId" text @click="showDeleteModal = true">删除</n-button>
@@ -42,7 +48,22 @@
 </template>
 <script>
 import { defineComponent, reactive, toRefs } from 'vue'
-import { NCard, NGrid, NGi, NSpace, NAvatar, NText, NTime, NButton, NForm, NFormItem, NModal, useMessage } from 'naive-ui'
+import {
+  NCard,
+  NGrid,
+  NGi,
+  NSpace,
+  NAvatar,
+  NText,
+  NTime,
+  NButton,
+  NForm,
+  NFormItem,
+  NModal,
+  useMessage,
+  NImage,
+  NImageGroup
+} from 'naive-ui'
 // import { Favorite, Chat } from '@vicons/carbon'
 import { addSonComment, deleteAdoption } from '../api/index'
 import { getData } from '../utils/tools'
@@ -63,7 +84,9 @@ export default defineComponent({
     // Chat,
     NForm,
     NFormItem,
-    NModal
+    NModal,
+    NImage,
+    NImageGroup
   },
   props: {
     item: {

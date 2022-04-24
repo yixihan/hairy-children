@@ -12,6 +12,12 @@
         <n-space vertical>
           <!-- 防止内容为空时控制台报错 -->
           <v-md-preview :text="item.clueContent ? item.clueContent : '内容为空'"></v-md-preview>
+          <n-image-group>
+            <n-space style="padding-left: 32px">
+              <!-- imgs url最后一张末尾有':'，所以分隔字符串后选取第一个 -->
+              <n-image v-for="img in item.imgs" :key="img" :src="'http://175.24.229.41:9421/' + img.split(':')[0]" width="200"></n-image>
+            </n-space>
+          </n-image-group>
           <n-space justify="flex-end">
             <n-time :time="item.gmtCreate" type="relative" />
             <n-button v-if="getData('userInfo').userId === item.userId" text @click="showDeleteModal = true">删除</n-button>
@@ -33,7 +39,7 @@
 </template>
 <script>
 import { defineComponent, reactive, toRefs } from 'vue'
-import { NCard, NGrid, NGi, NSpace, NAvatar, NText, NTime, NButton, useMessage, NModal } from 'naive-ui'
+import { NCard, NGrid, NGi, NSpace, NAvatar, NText, NTime, NButton, useMessage, NModal, NImage, NImageGroup } from 'naive-ui'
 import { deleteClue } from '../api/index'
 import { getData } from '../utils/tools'
 
@@ -47,7 +53,9 @@ export default defineComponent({
     NText,
     NTime,
     NButton,
-    NModal
+    NModal,
+    NImage,
+    NImageGroup
   },
   props: {
     item: {
