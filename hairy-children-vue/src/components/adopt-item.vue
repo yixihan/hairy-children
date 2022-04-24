@@ -18,8 +18,8 @@
             <n-form-item label="联系方式">{{ item.adoptUserPhone }}</n-form-item>
             <n-form-item label="养宠理念">{{ item.adoptConcept }}</n-form-item>
             <n-form-item label="接动物方式">{{ item.adoptWay }}</n-form-item>
-            <n-form-item label="是否接受定期回访">{{ item.isReturnVisit === '1' ? '是' : '否' }}</n-form-item>
-            <n-form-item label="是否能够定期反馈领养情况">{{ item.isFeedback === '1' ? '是' : '否' }}</n-form-item>
+            <n-form-item label="是否接受定期回访">{{ item.isReturnVisit === 1 ? '是' : '否' }}</n-form-item>
+            <n-form-item label="是否能够定期反馈领养情况">{{ item.isFeedback === 1 ? '是' : '否' }}</n-form-item>
           </n-form>
           <n-image-group>
             <n-space>
