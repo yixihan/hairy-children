@@ -18,6 +18,8 @@ Vue.use(ElementUi)
 Vue.use(mavonEditor)
 Vue.use(router)
 
+
+
 Vue.prototype.$axios=axios
 
 new Vue({

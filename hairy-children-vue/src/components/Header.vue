@@ -4,8 +4,8 @@
       <li class="logo" @click="toMain"></li>
       <li class="col" v-if="!isLogin" @click="toLogin">登录</li>
       <li class="col" v-if="!isLogin" @click="toRegister">注册</li>
-      <span class="col" v-if="isLogin">{{userName}}, 欢迎回来</span>
-      <li class="col" v-if="isLogin">个人中心</li>
+      <span class="col text" v-if="isLogin">{{ userName }}, 欢迎回来</span>
+      <li class="col" v-if="isLogin" @click="toCenter">个人中心</li>
       <li class="col" v-if="isLogin">我要发布</li>
       <li class="col" v-if="isLogin" @click="cancellation">注销</li>
     </ul>
@@ -13,12 +13,11 @@
 </template>
 
 <script>
-
 export default {
-  name: 'Header',
+  name: "Header",
   data() {
     return {
-    }
+    };
   },
   methods: {
     // 跳转到注册界面
@@ -33,20 +32,29 @@ export default {
     toLogin() {
       this.$router.push("/login");
     },
+    // 注销
     cancellation() {
       this.$store.commit("REMOVE_INFO");
-    }
+      this.$router.push("/");
+    },
+    toCenter() {
+      this.$router.push({
+        path: "/center/" + this.$store.getters.getUser.userId,
+      });
+    },
   },
   computed: {
-    isLogin () {
-      return this.$store.getters.getToken != null && this.$store.getters.getToken != ''
+    isLogin() {
+      return (
+        this.$store.getters.getToken != null &&
+        this.$store.getters.getToken != ""
+      );
     },
-    userName () {
-      return this.$store.getters.getUser.userName
-    }
+    userName() {
+      return this.$store.getters.getUser.userName;
+    },
   },
-  
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -82,7 +90,7 @@ export default {
       line-height: 70px;
       user-select: none;
       cursor: pointer;
-      transition: background .1s;
+      transition: background 0.1s;
       &:hover {
         background: #76a2b1;
         color: #fff;
@@ -94,7 +102,11 @@ export default {
       flex-grow: 16;
       height: 50px;
       min-width: 270px;
-      background: url("~@/assets/img/logo/6a8134a155fe420ea789179ecc7ad64a.png") no-repeat;
+      background: url("~@/assets/img/logo/6a8134a155fe420ea789179ecc7ad64a.png")
+        no-repeat;
+    }
+    .text {
+      margin-right: 5px;
     }
   }
 }

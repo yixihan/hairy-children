@@ -15,6 +15,7 @@ export default new Vuex.Store({
       state.token = token//将传入的token赋值 给state的token
       //同时可以存入浏览器的localStorage里面
       localStorage.setItem("token", token)
+      sessionStorage.setItem("token", JSON.stringify(token))
     },
     SET_USERINFO: (state, userInfo) => {
       state.userInfo = userInfo//将传入的tuserInfo赋值 给state的userInfo
@@ -27,6 +28,7 @@ export default new Vuex.Store({
       state.token = '';
       state.userInfo = {};
       localStorage.setItem("token", '')
+      sessionStorage.setItem("token", JSON.stringify(''))
       sessionStorage.setItem("userInfo", JSON.stringify(''))
     }
   },
@@ -39,9 +41,6 @@ export default new Vuex.Store({
     getToken: state => {
       return state.token;
     },
-    getIsLogin: state => {
-      return state.isLogin;
-    }
   },
   actions: {
 

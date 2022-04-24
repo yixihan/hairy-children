@@ -3,20 +3,24 @@
     <div>
       <carousel></carousel>
       <meet-pets></meet-pets>
+      <nav-footer></nav-footer>
     </div>
   </div>
 </template>
 
 <script>
-import Carousel from '../components/Carousel.vue'
-import MeetPets from '../components/MeetPets.vue'
+import Carousel from "../components/Carousel.vue";
+import MeetPets from "../components/MeetPets.vue";
+import NavFooter from "../components/NavFooter.vue";
+
 export default {
-  name: 'index',
+  name: "index",
   components: {
     Carousel,
-    MeetPets
-  }
-}
+    MeetPets,
+    NavFooter,
+  },
+};
 </script>
 
 <style>
