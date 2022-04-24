@@ -38,6 +38,24 @@ const router = createRouter({
           path: '/article/:id',
           name: 'article',
           component: () => import('../views/Article.vue')
+        },
+        {
+          path: '/:userId/space',
+          name: 'space',
+          component: () => import('../views/Space.vue'),
+          children: [
+            {
+              path: 'userinfo',
+              name: 'space-userinfo',
+              component: () => import('../views/space-page/user-info.vue')
+            },
+            // 实名认证
+            {
+              path: 'identify',
+              name: 'space-identify',
+              component: () => import('../views/space-page/Identify.vue')
+            }
+          ]
         }
       ]
     }

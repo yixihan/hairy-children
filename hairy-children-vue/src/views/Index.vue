@@ -6,7 +6,7 @@
         <img src="https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web/e08da34488b114bd4c665ba2fa520a31.svg" @click="gotoPage('/')" />
         <n-space v-if="isLogin" align="center">
           <n-button type="primary" @click="showModal = true">我要发布</n-button>
-          <n-button type="primary">个人中心</n-button>
+          <n-button type="primary" @click="gotoPage(`/${getData('userInfo').userId}/space`)">个人中心</n-button>
           <n-text>{{ userInfo.userName }}，欢迎回来！</n-text>
           <n-button type="info" secondary @click="logout()"> 注销 </n-button>
         </n-space>
@@ -123,7 +123,7 @@ export default defineComponent({
         }
       })
     }
-    return { ...toRefs(state), setState, GetUserInfo, gotoPage, logout, onPositiveClick }
+    return { ...toRefs(state), setState, GetUserInfo, gotoPage, logout, onPositiveClick, getData }
   }
 })
 </script>

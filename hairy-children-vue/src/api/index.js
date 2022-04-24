@@ -45,6 +45,36 @@ export function getUserInfo(data) {
   })
 }
 
+// 上传头像
+export function uploadAvatar(data) {
+  return Axios({
+    url: '/user-info/uploadAvatar',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data
+  })
+}
+
+// 更新用户信息
+export function updateUserInfo(data) {
+  return Axios({
+    url: '/user-info/updateUserInfo',
+    method: 'post',
+    data
+  })
+}
+
+// 实名认证
+export function authentication(data) {
+  return Axios({
+    url: '/user-info/authentication',
+    method: 'post',
+    data
+  })
+}
+
 // 获取文章列表
 export function getArticleList(data) {
   return Axios({
