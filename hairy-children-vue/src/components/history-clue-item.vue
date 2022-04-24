@@ -1,7 +1,7 @@
 <template>
   <n-card style="margin: 20px 0">
-    <n-h2>{{ articleInfo.titleName }}</n-h2>
-    <n-text>{{ abstractFn(90, item.replyContent) + ' ……' }}</n-text>
+    <n-h2>{{ item.titleName }}</n-h2>
+    <n-text>{{ abstractFn(90, item.clueContent) + ' ……' }}</n-text>
     <n-space justify="space-between" align="center">
       <n-space>
         <!-- <n-text>{{ item.titleType === 1 ? '收养贴' : '寻宠贴' }}</n-text> -->
@@ -45,12 +45,12 @@ export default defineComponent({
     })
 
     onMounted(async () => {
-      const { data: res } = await getArticle({ titleId: props.item.answerId })
+      const { data: res } = await getArticle({ titleId: props.item.titleId })
       state.articleInfo = res.data.title
     })
     const goToArticle = () => {
       router.push({
-        path: `/article/${props.item.answerId}`
+        path: `/article/${props.item.titleId}`
       })
     }
     return { ...toRefs(state), getData, abstractFn, goToArticle }

@@ -264,6 +264,15 @@ export function getUserComment(data) {
   })
 }
 
+// 获取用户所有线索
+export function getUserClue(data) {
+  return Axios({
+    url: '/clue/getAllUserClues',
+    method: 'post',
+    data
+  })
+}
+
 // 获取所有领养申请通知
 export function getAllAdoptionNotices(data) {
   return Axios({
