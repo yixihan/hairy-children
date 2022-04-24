@@ -87,7 +87,7 @@ export default defineComponent({
                   RouterLink,
                   {
                     to: {
-                      path: '/space/history/article',
+                      name: 'space-history-article',
                       query: {
                         userId: getData('token').userId
                       }

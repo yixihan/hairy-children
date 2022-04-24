@@ -2,7 +2,7 @@
   <div class="list">
     <div v-for="item in list" :key="item.titleId" class="list-item" @click="gotoPage('/article/' + item.titleId)">
       <span class="item-title">{{ item.titleName }}</span>
-      <span class="item-content">{{ abstractFn(item.titleContent) + ' ……' }}</span>
+      <span class="item-content">{{ abstractFn(50, item.titleContent) + ' ……' }}</span>
       <n-space>
         <span class="user-address">{{ item.userAddress }}</span>
         <n-time :time="item.gmtCreate" type="relative" />

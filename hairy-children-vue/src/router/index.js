@@ -54,6 +54,11 @@ const router = createRouter({
               path: 'identify',
               name: 'space-identify',
               component: () => import('../views/space-page/Identify.vue')
+            },
+            {
+              path: 'history/article',
+              name: 'space-history-article',
+              component: () => import('../views/space-page/history-article.vue')
             }
           ]
         }

@@ -11,7 +11,7 @@ export const getData = (name) => {
 }
 
 // 提取 markdown 文本
-export const abstractFn = (res) => {
+export const abstractFn = (length, res) => {
   if (!res) return ''
   return (
     res
@@ -32,6 +32,6 @@ export const abstractFn = (res) => {
       .replace(/\r\n/g, '') // 全局匹配换行
       .replace(/\n/g, '') // 全局匹配换行
       .replace(/\s/g, '') // 全局匹配空字符
-      .slice(0, 50)
+      .slice(0, length)
   )
 }

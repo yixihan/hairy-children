@@ -1,0 +1,65 @@
+<template>
+  <n-card style="margin: 20px 0">
+    <n-h2>{{ item.titleName }}</n-h2>
+    <n-text>{{ abstractFn(90, item.titleContent) + ' ……' }}</n-text>
+    <n-space justify="space-between" align="center">
+      <n-space>
+        <n-text>{{ item.titleType === 1 ? '收养贴' : '寻宠贴' }}</n-text>
+        <n-time :time="item.gmtCreate" type="relative" />
+      </n-space>
+      <n-button @click="goToArticle">查看详情</n-button>
+    </n-space>
+  </n-card>
+</template>
+<script>
+import { defineComponent, reactive, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
+import { NCard, NSpace, NText, NTime, NButton, NH2 } from 'naive-ui'
+// import { deleteClue, getArticle, getUserArticle } from '../api/index'
+import { getData, abstractFn } from '../utils/tools'
+
+export default defineComponent({
+  components: {
+    NCard,
+    NSpace,
+    NText,
+    NTime,
+    NButton,
+    NH2
+  },
+  props: {
+    item: {
+      type: Object,
+      required: true
+    }
+  },
+  setup(props) {
+    // const message = useMessage()
+    const router = useRouter()
+    const state = reactive({
+      userInfo: {},
+      comment: '',
+      userName: '',
+      showDeleteModal: false,
+      articleInfo: {}
+    })
+
+    // onMounted(async () => {
+    //   const { data: res } = await getArticle({ titleId: props.item.titleId })
+    //   state.articleInfo = res.data.title
+    //   console.log(state.articleInfo)
+    // })
+    const goToArticle = () => {
+      router.push({
+        path: `/article/${props.item.titleId}`
+      })
+    }
+    return { ...toRefs(state), getData, abstractFn, goToArticle }
+  }
+})
+</script>
+<style lang="scss">
+p {
+  margin: 0;
+}
+</style>

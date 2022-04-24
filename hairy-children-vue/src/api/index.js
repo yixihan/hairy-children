@@ -245,3 +245,21 @@ export function uploadAdoptionImg(adoptId, data) {
     data
   })
 }
+
+// 获取用户所有文章
+export function getUserArticle(data) {
+  return Axios({
+    url: '/title/getAllUserTitles',
+    method: 'post',
+    data
+  })
+}
+
+// 获取所有领养申请通知
+export function getAllAdoptionNotices(data) {
+  return Axios({
+    url: '/mailbox/getAdoptMessages',
+    method: 'post',
+    data
+  })
+}
