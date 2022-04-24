@@ -7,7 +7,9 @@ import com.wq.common.pojo.Result;
 import com.wq.pojo.Title;
 import com.wq.pojo.TitleLikeMailbox;
 import com.wq.pojo.User;
+import com.wq.pojo.UserInfo;
 import com.wq.service.TitleService;
+import com.wq.service.UserInfoService;
 import com.wq.service.UserService;
 import com.wq.service.message.TitleLikeMailboxService;
 import com.wq.service.redis.RedisService;
@@ -47,6 +49,9 @@ public class TitleController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private UserInfoService userInfoService;
 
     @Resource
     private PhotoProperties photoProperties;
@@ -111,6 +116,7 @@ public class TitleController {
         long titleId = Long.parseLong (String.valueOf (params.get ("titleId")));
 
         Title title = titleService.getById (titleId);
+        setUserInfo (title);
 
         Map<String, Object> map = new HashMap<> (16);
         map.put ("title", title);
@@ -142,6 +148,9 @@ public class TitleController {
         }
 
         List<Title> titleList = titleService.getTitleByUserId (userId);
+        for (Title title : titleList) {
+            setUserInfo (title);
+        }
         PageUtils titlePage = new PageUtils (titleList, titleList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<> (16);
@@ -158,6 +167,9 @@ public class TitleController {
         wrapper.like ("title_name", titleName);
 
         List<Title> titleList = titleService.list (wrapper);
+        for (Title title : titleList) {
+            setUserInfo (title);
+        }
         PageUtils titlePage = new PageUtils (titleList, titleList.size (), 10, 0);
 
         Map<String, Object> map = new HashMap<> (16);
@@ -188,20 +200,20 @@ public class TitleController {
     @PostMapping("/getAllTitles")
     public Result getAllTitles(@RequestBody Map<String, Object> params) {
 
-
-        int titleType =  Integer.parseInt (String.valueOf (params.get ("titleType")));
+        String titleName = String.valueOf (params.get ("titleName"));
+        int titleType = Integer.parseInt (String.valueOf (params.get ("titleType")));
         int timeLimit = Integer.parseInt (String.valueOf (params.get ("timeLimit")));
         String city = String.valueOf (params.get ("city"));
         int isFinish = Integer.parseInt (String.valueOf (params.get ("isFinish")));
 
         boolean time = Boolean.parseBoolean (String.valueOf (params.get ("time")));
-        boolean like = Boolean.parseBoolean (String.valueOf (params.get ("like"))) ;
-        boolean reply = Boolean.parseBoolean (String.valueOf (params.get ("reply"))) ;
-        boolean collection = Boolean.parseBoolean (String.valueOf (params.get ("collection"))) ;
+        boolean like = Boolean.parseBoolean (String.valueOf (params.get ("like")));
+        boolean reply = Boolean.parseBoolean (String.valueOf (params.get ("reply")));
+        boolean collection = Boolean.parseBoolean (String.valueOf (params.get ("collection")));
 
         QueryWrapper<Title> wrapper = new QueryWrapper<> ();
         // 文章类型限制
-        wrapper.eq ("title_type", titleType);
+        wrapper.eq ("title_type", titleType).like ("title_name", titleName);
 
         // 城市限制
         if (!"".equals (city)) {
@@ -210,7 +222,9 @@ public class TitleController {
 
         // 完成状态限制
         if (isFinish != 3) {
-            wrapper.eq ("is_finish", isFinish);
+            wrapper.eq ("is_finish", isFinish).notIn ("is_finish", -1);
+        } else {
+            wrapper.notIn ("is_finish", -1);
         }
 
         // 时间限制
@@ -234,6 +248,10 @@ public class TitleController {
         }
 
         List<Title> titleList = titleService.list (wrapper);
+
+        for (Title title : titleList) {
+            setUserInfo (title);
+        }
 
         // 排序
         titleList.sort ((o1, o2) -> {
@@ -322,5 +340,13 @@ public class TitleController {
         titleLikeMailboxService.sendMailbox (one);
 
         return Result.success ("点赞成功");
+    }
+
+    private void setUserInfo (Title title) {
+        UserInfo info = userInfoService.getUserInfoById (title.getUserId ());
+        User user = userService.getById (title.getUserId ());
+
+        title.setUserAvatar (info.getUserAvatar ());
+        title.setUserName (user.getUserName ());
     }
 }

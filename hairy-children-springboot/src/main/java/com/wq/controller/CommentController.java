@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.pojo.Result;
 import com.wq.pojo.*;
-import com.wq.service.CommentReplyService;
-import com.wq.service.CommentRootService;
-import com.wq.service.TitleService;
-import com.wq.service.UserService;
+import com.wq.service.*;
 import com.wq.service.message.CommentLikeMailboxService;
 import com.wq.service.message.CommentMailboxService;
 import com.wq.service.message.ReplyMailboxService;
@@ -49,6 +46,9 @@ public class CommentController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private UserInfoService userInfoService;
 
     @Resource
     private RedisService redisService;
@@ -163,6 +163,13 @@ public class CommentController {
         }
 
         List<CommentRoot> commentRootList = commentRootService.getAll (titleId);
+
+        for (CommentRoot commentRoot : commentRootList) {
+            for (CommentReply commentReply : commentRoot.getCommentReplyList ()) {
+                setUserInfo (commentReply);
+            }
+            setUserInfo (commentRoot);
+        }
         PageUtils commentPage = new PageUtils (commentRootList, commentRootList.size (), 10, 0);
 
         HashMap<String, Object> map = new HashMap<> (8);
@@ -179,6 +186,11 @@ public class CommentController {
         }
 
         List<UserComments> userCommentList = commentRootService.getUserComments (userId);
+
+        for (UserComments userComments : userCommentList) {
+            setUserInfo (userComments);
+        }
+
         PageUtils commentPage = new PageUtils (userCommentList, userCommentList.size (), 10, 0);
 
         HashMap<String, Object> map = new HashMap<> (8);
@@ -333,6 +345,50 @@ public class CommentController {
         CommentRoot commentRoot = commentRootService.getById (rootId);
         commentRoot.setReplyCount (commentRoot.getReplyCount () + count);
         return commentRootService.updateById (commentRoot);
+    }
+
+    private void setUserInfo (CommentRoot commentRoot) {
+        UserInfo info = userInfoService.getUserInfoById (commentRoot.getUserId ());
+        User user = userService.getById (commentRoot.getUserId ());
+
+        commentRoot.setUserAvatar (info.getUserAvatar ());
+        commentRoot.setUserName (user.getUserName ());
+    }
+
+    private void setUserInfo (CommentReply commentReply) {
+        UserInfo info = userInfoService.getUserInfoById (commentReply.getUserId ());
+        User user = userService.getById (commentReply.getUserId ());
+
+        commentReply.setUserAvatar (info.getUserAvatar ());
+        commentReply.setUserName (user.getUserName ());
+
+        if (commentReply.getReplyUserId () != null) {
+            UserInfo replyInfo = userInfoService.getUserInfoById (commentReply.getReplyUserId ());
+            User replyUser = userService.getById (commentReply.getReplyUserId ());
+
+            commentReply.setReplyUserAvatar (replyInfo.getUserAvatar ());
+            commentReply.setReplyUserName (replyUser.getUserName ());
+        }
+    }
+
+    private void setUserInfo (UserComments userComments) {
+
+        UserInfo info = userInfoService.getUserInfoById (userComments.getUserId ());
+        User user = userService.getById (userComments.getUserId ());
+
+        userComments.setUserAvatar (info.getUserAvatar ());
+        userComments.setUserName (user.getUserName ());
+
+        if (userComments.getRootId () != null) {
+            CommentRoot commentRoot = commentRootService.getById (userComments.getRootId ());
+            UserInfo rootInfo = userInfoService.getUserInfoById (commentRoot.getUserId ());
+            User rootUser = userService.getById (commentRoot.getUserId ());
+
+            userComments.setRootUserId (commentRoot.getUserId ());
+            userComments.setRootUserName (rootUser.getUserName ());
+            userComments.setRootUserAvatar (rootInfo.getUserAvatar ());
+        }
+
     }
 
 

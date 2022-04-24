@@ -35,6 +35,14 @@ public class Clue implements Serializable {
     @ApiModelProperty(value = "提供者 id")
     private Long userId;
 
+    @ApiModelProperty(value = "提供者用户名")
+    @TableField(exist = false)
+    private String userName;
+
+    @ApiModelProperty(value = "提供者头像")
+    @TableField(exist = false)
+    private String userAvatar;
+
     @ApiModelProperty(value = "文章 id")
     private Long titleId;
 

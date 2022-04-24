@@ -75,14 +75,14 @@ public class AdoptServiceImpl extends ServiceImpl<AdoptMapper, Adopt> implements
     @Override
     public List<Adopt> getAdoptsByUserId(Long userId) {
         QueryWrapper<Adopt> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("user_id", userId);
+        wrapper.eq ("user_id", userId).notIn ("is_success", -1);
         return adoptMapper.selectList (wrapper);
     }
 
     @Override
     public List<Adopt> getAllAdoptsByTitleId(Long titleId) {
         QueryWrapper<Adopt> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("title_id", titleId);
+        wrapper.eq ("title_id", titleId).notIn ("is_success", -1);
         return adoptMapper.selectList (wrapper);
     }
 
