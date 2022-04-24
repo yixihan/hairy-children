@@ -103,7 +103,7 @@ export default defineComponent({
                   RouterLink,
                   {
                     to: {
-                      path: '/space/history/comment',
+                      name: 'space-history-comment',
                       query: {
                         userId: getData('token').userId
                       }
@@ -119,7 +119,7 @@ export default defineComponent({
                   RouterLink,
                   {
                     to: {
-                      path: '/space/history/clue',
+                      name: 'space-history-clue',
                       query: {
                         userId: getData('token').userId
                       }

@@ -59,6 +59,16 @@ const router = createRouter({
               path: 'history/article',
               name: 'space-history-article',
               component: () => import('../views/space-page/history-article.vue')
+            },
+            {
+              path: 'history/comment',
+              name: 'space-history-comment',
+              component: () => import('../views/space-page/history-comment.vue')
+            },
+            {
+              path: 'history/clue',
+              name: 'space-history-clue',
+              component: () => import('../views/space-page/history-clue.vue')
             }
           ]
         }

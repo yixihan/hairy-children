@@ -255,6 +255,15 @@ export function getUserArticle(data) {
   })
 }
 
+// 获取用户所有评论
+export function getUserComment(data) {
+  return Axios({
+    url: '/comment/getAllUserComment',
+    method: 'post',
+    data
+  })
+}
+
 // 获取所有领养申请通知
 export function getAllAdoptionNotices(data) {
   return Axios({
