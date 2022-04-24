@@ -167,6 +167,9 @@ public class UserController {
             userInfo.put ("userAddress", info.getUserAddress ());
             userInfo.put ("userGender", info.getUserGender ());
             userInfo.put ("userBirth", info.getUserBirth ());
+            userInfo.put ("birthShow", info.getBirthShow ());
+            userInfo.put ("addressShow", info.getAddressShow ());
+            userInfo.put ("genderShow", info.getGenderShow ());
         } else {
             if (info.getAddressShow () == 1) {
                 userInfo.put ("userAddress", info.getUserAddress ());
