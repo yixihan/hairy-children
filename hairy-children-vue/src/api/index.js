@@ -281,3 +281,48 @@ export function getAllAdoptionNotices(data) {
     data
   })
 }
+
+// 获取用户所有的收藏夹
+export function getUserFavorites(data) {
+  return Axios({
+    url: '/collection/getAllFavorites',
+    method: 'post',
+    data
+  })
+}
+
+// 添加收藏夹
+export function addFavorite(data) {
+  return Axios({
+    url: '/collection/createFavorites',
+    method: 'post',
+    data
+  })
+}
+
+// 删除收藏夹
+export function deleteFavorite(data) {
+  return Axios({
+    url: '/collection/deleteFavorites',
+    method: 'post',
+    data
+  })
+}
+
+// 查看收藏夹内的文章
+export function getFavoriteArticle(data) {
+  return Axios({
+    url: '/collection/getAllCollections',
+    method: 'post',
+    data
+  })
+}
+
+// 收藏文章
+export function addCollection(data) {
+  return Axios({
+    url: '/collection/addCollection',
+    method: 'post',
+    data
+  })
+}

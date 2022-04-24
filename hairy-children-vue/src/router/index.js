@@ -74,6 +74,16 @@ const router = createRouter({
               path: 'history/adopt',
               name: 'space-history-adopt',
               component: () => import('../views/space-page/history-adopt.vue')
+            },
+            {
+              path: 'history/collect',
+              name: 'space-history-collect',
+              component: () => import('../views/space-page/history-collect.vue')
+            },
+            {
+              path: 'history/collect/detail',
+              name: 'space-history-collect-detail',
+              component: () => import('../views/space-page/history-collect-detail.vue')
             }
           ]
         }

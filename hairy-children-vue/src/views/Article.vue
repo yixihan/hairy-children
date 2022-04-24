@@ -13,6 +13,7 @@
           <v-md-preview :text="title.titleContent ? title.titleContent : 'null'"></v-md-preview>
           <n-space justify="flex-end">
             <n-button v-if="getData('userInfo').userId === userInfo.userId" text @click="EditArticle">编辑</n-button>
+            <n-button text @click="collectHandle">收藏</n-button>
             <span class="user-address">{{ title.userAddress }}</span>
             <n-time :time="title.gmtCreate" type="relative" />
             <div class="center">
@@ -132,6 +133,34 @@
       }"
     />
   </n-modal>
+  <!-- 收藏夹 -->
+  <n-modal
+    v-model:show="showCollectionModal"
+    class="custom-card"
+    preset="card"
+    title="收藏夹"
+    size="huge"
+    style="width: 600px"
+    :bordered="false"
+  >
+    <div v-for="item in favorites" :key="item.collectionId">
+      <n-space justify="space-between" align="center">
+        <n-space vertical style="padding: 10px">
+          <n-text style="font-size: 18px; font-weight: 700">{{ item.collectionName }}</n-text>
+          <n-text>{{ item.collectionCount }} 条内容</n-text>
+        </n-space>
+        <n-button @click="collectArticle(item.collectionId)">收藏</n-button>
+      </n-space>
+    </div>
+    <template #footer>
+      <n-button v-if="!isAddCollection" @click="isAddCollection = true">新建收藏夹</n-button>
+      <n-space v-else justify="space-between">
+        <n-input v-model:value="collectionName"></n-input>
+        <n-button @click="isAddCollection = false">取消</n-button>
+        <n-button type="primary" @click="onCreateCollectionClick">确认</n-button>
+      </n-space>
+    </template>
+  </n-modal>
 </template>
 <script>
 import { defineComponent, reactive, toRefs } from 'vue'
@@ -154,7 +183,8 @@ import {
   NFormItem,
   NModal,
   NSwitch,
-  NUpload
+  NUpload,
+  useDialog
 } from 'naive-ui'
 import { Favorite, Star, Chat } from '@vicons/carbon'
 import commentItem from '../components/comment-item.vue'
@@ -170,7 +200,10 @@ import {
   uploadAdoptionImg,
   createClue,
   updateClue,
-  uploadClueImg
+  uploadClueImg,
+  addCollection,
+  getUserFavorites,
+  addFavorite
 } from '../api/index'
 import adoptItem from '../components/adopt-item.vue'
 import clueItem from '../components/clue-item.vue'
@@ -211,6 +244,7 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const message = useMessage()
+    const dialog = useDialog()
     const state = reactive({
       title: {},
       userInfo: {},
@@ -222,7 +256,11 @@ export default defineComponent({
       showImgUploadModal: false,
       fileList: [],
       showClueModal: false,
-      clueInfo: {}
+      clueInfo: {},
+      showCollectionModal: true,
+      favorites: [],
+      isAddCollection: false,
+      collectionName: ''
     })
     const GetArticle = async (data) => {
       const { data: res } = await getArticle({ titleId: data })
@@ -239,6 +277,9 @@ export default defineComponent({
         const { data: ressss } = await getArticleClues({ titleId: state.title.titleId })
         state.list = ressss.data.page?.list
       }
+      const { data: resssss } = await getUserFavorites({ userId: state.userInfo.userId })
+      state.favorites = resssss.data.page?.list
+      console.log(state.favorites)
     }
     const GetUserInfo = async () => {
       const { data: res } = await getUserInfo()
@@ -334,6 +375,29 @@ export default defineComponent({
         })
       })
     }
+    const collectArticle = async (collectionId) => {
+      const { data: res } = await addCollection({
+        collectionId,
+        titleId: state.title.titleId
+      })
+      if (res.code === 200) {
+        message.success('收藏成功')
+        state.showCollectionModal = false
+      } else {
+        message.error(res.msg)
+      }
+    }
+    const onCreateCollectionClick = async () => {
+      const { data: res } = await addFavorite({
+        collectionName: state.collectionName
+      })
+      if (res.code === 200) {
+        message.success('新建成功')
+        state.isAddCollection = false
+      } else {
+        message.error(res.msg)
+      }
+    }
     return {
       ...toRefs(state),
       GetArticle,
@@ -343,7 +407,9 @@ export default defineComponent({
       EditArticle,
       onPositiveClick,
       customRequest,
-      onCreateClueClick
+      onCreateClueClick,
+      collectArticle,
+      onCreateCollectionClick
     }
   }
 })

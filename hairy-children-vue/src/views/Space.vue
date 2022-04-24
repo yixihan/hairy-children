@@ -151,7 +151,7 @@ export default defineComponent({
                   RouterLink,
                   {
                     to: {
-                      path: 'space/history/favorite',
+                      name: 'space-history-collect',
                       query: {
                         userId: getData('token').userId
                       }
@@ -159,7 +159,7 @@ export default defineComponent({
                   },
                   { default: () => '我的收藏' }
                 ),
-              key: 'history-favorite'
+              key: 'history-collect'
             }
           ]
         },
