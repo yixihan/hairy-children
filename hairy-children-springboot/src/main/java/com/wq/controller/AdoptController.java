@@ -11,6 +11,7 @@ import com.wq.service.UserInfoService;
 import com.wq.service.UserService;
 import com.wq.service.message.AdoptMailboxService;
 import com.wq.util.PageUtils;
+import com.wq.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
@@ -133,8 +134,11 @@ public class AdoptController {
         long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
         Adopt adopt = adoptService.getById (adoptId);
 
-        adopt.setImgs (adopt.getImgsDir ().split ("::"));
+        if (!StringUtils.isEmpty (adopt.getImgsDir ())) {
+            adopt.setImgs (adopt.getImgsDir ().split ("::"));
+        }
         setUserInfo (adopt);
+        setTitleInfo (adopt);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put("adopt", adopt);
@@ -170,11 +174,14 @@ public class AdoptController {
         List<Adopt> adoptList = adoptService.getAdoptsByUserId (userId);
 
         for (Adopt adopt : adoptList) {
-            adopt.setImgs (adopt.getImgsDir ().split ("::"));
+            if (!StringUtils.isEmpty (adopt.getImgsDir ())) {
+                adopt.setImgs (adopt.getImgsDir ().split ("::"));
+            }
             setUserInfo (adopt);
+            setTitleInfo (adopt);
         }
 
-        PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 10, 0);
+        PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 5, 0);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put("page", adoptPage);
@@ -192,12 +199,15 @@ public class AdoptController {
         List<Adopt> adoptList = adoptService.getAllAdoptsByTitleId (titleId);
 
         for (Adopt adopt : adoptList) {
-            adopt.setImgs (adopt.getImgsDir ().split ("::"));
+            if (!StringUtils.isEmpty (adopt.getImgsDir ())) {
+                adopt.setImgs (adopt.getImgsDir ().split ("::"));
+            }
             setUserInfo (adopt);
+            setTitleInfo (adopt);
 
         }
 
-        PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 10, 0);
+        PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 5, 0);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put("page", adoptPage);
@@ -227,5 +237,14 @@ public class AdoptController {
 
         adopt.setUserAvatar (info.getUserAvatar ());
         adopt.setUserName (user.getUserName ());
+    }
+
+    private void setTitleInfo (Adopt adopt) {
+        Title title = titleService.getById (adopt.getTitleId ());
+        User author = userService.getById (title.getUserId ());
+
+        adopt.setTitleAuthorId (title.getUserId ());
+        adopt.setTitleAuthorName (author.getUserName ());
+        adopt.setTitleName (title.getTitleName ());
     }
 }

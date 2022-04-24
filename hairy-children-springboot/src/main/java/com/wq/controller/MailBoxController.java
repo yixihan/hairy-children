@@ -88,7 +88,7 @@ public class MailBoxController {
             setUserInfo (message);
         }
 
-        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 5, 0);
 
             Map<String, Object> map = new HashMap<>(16);
         map.put ("page", messagesPage);
@@ -143,7 +143,7 @@ public class MailBoxController {
             setUserInfo (message);
         }
 
-        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 5, 0);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("page", messagesPage);
@@ -197,7 +197,7 @@ public class MailBoxController {
         for (CommentMailbox message : messages) {
             setUserInfo (message);
         }
-        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 5, 0);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("page", messagesPage);
@@ -250,7 +250,7 @@ public class MailBoxController {
         for (ReplyMailbox message : messages) {
             setUserInfo (message);
         }
-        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 5, 0);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("page", messagesPage);
@@ -305,7 +305,7 @@ public class MailBoxController {
             setUserInfo (message);
         }
 
-        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 5, 0);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("page", messagesPage);
@@ -358,7 +358,7 @@ public class MailBoxController {
         for (TitleLikeMailbox message : messages) {
             setUserInfo (message);
         }
-        PageUtils messagesPage = new PageUtils (messages, messages.size (), 10, 0);
+        PageUtils messagesPage = new PageUtils (messages, messages.size (), 5, 0);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("page", messagesPage);

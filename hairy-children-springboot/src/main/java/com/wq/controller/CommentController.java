@@ -189,6 +189,7 @@ public class CommentController {
 
         for (UserComments userComments : userCommentList) {
             setUserInfo (userComments);
+            setTitleInfo (userComments);
         }
 
         PageUtils commentPage = new PageUtils (userCommentList, userCommentList.size (), 10, 0);
@@ -390,6 +391,15 @@ public class CommentController {
         }
 
     }
+
+    private void setTitleInfo (UserComments userComments) {
+        Title title = titleService.getById (userComments.getAnswerId ());
+
+        userComments.setTitleAuthorId (title.getUserId ());
+        userComments.setTitleName (title.getTitleName ());
+    }
+
+
 
 
 }

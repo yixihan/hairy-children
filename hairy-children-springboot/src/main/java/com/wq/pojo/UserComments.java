@@ -1,5 +1,6 @@
 package com.wq.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,14 @@ public class UserComments implements Serializable {
 
     @ApiModelProperty(value = "回答(文章) id")
     private Long answerId;
+
+    @ApiModelProperty(value = "文章 名")
+    @TableField(exist = false)
+    private String titleName;
+
+    @ApiModelProperty(value = "文章作者 id")
+    @TableField(exist = false)
+    private Long titleAuthorId;
 
     @ApiModelProperty(value = "评论 id")
     private Long commentId;

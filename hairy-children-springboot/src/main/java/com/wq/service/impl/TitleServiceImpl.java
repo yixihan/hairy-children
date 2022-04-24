@@ -44,7 +44,7 @@ public class TitleServiceImpl extends ServiceImpl<TitleMapper, Title> implements
         File titlePath = new File (photoProperties.getTitlePaths () + "/" + fileName);
 
         // 生成图片目录
-        String imageName = String.format (FileUtils.TITLE_DIR, title.getTitleName ());
+        String imageName = String.format (FileUtils.TITLE_DIR, System.currentTimeMillis ());
 
         // 创建图片上传路径 src/resources/static/photoDir/title/userId/titleName.assets
         File imagePath = new File (photoProperties.getPaths () + "/" + titlePath + "/" + imageName);

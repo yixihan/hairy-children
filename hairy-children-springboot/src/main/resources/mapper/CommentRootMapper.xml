@@ -44,7 +44,7 @@
                ry.content,
                null likeCount,
                null replyCount,
-               1 type,
+               2 type,
                ry.gmt_create gmtCreate
         from comment_reply ry
                  left join comment_root rt on ry.root_id = rt.root_id

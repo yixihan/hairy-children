@@ -53,6 +53,9 @@ public class Title implements Serializable {
     @ApiModelProperty(value = "文章标题")
     private String titleName;
 
+    @ApiModelProperty(value = "文章预览图")
+    private String titleImg;
+
     @ApiModelProperty(value = "文章正文")
     private String titleContent;
 

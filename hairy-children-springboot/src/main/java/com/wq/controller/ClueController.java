@@ -11,6 +11,7 @@ import com.wq.service.UserInfoService;
 import com.wq.service.UserService;
 import com.wq.service.message.ClueMailboxService;
 import com.wq.util.PageUtils;
+import com.wq.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author wq
@@ -54,7 +55,7 @@ public class ClueController {
     private PhotoProperties photoProperties;
 
     @PostMapping("/creatClue")
-    public Result createClue (@RequestBody Clue clue) {
+    public Result createClue(@RequestBody Clue clue) {
 
         if (userService.count (new QueryWrapper<User> ().eq ("user_id", clue.getUserId ())) <= 0) {
             return Result.fail (555, "没有该用户");
@@ -64,28 +65,27 @@ public class ClueController {
             return Result.fail (555, "没有该文章");
         }
 
-        if (! clueService.isExists (clue.getTitleId (), clue.getUserId ())) {
+        if (!clueService.isExists (clue.getTitleId (), clue.getUserId ())) {
             return Result.fail ("请勿重复创建线索贴");
         }
         Boolean create = clueService.createClue (clue);
 
         if (create) {
             QueryWrapper<Clue> wrapper = new QueryWrapper<> ();
-            wrapper.eq ("user_id", clue.getUserId ())
-                    .eq ("title_id", clue.getTitleId ());
+            wrapper.eq ("user_id", clue.getUserId ()).eq ("title_id", clue.getTitleId ());
 
             Clue one = clueService.getOne (wrapper);
 
             Map<String, Object> map = new HashMap<> (16);
-            map.put("clueId", one.getClueId ());
-            return Result.success("创建成功", map);
+            map.put ("clueId", one.getClueId ());
+            return Result.success ("创建成功", map);
         }
 
         return Result.fail ("创建失败");
     }
 
     @PostMapping("/updateClue")
-    public Result updateClue (@RequestBody Clue clue) {
+    public Result updateClue(@RequestBody Clue clue) {
         boolean update = clueService.updateById (clue);
         clue = clueService.getById (clue.getClueId ());
 
@@ -99,20 +99,20 @@ public class ClueController {
 
         sendClueMailBox (mailbox);
 
-        return update ? Result.success("更新成功") : Result.fail("更新失败");
+        return update ? Result.success ("更新成功") : Result.fail ("更新失败");
     }
 
     @PostMapping("/deleteClue")
-    public Result deleteClue (@RequestBody Map<String, Object> params) {
+    public Result deleteClue(@RequestBody Map<String, Object> params) {
         long clueId = Long.parseLong (String.valueOf (params.get ("clueId")));
         boolean remove = clueService.removeById (clueId);
 
-        return remove ? Result.success("删除成功") : Result.fail("删除失败");
+        return remove ? Result.success ("删除成功") : Result.fail ("删除失败");
     }
 
     @PostMapping("/updateImg/{clueId}")
-    public Result updateImg (@PathVariable Long clueId, @RequestParam("imgs") MultipartFile[] imgs) {
-        StringBuilder clueImgs = new StringBuilder();
+    public Result updateImg(@PathVariable Long clueId, @RequestParam("imgs") MultipartFile[] imgs) {
+        StringBuilder clueImgs = new StringBuilder ();
 
         for (MultipartFile img : imgs) {
             String clueImg = clueService.uploadImg (clueId, img);
@@ -124,23 +124,26 @@ public class ClueController {
         clue.setImgsDir (clueImgs.toString ());
         clueService.updateById (clue);
 
-        return Result.success("图片上传成功");
+        return Result.success ("图片上传成功");
     }
 
     @PostMapping("/getClue")
-    public Result getClue (@RequestBody Map<String, Object> params) {
+    public Result getClue(@RequestBody Map<String, Object> params) {
         long clueId = Long.parseLong (String.valueOf (params.get ("clueId")));
         Clue clue = clueService.getById (clueId);
-        clue.setImgs (clue.getImgsDir ().split ("::"));
+        if (!StringUtils.isEmpty (clue.getImgsDir ())) {
+            clue.setImgs (clue.getImgsDir ().split ("::"));
+        }
         setUserInfo (clue);
+        setTitleInfo (clue);
 
-        Map<String, Object> map = new HashMap<>(16);
-        map.put("clue", clue);
-        return Result.success("获取成功", map);
+        Map<String, Object> map = new HashMap<> (16);
+        map.put ("clue", clue);
+        return Result.success ("获取成功", map);
     }
 
     @PostMapping("/success")
-    public Result finish (@RequestBody Map<String, Object> params) {
+    public Result finish(@RequestBody Map<String, Object> params) {
         long clueId = Long.parseLong (String.valueOf (params.get ("clueId")));
         Clue clue = clueService.getById (clueId);
         Title title = titleService.getById (clue.getTitleId ());
@@ -150,15 +153,13 @@ public class ClueController {
         }
 
         clue.setIsSuccess (1);
-        title.setIsFinish (1);
         boolean update1 = clueService.updateById (clue);
-        boolean update2 = titleService.updateById (title);
 
-        return update1 && update2 ? Result.success ("更新成功") : Result.fail ("更新失败");
+        return update1 ? Result.success ("更新成功") : Result.fail ("更新失败");
     }
 
     @PostMapping("/getAllUserClues")
-    public Result getAllUserClues (@RequestBody Map<String, Object> params) {
+    public Result getAllUserClues(@RequestBody Map<String, Object> params) {
         long userId = Long.parseLong (String.valueOf (params.get ("userId")));
 
         if (userService.count (new QueryWrapper<User> ().eq ("user_id", userId)) <= 0) {
@@ -168,19 +169,22 @@ public class ClueController {
         List<Clue> clueList = clueService.getCluesByUserId (userId);
 
         for (Clue clue : clueList) {
-            clue.setImgs (clue.getImgsDir ().split ("::"));
+            if (!StringUtils.isEmpty (clue.getImgsDir ())) {
+                clue.setImgs (clue.getImgsDir ().split ("::"));
+            }
             setUserInfo (clue);
+            setTitleInfo (clue);
         }
 
-        PageUtils cluePage = new PageUtils (clueList, clueList.size (), 10, 0);
+        PageUtils cluePage = new PageUtils (clueList, clueList.size (), 5, 0);
 
         Map<String, Object> map = new HashMap<> (16);
-        map.put("page", cluePage);
-        return Result.success("获取成功", map);
+        map.put ("page", cluePage);
+        return Result.success ("获取成功", map);
     }
 
     @PostMapping("/getAllTitleClues")
-    public Result getAllTitleClues (@RequestBody Map<String, Object> params) {
+    public Result getAllTitleClues(@RequestBody Map<String, Object> params) {
         long titleId = Long.parseLong (String.valueOf (params.get ("titleId")));
 
         if (titleService.count (new QueryWrapper<Title> ().eq ("title_id", titleId)) <= 0) {
@@ -190,15 +194,18 @@ public class ClueController {
         List<Clue> clueList = clueService.getCluesByTitleId (titleId);
 
         for (Clue clue : clueList) {
-            clue.setImgs (clue.getImgsDir ().split ("::"));
+            if (!StringUtils.isEmpty (clue.getImgsDir ())) {
+                clue.setImgs (clue.getImgsDir ().split ("::"));
+            }
             setUserInfo (clue);
+            setTitleInfo (clue);
         }
 
-        PageUtils cluePage = new PageUtils (clueList, clueList.size (), 10, 0);
+        PageUtils cluePage = new PageUtils (clueList, clueList.size (), 5, 0);
 
-        Map<String, Object> map = new HashMap<>(16);
-        map.put("page", cluePage);
-        return Result.success("获取成功", map);
+        Map<String, Object> map = new HashMap<> (16);
+        map.put ("page", cluePage);
+        return Result.success ("获取成功", map);
     }
 
     @Async
@@ -206,7 +213,7 @@ public class ClueController {
     public void sendClueMailBox(ClueMailbox mailbox) {
         boolean save = clueMailboxService.save (mailbox);
 
-        if (! save) {
+        if (!save) {
             log.warn ("消息持久化失败");
             throw new RuntimeException ("消息持久化失败");
         }
@@ -215,11 +222,20 @@ public class ClueController {
     }
 
 
-    private void setUserInfo (Clue clue) {
+    private void setUserInfo(Clue clue) {
         UserInfo info = userInfoService.getUserInfoById (clue.getUserId ());
         User user = userService.getById (clue.getUserId ());
 
         clue.setUserAvatar (info.getUserAvatar ());
         clue.setUserName (user.getUserName ());
+    }
+
+    private void setTitleInfo (Clue clue) {
+        Title title = titleService.getById (clue.getTitleId ());
+        User author = userService.getById (title.getUserId ());
+
+        clue.setTitleAuthorId (title.getUserId ());
+        clue.setTitleAuthorName (author.getUserName ());
+        clue.setTitleName (title.getTitleName ());
     }
 }

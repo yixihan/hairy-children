@@ -84,6 +84,15 @@ public class TitleController {
         return Result.fail ("创建失败, 请重新尝试");
     }
 
+    @PostMapping("/uploadImg/{titleId}")
+    public Result uploadImg (@RequestParam("img") MultipartFile img, @PathVariable Long titleId) {
+        String titleImg = titleService.uploadTitleImg (titleId, img);
+        Title title = titleService.getById (titleId);
+        title.setTitleImg (titleImg);
+        boolean update = titleService.updateById (title);
+        return update ? Result.success ("文章预览图设置成功") : Result.fail ("文章预览图设置失败");
+    }
+
     @PostMapping("/updateTitle")
     public Result updateTitle(@RequestBody Title title) {
         boolean update = titleService.updateById (title);
@@ -151,7 +160,7 @@ public class TitleController {
         for (Title title : titleList) {
             setUserInfo (title);
         }
-        PageUtils titlePage = new PageUtils (titleList, titleList.size (), 10, 0);
+        PageUtils titlePage = new PageUtils (titleList, titleList.size (), 5, 0);
 
         Map<String, Object> map = new HashMap<> (16);
         map.put ("page", titlePage);
@@ -170,7 +179,7 @@ public class TitleController {
         for (Title title : titleList) {
             setUserInfo (title);
         }
-        PageUtils titlePage = new PageUtils (titleList, titleList.size (), 10, 0);
+        PageUtils titlePage = new PageUtils (titleList, titleList.size (), 5, 0);
 
         Map<String, Object> map = new HashMap<> (16);
         map.put ("page", titlePage);
@@ -270,7 +279,7 @@ public class TitleController {
             }
         });
 
-        PageUtils titlePage = new PageUtils (titleList, titleList.size (), 10, 0);
+        PageUtils titlePage = new PageUtils (titleList, titleList.size (), 5, 0);
         Map<String, Object> map = new HashMap<> (16);
         map.put ("page", titlePage);
         return Result.success (map);
