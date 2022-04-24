@@ -34,6 +34,10 @@ public class UserComments implements Serializable {
     @TableField(exist = false)
     private String titleName;
 
+    @ApiModelProperty(value = "文章 略缩图")
+    @TableField(exist = false)
+    private String titleImg;
+
     @ApiModelProperty(value = "文章作者 id")
     @TableField(exist = false)
     private Long titleAuthorId;

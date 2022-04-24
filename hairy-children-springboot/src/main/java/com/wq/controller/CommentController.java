@@ -170,7 +170,7 @@ public class CommentController {
             }
             setUserInfo (commentRoot);
         }
-        PageUtils commentPage = new PageUtils (commentRootList, commentRootList.size (), 10, 0);
+        PageUtils commentPage = new PageUtils (commentRootList, commentRootList.size (), 5, 0);
 
         HashMap<String, Object> map = new HashMap<> (8);
         map.put ("page", commentPage);
@@ -192,7 +192,7 @@ public class CommentController {
             setTitleInfo (userComments);
         }
 
-        PageUtils commentPage = new PageUtils (userCommentList, userCommentList.size (), 10, 0);
+        PageUtils commentPage = new PageUtils (userCommentList, userCommentList.size (), 5, 0);
 
         HashMap<String, Object> map = new HashMap<> (8);
         map.put ("page", commentPage);
@@ -397,6 +397,7 @@ public class CommentController {
 
         userComments.setTitleAuthorId (title.getUserId ());
         userComments.setTitleName (title.getTitleName ());
+        userComments.setTitleImg (title.getTitleImg ());
     }
 
 
