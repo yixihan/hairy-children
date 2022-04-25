@@ -36,6 +36,7 @@
         @current-change="handleCurrentChange"
         class="pagination"
         v-if="!isEmpty"
+        :hide-on-single-page="clue.totalCount <= clue.pageSize"
       >
       </el-pagination>
     </div>

@@ -1,6 +1,7 @@
 <template>
   <div class="page">
     <div class="search">
+      <div class="title">寻宠</div>
       <el-form
         :model="data"
         :rules="rules"
@@ -261,7 +262,7 @@ export default {
       }
     },
     resetData() {
-      this.data.titleName = '';
+      this.data.titleName = "";
       this.data.timeLimit = "不限";
       this.data.isFinish = "不限";
       this.data.city = "";
@@ -322,9 +323,10 @@ export default {
   width: 100%;
 
   .search {
-    width: 1024px;
+    width: 1276px;
     margin: 0 auto;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    display: flex;
     ::v-deep .el-form-item__content {
       display: flex !important;
       justify-content: center;
@@ -336,6 +338,15 @@ export default {
       .el-button--primary {
         position: inherit;
       }
+    }
+
+    .title {
+      font: italic small-caps bold 30px/45px Georgia, serif;
+      letter-spacing: 10px;
+      margin: 20px 20px 90px 20px;
+      padding: 20px;
+      writing-mode: vertical-lr;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
     }
     .el-form {
       width: 90% !important;

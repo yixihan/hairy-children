@@ -41,7 +41,14 @@
       </el-descriptions-item>
       <el-descriptions-item label="所在城市" v-if="userInfo.userAddress != null"
         ><span v-text="userInfo.userAddress" v-if="!checked"></span>
-        <el-input v-model="userInfo.userAddress" v-if="checked"></el-input>
+        <el-cascader
+          v-if="checked"
+          size="mini"
+          :options="options"
+          v-model="selectedOptions"
+          @change="handleChange"
+        >
+        </el-cascader>
         <el-switch
           v-model="userInfo.addressShow"
           active-text="展示"
@@ -124,13 +131,24 @@
 </template>
 
 <script>
+import {
+  regionDataPlus,
+  CodeToText,
+  TextToCode,
+} from "element-china-area-data";
+
 export default {
+  inject: ["reload"],
   data() {
     return {
       userInfo: "",
       checked: false,
       JwtToken: "",
       userId: "",
+      options: regionDataPlus,
+      decodeCode: CodeToText,
+      encodeCOde: TextToCode,
+      selectedOptions: [],
     };
   },
   methods: {
@@ -205,6 +223,16 @@ export default {
         type: "success",
       });
     },
+    handleChange(value) {
+      let data = "";
+      for (var i = 0; i < value.length; i++) {
+        if (value[i] !== "") {
+          data += this.decodeCode[value[i]];
+        }
+      }
+      this.userInfo.userAddress = data.replace("市辖区", "");
+      console.log(this.userInfo.userAddress);
+    },
     // 校验头像文件
     beforeAvatarUpload(file) {
       const isLt2M = file.size / 1024 / 1024 < 2;
@@ -230,6 +258,7 @@ export default {
     this.JwtToken = JSON.parse(
       `{"Jwt-Token": "` + this.$store.getters.getToken + `"}`
     );
+    
   },
   mounted() {},
 };

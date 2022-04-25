@@ -42,6 +42,7 @@
         @current-change="handleCurrentChange"
         class="pagination"
         v-if="!isEmpty"
+        :hide-on-single-page="comment.totalCount <= comment.pageSize"
       >
       </el-pagination>
     </div>
@@ -97,6 +98,9 @@ export default {
       this.getUserComment().then(({ data }) => {
         console.log(data);
         this.comment = data.data.page;
+        if (this.comment.list.length == 0) {
+          this.isEmpty = true;
+        }
 
         this.commentList = this.comment.list.slice(0, this.comment.pageSize);
       });

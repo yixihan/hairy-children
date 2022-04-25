@@ -1,7 +1,7 @@
 <template>
   <div class="meetpets">
     <div class="adoption">
-      <h2>领养</h2>
+      <h2 @click="toAdoptSearch">领养</h2>
       <ul>
         <li v-for="(item, index) in adoptArticles.list" :key="index">
           <a href="javascript:;">
@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="findpets">
-      <h2>寻宠</h2>
+      <h2 @click="toFindPetSearch">寻宠</h2>
       <ul>
         <li v-for="(item, index) in findPetsArticles.list" :key="index">
           <a href="javascript:;">

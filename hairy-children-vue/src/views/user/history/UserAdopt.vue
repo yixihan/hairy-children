@@ -37,6 +37,7 @@
         @current-change="handleCurrentChange"
         class="pagination"
         v-if="!isEmpty"
+        :hide-on-single-page="adopt.totalCount <= adopt.pageSize"
       >
       </el-pagination>
     </div>
