@@ -22,6 +22,8 @@ import UserClueMsg from '@/views/user/msg/UserClueMsg'
 import UserCommentMsg from '@/views/user/msg/UserCommentMsg'
 import UserCommentReplyMsg from '@/views/user/msg/UserCommentReplyMsg'
 import UserLikeMsg from '@/views/user/msg/UserLikeMsg'
+import AdoptSearch from '@/views/search/AdoptSearch'
+import FindPetSearch from '@/views/search/FindPetSearch'
 
 Vue.use(VueRouter);
 
@@ -82,6 +84,7 @@ const routes = [
           requireAuth: false
         }
       },
+      // 个人中心
       {
         path: '/center/:userId',
         name: 'center',
@@ -204,6 +207,22 @@ const routes = [
             },
           },
         ]
+      },
+      {
+        path: '/search/adopt',
+        name: 'searchAdopt',
+        component: AdoptSearch,
+        meta: {
+          requireAuth: true
+        }
+      },
+      {
+        path: '/search/findPet',
+        name: 'searchFindPet',
+        component: FindPetSearch,
+        meta: {
+          requireAuth: true
+        }
       }
     ]
   },

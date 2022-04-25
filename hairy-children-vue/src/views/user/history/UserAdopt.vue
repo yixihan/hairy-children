@@ -17,11 +17,11 @@
               <div class="petstatus">
                 <el-tag>{{ item.adoptUserAddress }}</el-tag>
                 <el-tag
-                  >发布于 :
+                  >申请于 :
                   {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
                 >
                 <el-tag class="adopted">{{
-                  item.isSuccess == 1 ? "已被接受" : "暂未被接受"
+                  item.isSuccess == 1 ? "已通过" : item.isSuccess == 0 ? "暂未审核" : '已拒绝'
                 }}</el-tag>
               </div>
             </div>

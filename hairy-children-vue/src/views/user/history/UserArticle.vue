@@ -2,7 +2,7 @@
   <div class="meetpets">
     <div class="adoption">
       <div class="null" v-if="isEmpty">
-        <h3>用户暂无领养申请</h3>
+        <h3>用户暂无贴子</h3>
       </div>
       <ul>
         <li v-for="(item, index) in articleList" :key="index">
@@ -14,7 +14,10 @@
                 {{ item.titleContent }}
               </p>
               <div class="petstatus">
-                <el-tag>{{ item.userAddress }}</el-tag>
+                <el-tag>点赞 : {{ item.likeCount }}</el-tag>
+                <el-tag>评论 : {{ item.commentCount }}</el-tag>
+                <el-tag>收藏 : {{ item.collectionCount }}</el-tag>
+                <el-tag>发布城市 : {{ item.userAddress }}</el-tag>
                 <el-tag
                   >发布于 :
                   {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
@@ -95,7 +98,6 @@ export default {
     setInfo() {
       this.userId = this.$route.params.userId;
       this.getUserArticle().then(({ data }) => {
-        console.log(data);
         this.article = data.data.page;
         if (this.article.list.length == 0) {
           this.isEmpty = true;

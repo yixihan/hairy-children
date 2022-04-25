@@ -1,8 +1,17 @@
 <template>
   <div class="meetpets">
     <div class="adoption">
+      <div class="messageTag">
+        <el-tag>未读数 : {{ unreadCount }}</el-tag>
+        <el-tag>消息总数 : {{ count }}</el-tag>
+        <el-tag
+          @click="readAll"
+          v-if="userId == myUserId"
+          >全部阅读</el-tag
+        >
+      </div>
       <div class="null" v-if="isEmpty">
-        <h3>用户暂时没有收到回复</h3>
+        <h3>用户暂时没有收到点赞</h3>
       </div>
       <ul>
         <li v-for="(item, index) in messageList" :key="index">
@@ -14,7 +23,7 @@
             <div class="article">
               <h3 class="title">来自 {{ item.sendUserName }} 的回复</h3>
               <p>
-                <span>回复内容 : {{item.replyContent}}</span>
+                <span>回复内容 : {{ item.replyContent }}</span>
                 <el-link
                   href="#"
                   target="_blank"
@@ -29,9 +38,11 @@
                   >发送于 :
                   {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
                 >
-                <el-tag @click="read(index)">{{
-                  item.isRead === 0 ? "未读" : "已读"
-                }}</el-tag>
+                <el-tag
+                  @click="read(index)"
+                  v-if="userId == myUserId"
+                  >{{ item.isRead === 0 ? "未读" : "已读" }}</el-tag
+                >
               </div>
             </div>
           </a>
@@ -56,6 +67,7 @@
 import format from "../../../utils/DateFormat.js";
 
 export default {
+  inject: ["reload"],
   format,
   data() {
     return {
@@ -68,7 +80,10 @@ export default {
         totalPage: 0,
       },
       userId: "",
+      myUserId: '',
       isEmpty: false,
+      count: 0,
+      unreadCount: 0,
     };
   },
   methods: {
@@ -96,10 +111,35 @@ export default {
 
       return data;
     },
+    async getReplyCount() {
+      const data = await this.$axios({
+        url: "/mailbox/getReplyMailBoxCount",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          userId: this.userId,
+        },
+      });
+      return data;
+    },
+    async getReplyUnReadCount() {
+      const data = await this.$axios({
+        url: "/mailbox/getUnReadReplyMailBoxCount",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          userId: this.userId,
+        },
+      });
+      return data;
+    },
     setInfo() {
       this.userId = this.$route.params.userId;
       this.getUserMessage().then(({ data }) => {
-        console.log(data);
         this.message = data.data.page;
         if (this.message.list.length == 0) {
           this.isEmpty = true;
@@ -107,13 +147,19 @@ export default {
         }
         for (var i = 0; i < this.message.list.length; i++) {
           if (this.message.list[i].imgs == null) {
-            
             this.message.list[i].imgs = [];
             this.message.list[i].imgs.push("/adopt/default/default.png");
           }
         }
-        
+
         this.messageList = this.message.list.slice(0, this.message.pageSize);
+      });
+      this.getReplyUnReadCount().then(({ data }) => {
+        this.unreadCount = data.data.count;
+      });
+
+      this.getReplyCount().then(({ data }) => {
+        this.count = data.data.count;
       });
     },
     read(index) {
@@ -123,7 +169,6 @@ export default {
             message: "消息已成功阅读",
             type: "success",
           });
-          this.setInfo();
         } else {
           this.$message({
             message: "更新失败, 请重试",
@@ -131,7 +176,28 @@ export default {
           });
         }
       });
+      this.reload();
     },
+    readAll() {
+      for (var i = 0; i < this.message.list.length; i++) {
+        this.readMessageById(this.message.list[i].id).then(({ data }) => {
+          if (data.code != 200) {
+            this.$message({
+              message: "更新失败, 请重试",
+              type: "error",
+            });
+            this.reload();
+            return;
+          }
+        });
+      }
+      this.$message({
+        message: "消息已成功阅读",
+        type: "success",
+      });
+      this.reload();
+    },
+
     async readMessage(index) {
       const data = await this.$axios({
         url: "/mailbox/readReplyMailBox",
@@ -146,9 +212,24 @@ export default {
 
       return data;
     },
+    async readMessageById(id) {
+      const data = await this.$axios({
+        url: "/mailbox/readReplyMailBox",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          id: id,
+        },
+      });
+
+      return data;
+    },
   },
   created() {
     this.setInfo();
+    this.myUserId = this.$store.getters.getUser.userId
   },
 };
 </script>
@@ -259,6 +340,23 @@ export default {
             color: #7da5b3 !important;
           }
         }
+      }
+    }
+
+    .messageTag {
+      margin-top: 8px;
+      margin-right: 8px;
+      height: 25px;
+      line-height: 25px;
+      position: relative;
+      display: flex;
+      justify-content: end;
+
+      span {
+        margin-left: 10px;
+      }
+      .adopted {
+        color: #1fb1e6;
       }
     }
     .foot {

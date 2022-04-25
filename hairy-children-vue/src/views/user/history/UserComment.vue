@@ -2,7 +2,7 @@
   <div class="meetpets">
     <div class="adoption">
       <div class="null" v-if="isEmpty">
-        <h3>用户暂无线索提供</h3>
+        <h3>用户暂无评论</h3>
       </div>
       <ul>
         <li v-for="(item, index) in commentList" :key="index">

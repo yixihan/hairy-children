@@ -9,11 +9,14 @@
   },
   "dependencies": {
     "axios": "^0.26.1",
+    "china-area-data": "^5.0.1",
     "core-js": "^3.6.5",
+    "element-china-area-data": "^5.0.2",
     "element-ui": "^2.15.6",
     "mavon-editor": "^2.10.4",
     "vue": "^2.6.11",
     "vue-axios": "^3.3.7",
+    "vue-region-picker": "^3.0.1",
     "vue-router": "^3.5.2",
     "vuex": "^3.6.2"
   },

@@ -12,7 +12,7 @@
             <i class="el-icon-user"></i>
             <span slot="title">账户信息</span>
           </el-menu-item>
-          <el-submenu index="账户设置">
+          <el-submenu index="账户设置" v-if="userId == this.$store.getters.getUser.userId">
             <template slot="title">
               <i class="el-icon-setting"></i>
               <span>账户设置</span>
@@ -38,15 +38,30 @@
           </el-submenu>
           <el-submenu index="个人信箱">
             <template slot="title">
-              <i class="el-icon-chat-line-square"></i>
-              <span>个人信箱</span>
+              <el-badge :value="unreadCount" class="item">
+                <i class="el-icon-chat-line-square"></i>
+                <span>个人信箱</span>
+              </el-badge>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="收到的领养申请">收到的领养申请</el-menu-item>
-              <el-menu-item index="收到的线索">收到的线索</el-menu-item>
-              <el-menu-item index="收到的评论">收到的评论</el-menu-item>
-              <el-menu-item index="收到的回复">收到的回复</el-menu-item>
-              <el-menu-item index="收到的赞">收到的赞</el-menu-item>
+              <el-badge :value="adoptUnreadCount" class="item">
+                <el-menu-item index="收到的领养申请"
+                  >收到的领养申请</el-menu-item
+                >
+              </el-badge>
+              <el-badge :value="clueUnreadCount" class="item">
+                <el-menu-item index="收到的线索">收到的线索</el-menu-item>
+              </el-badge>
+
+              <el-badge :value="commentUnreadCount" class="item">
+                <el-menu-item index="收到的评论">收到的评论</el-menu-item>
+              </el-badge>
+              <el-badge :value="replyUnreadCount" class="item">
+                <el-menu-item index="收到的回复">收到的回复</el-menu-item>
+              </el-badge>
+              <el-badge :value="likeUnreadCount" class="item">
+                <el-menu-item index="收到的赞">收到的赞</el-menu-item>
+              </el-badge>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -74,6 +89,12 @@ export default {
     return {
       userId: "",
       navList: ["账户信息"],
+      clueUnreadCount: 0,
+      adoptUnreadCount: 0,
+      commentUnreadCount: 0,
+      replyUnreadCount: 0,
+      likeUnreadCount: 0,
+      unreadCount: 0,
     };
   },
   methods: {
@@ -84,9 +105,120 @@ export default {
       }
       this.$router.push({ name: this.navList[this.navList.length - 1] });
     },
+    async getClueUnReadCount() {
+      const data = await this.$axios({
+        url: "/mailbox/getUnReadClueMailBoxCount",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          userId: this.userId,
+        },
+      });
+      return data;
+    },
+    async getAdoptUnReadCount() {
+      const data = await this.$axios({
+        url: "/mailbox/getUnReadAdoptMailBoxCount",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          userId: this.userId,
+        },
+      });
+      return data;
+    },
+    async getCommentUnReadCount() {
+      const data = await this.$axios({
+        url: "/mailbox/getUnReadCommentMailBoxCount",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          userId: this.userId,
+        },
+      });
+      return data;
+    },
+    async getReplyUnReadCount() {
+      const data = await this.$axios({
+        url: "/mailbox/getUnReadReplyMailBoxCount",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          userId: this.userId,
+        },
+      });
+      return data;
+    },
+    async getTitleLikeUnReadCount() {
+      const data = await this.$axios({
+        url: "/mailbox/getUnReadTitleLikeMailBoxCount",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          userId: this.userId,
+        },
+      });
+      return data;
+    },
+    async getCommentLikeUnReadCount() {
+      const data = await this.$axios({
+        url: "/mailbox/getUnReadCommentLikeMailBoxCount",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          userId: this.userId,
+        },
+      });
+      return data;
+    },
+    getUnreadCount() {
+      this.getClueUnReadCount().then(({ data }) => {
+        this.clueUnreadCount = data.data.count;
+        this.unreadCount += data.data.count;
+      });
+
+      this.getAdoptUnReadCount().then(({ data }) => {
+        this.adoptUnreadCount = data.data.count;
+        this.unreadCount += data.data.count;
+      });
+
+      this.getCommentUnReadCount().then(({ data }) => {
+        this.commentUnreadCount = data.data.count;
+        this.unreadCount += data.data.count;
+      });
+
+      this.getReplyUnReadCount().then(({ data }) => {
+        this.replyUnreadCount = data.data.count;
+        this.unreadCount += data.data.count;
+      });
+
+      this.getCommentLikeUnReadCount().then(({ data }) => {
+        this.likeUnreadCount += data.data.count;
+        this.unreadCount += data.data.count;
+      });
+
+      this.getTitleLikeUnReadCount().then(({ data }) => {
+        this.likeUnreadCount += data.data.count;
+        this.unreadCount += data.data.count;
+      });
+    },
   },
+
   created() {
     this.userId = this.$route.params.userId;
+    this.getUnreadCount();
   },
 };
 </script>

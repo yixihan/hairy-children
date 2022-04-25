@@ -3,40 +3,48 @@
     <div class="adoption">
       <h2>领养</h2>
       <ul>
-        <li v-for="(item, index) in adoptionAvatar" :key="index">
+        <li v-for="(item, index) in adoptArticles.list" :key="index">
           <a href="javascript:;">
-            <img :src="item" alt="" />
+            <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
             <div class="article">
-              <h3 class="title">领养一只小猫咪</h3>
+              <h3 class="title">{{ item.titleName }}</h3>
               <p>
-                猫,属于猫科动物,分家猫、野猫,
-                是全世界家庭中较为广泛的宠物。家猫的祖先据推测是古埃及的沙漠猫,波斯的波斯猫,已经被人类驯化了3500年(但未像狗一样完全地被驯化)。一般的猫：头圆、颜面部短,前肢五指,后肢四趾,趾端具锐利而弯曲的爪,爪能伸缩。夜行性。以伏击的方式猎捕其它动物,大多能攀援上树。猫的趾底有脂肪质肉垫,以免在行走时发出声响,捕猎时也不会惊跑鼠。行进时爪子处于收缩状态,防止爪被磨钝,在捕鼠和攀岩时会伸出来。
+                {{ item.titleContent }}
               </p>
               <div class="petstatus">
-                <el-tag class="adopted">已领养</el-tag>
+                <el-tag>点赞 : {{ item.likeCount }}</el-tag>
+                <el-tag>评论 : {{ item.commentCount }}</el-tag>
+                <el-tag>收藏 : {{ item.collectionCount }}</el-tag>
+                <el-tag class="adopted">{{
+                  item.isFinish == 1 ? "已领养" : "未领养"
+                }}</el-tag>
               </div>
             </div>
           </a>
         </li>
       </ul>
       <div class="foot">
-        <button class="more">mroe</button>
+        <button class="more" @click="toAdoptSearch">mroe</button>
       </div>
     </div>
     <div class="findpets">
       <h2>寻宠</h2>
       <ul>
-        <li v-for="(item, index) in adoptionAvatar" :key="index">
+        <li v-for="(item, index) in findPetsArticles.list" :key="index">
           <a href="javascript:;">
-            <img :src="item" alt="" />
+            <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
             <div class="article">
-              <h3 class="title">寻宠一只小猫咪</h3>
+              <h3 class="title">{{ item.titleName }}</h3>
               <p>
-                猫,属于猫科动物,分家猫、野猫,
-                是全世界家庭中较为广泛的宠物。家猫的祖先据推测是古埃及的沙漠猫,波斯的波斯猫,已经被人类驯化了3500年(但未像狗一样完全地被驯化)。一般的猫：头圆、颜面部短,前肢五指,后肢四趾,趾端具锐利而弯曲的爪,爪能伸缩。夜行性。以伏击的方式猎捕其它动物,大多能攀援上树。猫的趾底有脂肪质肉垫,以免在行走时发出声响,捕猎时也不会惊跑鼠。行进时爪子处于收缩状态,防止爪被磨钝,在捕鼠和攀岩时会伸出来。
+                {{ item.titleContent }}
               </p>
               <div class="petstatus">
-                <el-tag class="adopted">未找到</el-tag>
+                <el-tag>点赞 : {{ item.likeCount }}</el-tag>
+                <el-tag>评论 : {{ item.commentCount }}</el-tag>
+                <el-tag>收藏 : {{ item.collectionCount }}</el-tag>
+                <el-tag class="adopted">{{
+                  item.isFinish == 1 ? "已找回" : "未找回"
+                }}</el-tag>
               </div>
             </div>
           </a>
@@ -44,7 +52,7 @@
       </ul>
 
       <div class="foot">
-        <button class="more">mroe</button>
+        <button class="more" @click="toFindPetSearch">mroe</button>
       </div>
     </div>
   </div>
@@ -55,21 +63,67 @@ export default {
   name: "MeetPets",
   data() {
     return {
-      adoptionAvatar: [
-        require("@/assets/img/cat/avatar/1.jpg"),
-        require("@/assets/img/cat/avatar/2.jpg"),
-        require("@/assets/img/cat/avatar/3.jpg"),
-        require("@/assets/img/cat/avatar/4.jpg"),
-        require("@/assets/img/cat/avatar/5.jpg"),
-      ],
-      findpetsAvatar: [
-        require("@/assets/img/cat/avatar/1.jpg"),
-        require("@/assets/img/cat/avatar/2.jpg"),
-        require("@/assets/img/cat/avatar/3.jpg"),
-        require("@/assets/img/cat/avatar/4.jpg"),
-        require("@/assets/img/cat/avatar/5.jpg"),
-      ],
+      adoptArticles: {
+        currPage: 0,
+        list: [],
+        pageSize: 0,
+        totalCount: 0,
+        totalPage: 0,
+      },
+      findPetsArticles: {
+        currPage: 0,
+        list: [],
+        pageSize: 0,
+        totalCount: 0,
+        totalPage: 0,
+      },
     };
+  },
+  methods: {
+    async getArticles(titleType) {
+      const data = await this.$axios({
+        url: "/title/getAllTitles",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          titleType: titleType,
+          titleName: "",
+          timeLimit: "4",
+          city: "",
+          isFinish: "3",
+          time: "false",
+          like: "false",
+          reply: "false",
+          collection: "false",
+        },
+      });
+
+      return data;
+    },
+    setInfo() {
+      // 获取领养贴
+      this.getArticles(1).then(({ data }) => {
+        this.adoptArticles = data.data.page;
+        this.adoptArticles.list = this.adoptArticles.list.slice(0, 5);
+      });
+
+      // 获取寻宠贴
+      this.getArticles(2).then(({ data }) => {
+        this.findPetsArticles = data.data.page;
+        this.findPetsArticles.list = this.findPetsArticles.list.slice(0, 5);
+      });
+    },
+    toFindPetSearch() {
+      this.$router.push("/search/findPet");
+    },
+    toAdoptSearch() {
+      this.$router.push("/search/adopt");
+    },
+  },
+  created() {
+    this.setInfo();
   },
 };
 </script>
@@ -91,7 +145,7 @@ export default {
   .findpets {
     border: 2px solid #7da5b3;
     background: #fff;
-    width: 50%;
+    width: 100%;
     h2 {
       height: 80px;
       line-height: 80px;
@@ -124,6 +178,7 @@ export default {
           }
           // 帖子条
           .article {
+            width: 100%;
             .title {
               color: #313131;
               height: 30px;
@@ -144,10 +199,26 @@ export default {
               white-space: normal;
             }
             .petstatus {
+              margin-top: 8px;
+              height: 25px;
+              line-height: 25px;
+              position: relative;
+              display: flex;
+              justify-content: end;
+
+              span {
+                margin-left: 10px;
+              }
+              .adopted {
+                color: #1fb1e6;
+              }
+            }
+
+            .time {
               position: relative;
               ::v-deep .el-tag {
                 position: absolute;
-                right: 0;
+                right: 65px;
                 height: 25px;
                 line-height: 25px;
               }
@@ -186,6 +257,11 @@ export default {
         font-size: 14px;
         border-radius: 4px;
       }
+    }
+
+    .pagination {
+      margin: 10px;
+      padding: 10px;
     }
   }
 }
