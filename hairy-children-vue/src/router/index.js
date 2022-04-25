@@ -89,12 +89,12 @@ const router = createRouter({
               path: 'message/adopt',
               name: 'space-message-adopt',
               component: () => import('../views/space-page/message-adopt.vue')
+            },
+            {
+              path: 'message/comment',
+              name: 'space-message-comment',
+              component: () => import('../views/space-page/message-comment.vue')
             }
-            // {
-            //   path: 'message/comment',
-            //   name: 'space-message-comment',
-            //   component: () => import('../views/space-page/message-comment.vue')
-            // },
             // {
             //   path: 'message/reply',
             //   name: 'space-message-reply',

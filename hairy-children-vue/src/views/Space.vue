@@ -182,23 +182,23 @@ export default defineComponent({
                   { default: () => '收到的领养申请' }
                 ),
               key: 'message-adopt'
+            },
+            {
+              label: () =>
+                h(
+                  RouterLink,
+                  {
+                    to: {
+                      name: 'space-message-comment',
+                      query: {
+                        userId: getData('token').userId
+                      }
+                    }
+                  },
+                  { default: () => '收到的评论' }
+                ),
+              key: 'message-comment'
             }
-            // {
-            //   label: () =>
-            //     h(
-            //       RouterLink,
-            //       {
-            //         to: {
-            //           name: 'space-message-comment',
-            //           query: {
-            //             userId: getData('token').userId
-            //           }
-            //         }
-            //       },
-            //       { default: () => '收到的评论' }
-            //     ),
-            //   key: 'message-comment'
-            // },
             // {
             //   label: () =>
             //     h(

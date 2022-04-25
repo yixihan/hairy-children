@@ -335,3 +335,12 @@ export function getReceiveAdoptionNotices(data) {
     data
   })
 }
+
+// 获取所有评论通知
+export function getAllCommentNotices(data) {
+  return Axios({
+    url: '/mailbox/getCommentMessages',
+    method: 'post',
+    data
+  })
+}
