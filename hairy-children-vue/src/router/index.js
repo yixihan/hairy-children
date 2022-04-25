@@ -84,7 +84,32 @@ const router = createRouter({
               path: 'history/collect/detail',
               name: 'space-history-collect-detail',
               component: () => import('../views/space-page/history-collect-detail.vue')
+            },
+            {
+              path: 'message/adopt',
+              name: 'space-message-adopt',
+              component: () => import('../views/space-page/message-adopt.vue')
             }
+            // {
+            //   path: 'message/comment',
+            //   name: 'space-message-comment',
+            //   component: () => import('../views/space-page/message-comment.vue')
+            // },
+            // {
+            //   path: 'message/reply',
+            //   name: 'space-message-reply',
+            //   component: () => import('../views/space-page/message-reply.vue')
+            // },
+            // {
+            //   path: 'message/clue',
+            //   name: 'space-message-clue',
+            //   component: () => import('../views/space-page/message-clue.vue')
+            // },
+            // {
+            //   path: 'message/like',
+            //   name: 'space-message-like',
+            //   component: () => import('../views/space-page/message-like.vue')
+            // }
           ]
         }
       ]

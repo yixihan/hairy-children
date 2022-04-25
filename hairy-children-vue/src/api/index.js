@@ -326,3 +326,12 @@ export function addCollection(data) {
     data
   })
 }
+
+// 收到的领养申请通知
+export function getReceiveAdoptionNotices(data) {
+  return Axios({
+    url: '/mailbox/getAdoptMessages',
+    method: 'post',
+    data
+  })
+}

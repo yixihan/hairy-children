@@ -173,7 +173,7 @@ export default defineComponent({
                   RouterLink,
                   {
                     to: {
-                      path: '/space/message/adopt',
+                      name: 'space-message-adopt',
                       query: {
                         userId: getData('token').userId
                       }
@@ -182,71 +182,71 @@ export default defineComponent({
                   { default: () => '收到的领养申请' }
                 ),
               key: 'message-adopt'
-            },
-            {
-              label: () =>
-                h(
-                  RouterLink,
-                  {
-                    to: {
-                      path: '/space/message/comment',
-                      query: {
-                        userId: getData('token').userId
-                      }
-                    }
-                  },
-                  { default: () => '收到的评论' }
-                ),
-              key: 'message-comment'
-            },
-            {
-              label: () =>
-                h(
-                  RouterLink,
-                  {
-                    to: {
-                      path: '/space/message/reply',
-                      query: {
-                        userId: getData('token').userId
-                      }
-                    }
-                  },
-                  { default: () => '收到的回复' }
-                ),
-              key: 'message-reply'
-            },
-            {
-              label: () =>
-                h(
-                  RouterLink,
-                  {
-                    to: {
-                      path: '/space/message/clue',
-                      query: {
-                        userId: getData('token').userId
-                      }
-                    }
-                  },
-                  { default: () => '收到的线索' }
-                ),
-              key: 'message-clue'
-            },
-            {
-              label: () =>
-                h(
-                  RouterLink,
-                  {
-                    to: {
-                      path: '/space/message/like',
-                      query: {
-                        userId: getData('token').userId
-                      }
-                    }
-                  },
-                  { default: () => '收到的赞' }
-                ),
-              key: 'message-like'
             }
+            // {
+            //   label: () =>
+            //     h(
+            //       RouterLink,
+            //       {
+            //         to: {
+            //           name: 'space-message-comment',
+            //           query: {
+            //             userId: getData('token').userId
+            //           }
+            //         }
+            //       },
+            //       { default: () => '收到的评论' }
+            //     ),
+            //   key: 'message-comment'
+            // },
+            // {
+            //   label: () =>
+            //     h(
+            //       RouterLink,
+            //       {
+            //         to: {
+            //           name: 'space-message-reply',
+            //           query: {
+            //             userId: getData('token').userId
+            //           }
+            //         }
+            //       },
+            //       { default: () => '收到的回复' }
+            //     ),
+            //   key: 'message-reply'
+            // },
+            // {
+            //   label: () =>
+            //     h(
+            //       RouterLink,
+            //       {
+            //         to: {
+            //           name: 'space-message-clue',
+            //           query: {
+            //             userId: getData('token').userId
+            //           }
+            //         }
+            //       },
+            //       { default: () => '收到的线索' }
+            //     ),
+            //   key: 'message-clue'
+            // },
+            // {
+            //   label: () =>
+            //     h(
+            //       RouterLink,
+            //       {
+            //         to: {
+            //           name: 'space-message-like',
+            //           query: {
+            //             userId: getData('token').userId
+            //           }
+            //         }
+            //       },
+            //       { default: () => '收到的赞' }
+            //     ),
+            //   key: 'message-like'
+            // }
           ]
         }
       ],
