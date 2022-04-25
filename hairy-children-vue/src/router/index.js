@@ -94,12 +94,12 @@ const router = createRouter({
               path: 'message/comment',
               name: 'space-message-comment',
               component: () => import('../views/space-page/message-comment.vue')
+            },
+            {
+              path: 'message/reply',
+              name: 'space-message-reply',
+              component: () => import('../views/space-page/message-reply.vue')
             }
-            // {
-            //   path: 'message/reply',
-            //   name: 'space-message-reply',
-            //   component: () => import('../views/space-page/message-reply.vue')
-            // },
             // {
             //   path: 'message/clue',
             //   name: 'space-message-clue',

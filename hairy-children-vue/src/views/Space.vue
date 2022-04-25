@@ -198,23 +198,23 @@ export default defineComponent({
                   { default: () => '收到的评论' }
                 ),
               key: 'message-comment'
+            },
+            {
+              label: () =>
+                h(
+                  RouterLink,
+                  {
+                    to: {
+                      name: 'space-message-reply',
+                      query: {
+                        userId: getData('token').userId
+                      }
+                    }
+                  },
+                  { default: () => '收到的回复' }
+                ),
+              key: 'message-reply'
             }
-            // {
-            //   label: () =>
-            //     h(
-            //       RouterLink,
-            //       {
-            //         to: {
-            //           name: 'space-message-reply',
-            //           query: {
-            //             userId: getData('token').userId
-            //           }
-            //         }
-            //       },
-            //       { default: () => '收到的回复' }
-            //     ),
-            //   key: 'message-reply'
-            // },
             // {
             //   label: () =>
             //     h(

@@ -344,3 +344,21 @@ export function getAllCommentNotices(data) {
     data
   })
 }
+
+// 获取评论内容
+export function getCommentContent(data) {
+  return Axios({
+    url: '/mailbox/getCommentMessage',
+    method: 'post',
+    data
+  })
+}
+
+// 获取所有回复通知
+export function getAllReplyNotices(data) {
+  return Axios({
+    url: '/mailbox/getReplyMessages',
+    method: 'post',
+    data
+  })
+}
