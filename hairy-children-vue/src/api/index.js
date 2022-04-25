@@ -362,3 +362,12 @@ export function getAllReplyNotices(data) {
     data
   })
 }
+
+// 获取所有线索通知
+export function getAllClueNotices(data) {
+  return Axios({
+    url: '/mailbox/getClueMessages',
+    method: 'post',
+    data
+  })
+}

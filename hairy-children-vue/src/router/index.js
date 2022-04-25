@@ -99,12 +99,12 @@ const router = createRouter({
               path: 'message/reply',
               name: 'space-message-reply',
               component: () => import('../views/space-page/message-reply.vue')
+            },
+            {
+              path: 'message/clue',
+              name: 'space-message-clue',
+              component: () => import('../views/space-page/message-clue.vue')
             }
-            // {
-            //   path: 'message/clue',
-            //   name: 'space-message-clue',
-            //   component: () => import('../views/space-page/message-clue.vue')
-            // },
             // {
             //   path: 'message/like',
             //   name: 'space-message-like',
