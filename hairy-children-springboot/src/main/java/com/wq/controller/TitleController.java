@@ -265,17 +265,17 @@ public class TitleController {
         // 排序
         titleList.sort ((o1, o2) -> {
             if (like) {
-                return Integer.compare (o1.getLikeCount (), o2.getLikeCount ());
+                return Integer.compare (o2.getLikeCount (), o1.getLikeCount ());
             } else if (time) {
-                return Long.compare (o1.getGmtCreate ().getTime (), o2.getGmtCreate ().getTime ());
+                return Long.compare (o2.getGmtCreate ().getTime (), o1.getGmtCreate ().getTime ());
             } else if (reply) {
-                return Integer.compare (o1.getCommentCount (), o2.getCommentCount ());
+                return Integer.compare (o2.getCommentCount (), o1.getCommentCount ());
             } else if (collection) {
-                return Integer.compare (o1.getCollectionCount (), o2.getCollectionCount ());
+                return Integer.compare (o2.getCollectionCount (), o1.getCollectionCount ());
             } else {
                 int val1 = o1.getLikeCount () + o1.getCommentCount () + o1.getCollectionCount ();
                 int val2 = o2.getLikeCount () + o2.getCommentCount () + o2.getCollectionCount ();
-                return Integer.compare (val1, val2);
+                return Integer.compare (val2, val1);
             }
         });
 
