@@ -6,7 +6,7 @@
       <li class="col" v-if="!isLogin" @click="toRegister">注册</li>
       <span class="col text" v-if="isLogin">{{ userName }}, 欢迎回来</span>
       <li class="col" v-if="isLogin" @click="toCenter">个人中心</li>
-      <li class="col" v-if="isLogin">我要发布</li>
+      <li class="col" v-if="isLogin" @click="toWriteArticle">我要发布</li>
       <li class="col" v-if="isLogin" @click="cancellation">注销</li>
     </ul>
   </div>
@@ -16,8 +16,7 @@
 export default {
   name: "Header",
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     // 跳转到注册界面
@@ -41,6 +40,27 @@ export default {
       this.$router.push({
         path: "/center/" + this.$store.getters.getUser.userId,
       });
+    },
+    toWriteArticle() {
+      if (this.$store.getters.getUser.userIdentityCard == null) {
+        this.open();
+      }
+    },
+    open() {
+      this.$confirm("您还没实名认证, 请先实名认证?", "提示", {
+        confirmButtonText: "实名认证",
+        cancelButtonText: "取消",
+        type: "warning",
+        center: true
+      })
+        .then(() => {
+          this.$router.push(
+            "/center/" +
+              this.$store.getters.getUser.userId +
+              "/setting/authentication"
+          );
+        })
+        .catch(() => {});
     },
   },
   computed: {
@@ -109,5 +129,9 @@ export default {
       margin-right: 5px;
     }
   }
+}
+
+button {
+  position: static !important;
 }
 </style>

@@ -117,13 +117,14 @@ export default {
 </script>
 
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 * {
   margin: 0;
   padding: 0;
 }
 .meetpets {
   margin: 26px auto;
+  width: 100%;
   width: 100%;
   max-width: 1280px;
   // height: 600px;

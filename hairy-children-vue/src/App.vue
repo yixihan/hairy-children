@@ -32,12 +32,16 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+::v-deep .el-button--primary {
+  position: sticky !important;
+  width: 100px !important;
 }
 </style>
