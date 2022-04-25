@@ -230,23 +230,23 @@ export default defineComponent({
                   { default: () => '收到的线索' }
                 ),
               key: 'message-clue'
+            },
+            {
+              label: () =>
+                h(
+                  RouterLink,
+                  {
+                    to: {
+                      name: 'space-message-like',
+                      query: {
+                        userId: getData('token').userId
+                      }
+                    }
+                  },
+                  { default: () => '收到的赞' }
+                ),
+              key: 'message-like'
             }
-            // {
-            //   label: () =>
-            //     h(
-            //       RouterLink,
-            //       {
-            //         to: {
-            //           name: 'space-message-like',
-            //           query: {
-            //             userId: getData('token').userId
-            //           }
-            //         }
-            //       },
-            //       { default: () => '收到的赞' }
-            //     ),
-            //   key: 'message-like'
-            // }
           ]
         }
       ],

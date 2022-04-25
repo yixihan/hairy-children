@@ -114,6 +114,15 @@ export function updateArticle(data) {
   })
 }
 
+// 文章点赞
+export function likeArticle(data) {
+  return Axios({
+    url: '/title/like',
+    method: 'post',
+    data
+  })
+}
+
 // 获取文章
 export function getArticle(data) {
   return Axios({
@@ -145,6 +154,15 @@ export function addRootComment(data) {
 export function addSonComment(titleId, data) {
   return Axios({
     url: `/comment/addSonComment/${titleId}`,
+    method: 'post',
+    data
+  })
+}
+
+// 点赞评论
+export function likeComment(data) {
+  return Axios({
+    url: '/comment/likeComment',
     method: 'post',
     data
   })
@@ -367,6 +385,24 @@ export function getAllReplyNotices(data) {
 export function getAllClueNotices(data) {
   return Axios({
     url: '/mailbox/getClueMessages',
+    method: 'post',
+    data
+  })
+}
+
+// 获取所有文章点赞通知
+export function getAllLikeNotices(data) {
+  return Axios({
+    url: '/mailbox/getTitleLikeMessages',
+    method: 'post',
+    data
+  })
+}
+
+// 获取所有评论点赞通知
+export function getAllCommentLikeNotices(data) {
+  return Axios({
+    url: '/mailbox/getCommentLikeMessages',
     method: 'post',
     data
   })

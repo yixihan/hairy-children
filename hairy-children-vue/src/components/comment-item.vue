@@ -14,7 +14,7 @@
           <v-md-preview :text="item.content ? item.content : '内容为空'"></v-md-preview>
           <n-space justify="flex-end">
             <n-time :time="item.gmtCreate" type="relative" />
-            <div class="center">
+            <div class="center" @click="likeCommentHandle">
               <n-icon size="16">
                 <Favorite />
               </n-icon>
@@ -62,9 +62,9 @@
 </template>
 <script>
 import { defineComponent, reactive, toRefs } from 'vue'
-import { NCard, NGrid, NGi, NSpace, NAvatar, NText, NTime, NIcon, NInput, NButton } from 'naive-ui'
+import { useMessage, NCard, NGrid, NGi, NSpace, NAvatar, NText, NTime, NIcon, NInput, NButton } from 'naive-ui'
 import { Favorite, Chat } from '@vicons/carbon'
-import { addSonComment } from '../api/index'
+import { addSonComment, likeComment } from '../api/index'
 import { getData } from '../utils/tools'
 
 export default defineComponent({
@@ -89,6 +89,7 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const message = useMessage()
     const state = reactive({
       userInfo: {},
       isReply: false,
@@ -96,21 +97,6 @@ export default defineComponent({
       comment: '',
       userName: ''
     })
-    // onMounted(async () => {
-    //   const { data: res } = await getUserInfo({
-    //     userId: props.item.userId
-    //   })
-    //   state.userInfo = res.data
-    // })
-    // const getUserName = async (userId) => {
-    //   // console.log(userId)
-    //   const { data: res } = await getUserInfo({
-    //     userId
-    //   })
-    //   // console.log(res.data.userName)
-    //   state.userName = res.data.userName
-    //   return state.userName
-    // }
 
     // 是否展示回复框
     const replyDisplay = (data) => {
@@ -131,7 +117,19 @@ export default defineComponent({
         state.comment = ''
       }
     }
-    return { ...toRefs(state), replyDisplay, AddSonComment }
+    // 点赞
+    const likeCommentHandle = async () => {
+      const { data: res } = await likeComment({
+        userId: getData('userInfo').userId,
+        rootId: props.item.rootId
+      })
+      if (res.code === 200) {
+        message.success('点赞成功')
+      } else {
+        message.error(res.msg)
+      }
+    }
+    return { ...toRefs(state), replyDisplay, AddSonComment, likeCommentHandle }
   }
 })
 </script>

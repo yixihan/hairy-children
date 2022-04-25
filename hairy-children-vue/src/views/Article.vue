@@ -13,10 +13,10 @@
           <v-md-preview :text="title.titleContent ? title.titleContent : 'null'"></v-md-preview>
           <n-space justify="flex-end">
             <n-button v-if="getData('userInfo').userId === userInfo.userId" text @click="EditArticle">编辑</n-button>
-            <n-button text @click="collectHandle">收藏</n-button>
+            <!-- <n-button text @click="collectHandle">收藏</n-button> -->
             <span class="user-address">{{ title.userAddress }}</span>
             <n-time :time="title.gmtCreate" type="relative" />
-            <div class="center">
+            <div class="center" @click="likeArticleHandle">
               <n-icon size="16">
                 <Favorite />
               </n-icon>
@@ -28,7 +28,7 @@
               </n-icon>
               <span class="comment"> {{ title.commentCount }}</span>
             </div>
-            <div class="center">
+            <div class="center" @click="showCollectionModal = true">
               <n-icon size="16">
                 <Star />
               </n-icon>
@@ -183,8 +183,7 @@ import {
   NFormItem,
   NModal,
   NSwitch,
-  NUpload,
-  useDialog
+  NUpload
 } from 'naive-ui'
 import { Favorite, Star, Chat } from '@vicons/carbon'
 import commentItem from '../components/comment-item.vue'
@@ -203,7 +202,8 @@ import {
   uploadClueImg,
   addCollection,
   getUserFavorites,
-  addFavorite
+  addFavorite,
+  likeArticle
 } from '../api/index'
 import adoptItem from '../components/adopt-item.vue'
 import clueItem from '../components/clue-item.vue'
@@ -244,7 +244,6 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const message = useMessage()
-    const dialog = useDialog()
     const state = reactive({
       title: {},
       userInfo: {},
@@ -257,7 +256,7 @@ export default defineComponent({
       fileList: [],
       showClueModal: false,
       clueInfo: {},
-      showCollectionModal: true,
+      showCollectionModal: false,
       favorites: [],
       isAddCollection: false,
       collectionName: ''
@@ -279,7 +278,6 @@ export default defineComponent({
       }
       const { data: resssss } = await getUserFavorites({ userId: state.userInfo.userId })
       state.favorites = resssss.data.page?.list
-      console.log(state.favorites)
     }
     const GetUserInfo = async () => {
       const { data: res } = await getUserInfo()
@@ -398,6 +396,15 @@ export default defineComponent({
         message.error(res.msg)
       }
     }
+    const likeArticleHandle = async () => {
+      const { data: res } = await likeArticle({ titleId: state.title.titleId, userId: getData('userInfo').userId })
+      if (res.code === 200) {
+        message.success('点赞成功')
+        router.go(0)
+      } else {
+        message.error(res.msg)
+      }
+    }
     return {
       ...toRefs(state),
       GetArticle,
@@ -409,7 +416,8 @@ export default defineComponent({
       customRequest,
       onCreateClueClick,
       collectArticle,
-      onCreateCollectionClick
+      onCreateCollectionClick,
+      likeArticleHandle
     }
   }
 })
