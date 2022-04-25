@@ -6,7 +6,6 @@ import com.wq.service.UserInfoService;
 import com.wq.service.UserService;
 import com.wq.service.message.*;
 import com.wq.util.PageUtils;
-import com.wq.util.shiro.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,8 +62,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getAdoptMailBoxCount")
-    public Result getAdoptMailboxCount () {
-        Integer count = adoptMailboxService.getMailBoxCount (ShiroUtils.getUserId ());
+    public Result getAdoptMailboxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = adoptMailboxService.getMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -72,8 +72,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getUnReadAdoptMailBoxCount")
-    public Result getUnReadAdoptMailBoxCount () {
-        Integer count = adoptMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
+    public Result getUnReadAdoptMailBoxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = adoptMailboxService.getUnreadMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -81,8 +82,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getAdoptMessages")
-    public Result getAdoptMessages () {
-        List<AdoptMailbox> messages = adoptMailboxService.getMessages (ShiroUtils.getUserId ());
+    public Result getAdoptMessages (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        List<AdoptMailbox> messages = adoptMailboxService.getMessages (userId);
 
         for (AdoptMailbox message : messages) {
             setUserInfo (message);
@@ -118,8 +120,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getClueMailBoxCount")
-    public Result getClueMailboxCount () {
-        Integer count = clueMailboxService.getMailBoxCount (ShiroUtils.getUserId ());
+    public Result getClueMailboxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = clueMailboxService.getMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -127,8 +130,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getUnReadClueMailBoxCount")
-    public Result getUnReadClueMailBoxCount () {
-        Integer count = clueMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
+    public Result getUnReadClueMailBoxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = clueMailboxService.getUnreadMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -136,8 +140,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getClueMessages")
-    public Result getClueMessages () {
-        List<ClueMailbox> messages = clueMailboxService.getMessages (ShiroUtils.getUserId ());
+    public Result getClueMessages (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        List<ClueMailbox> messages = clueMailboxService.getMessages (userId);
 
         for (ClueMailbox message : messages) {
             setUserInfo (message);
@@ -173,8 +178,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getCommentMailBoxCount")
-    public Result getCommentMailboxCount () {
-        Integer count = commentMailboxService.getMailBoxCount (ShiroUtils.getUserId ());
+    public Result getCommentMailboxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = commentMailboxService.getMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -182,8 +188,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getUnReadCommentMailBoxCount")
-    public Result getUnReadCommentMailBoxCount () {
-        Integer count = commentMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
+    public Result getUnReadCommentMailBoxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = commentMailboxService.getUnreadMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -191,8 +198,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getCommentMessages")
-    public Result getCommentMessages () {
-        List<CommentMailbox> messages = commentMailboxService.getMessages (ShiroUtils.getUserId ());
+    public Result getCommentMessages (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        List<CommentMailbox> messages = commentMailboxService.getMessages (userId);
 
         for (CommentMailbox message : messages) {
             setUserInfo (message);
@@ -227,8 +235,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getReplyMailBoxCount")
-    public Result getReplyMailboxCount () {
-        Integer count = replyMailboxService.getMailBoxCount (ShiroUtils.getUserId ());
+    public Result getReplyMailboxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = replyMailboxService.getMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -236,8 +245,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getUnReadReplyMailBoxCount")
-    public Result getUnReadReplyMailBoxCount () {
-        Integer count = replyMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
+    public Result getUnReadReplyMailBoxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = replyMailboxService.getUnreadMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -245,8 +255,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getReplyMessages")
-    public Result getReplyMessages () {
-        List<ReplyMailbox> messages = replyMailboxService.getMessages (ShiroUtils.getUserId ());
+    public Result getReplyMessages (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        List<ReplyMailbox> messages = replyMailboxService.getMessages (userId);
         for (ReplyMailbox message : messages) {
             setUserInfo (message);
         }
@@ -280,8 +291,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getCommentLikeMailBoxCount")
-    public Result getCommentLikeMailboxCount () {
-        Integer count = commentLikeMailboxService.getMailBoxCount (ShiroUtils.getUserId ());
+    public Result getCommentLikeMailboxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = commentLikeMailboxService.getMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -289,8 +301,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getUnReadCommentLikeMailBoxCount")
-    public Result getUnReadCommentLikeMailBoxCount () {
-        Integer count = commentLikeMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
+    public Result getUnReadCommentLikeMailBoxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = commentLikeMailboxService.getUnreadMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -298,8 +311,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getCommentLikeMessages")
-    public Result getCommentLikeMessages () {
-        List<CommentLikeMailbox> messages = commentLikeMailboxService.getMessages (ShiroUtils.getUserId ());
+    public Result getCommentLikeMessages (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        List<CommentLikeMailbox> messages = commentLikeMailboxService.getMessages (userId);
 
         for (CommentLikeMailbox message : messages) {
             setUserInfo (message);
@@ -335,8 +349,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getTitleLikeMailBoxCount")
-    public Result getTitleLikeMailboxCount () {
-        Integer count = titleLikeMailboxService.getMailBoxCount (ShiroUtils.getUserId ());
+    public Result getTitleLikeMailboxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = titleLikeMailboxService.getMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -344,8 +359,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getUnReadTitleLikeMailBoxCount")
-    public Result getUnReadTitleLikeMailBoxCount () {
-        Integer count = titleLikeMailboxService.getUnreadMailBoxCount (ShiroUtils.getUserId ());
+    public Result getUnReadTitleLikeMailBoxCount (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        Integer count = titleLikeMailboxService.getUnreadMailBoxCount (userId);
 
         Map<String, Object> map = new HashMap<>(16);
         map.put ("count", count);
@@ -353,8 +369,9 @@ public class MailBoxController {
     }
 
     @PostMapping("/getTitleLikeMessages")
-    public Result getTitleLikeMessages () {
-        List<TitleLikeMailbox> messages = titleLikeMailboxService.getMessages (ShiroUtils.getUserId ());
+    public Result getTitleLikeMessages (@RequestBody Map<String, Object> params) {
+        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        List<TitleLikeMailbox> messages = titleLikeMailboxService.getMessages (userId);
         for (TitleLikeMailbox message : messages) {
             setUserInfo (message);
         }

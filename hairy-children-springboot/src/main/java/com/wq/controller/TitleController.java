@@ -141,7 +141,7 @@ public class TitleController {
         }
 
         Title title = titleService.getById (titleId);
-        title.setIsFinish (2);
+        title.setIsFinish (1);
         boolean update = titleService.updateById (title);
 
         return update ? Result.success ("更新成功") : Result.fail ("更新失败");

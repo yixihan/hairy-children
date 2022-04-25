@@ -11,6 +11,7 @@ import com.wq.service.TitleService;
 import com.wq.service.UserCollectionService;
 import com.wq.util.PageUtils;
 import com.wq.util.shiro.ShiroUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +24,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author wq
@@ -43,7 +44,7 @@ public class UserCollectionController {
     private TitleService titleService;
 
     @PostMapping("/createFavorites")
-    public Result createFavorites (@RequestBody UserCollection userCollection) {
+    public Result createFavorites(@RequestBody UserCollection userCollection) {
         userCollection.setUserId (ShiroUtils.getUserId ());
         boolean save = userCollectionService.save (userCollection);
 
@@ -51,14 +52,14 @@ public class UserCollectionController {
     }
 
     @PostMapping("/updateFavorites")
-    public Result updateFavorites (@RequestBody UserCollection userCollection) {
+    public Result updateFavorites(@RequestBody UserCollection userCollection) {
         boolean update = userCollectionService.updateById (userCollection);
 
         return update ? Result.success ("修改收藏夹成功 !") : Result.fail ("修改收藏夹失败");
     }
 
     @PostMapping("/deleteFavorites")
-    public Result deleteFavorites (@RequestBody Map<String, Object> params) {
+    public Result deleteFavorites(@RequestBody Map<String, Object> params) {
         long userCollectionId = Long.parseLong (String.valueOf (params.get ("userCollectionId")));
 
         boolean remove = userCollectionService.removeById (userCollectionId);
@@ -67,14 +68,13 @@ public class UserCollectionController {
     }
 
     @PostMapping("/getAllFavorites")
-    public Result getAllFavorites (@RequestBody Map<String, Object> params) {
+    public Result getAllFavorites(@RequestBody Map<String, Object> params) {
 
         long userId = Long.parseLong (String.valueOf (params.get ("userId")));
 
         List<UserCollection> userCollectionList = userCollectionService.getAllCollectionById (userId);
 
-        PageUtils userCollectionPage =
-                new PageUtils (userCollectionList, userCollectionList.size (), 10, 0);
+        PageUtils userCollectionPage = new PageUtils (userCollectionList, userCollectionList.size (), 5, 0);
 
         HashMap<String, Object> map = new HashMap<> (16);
         map.put ("page", userCollectionPage);
@@ -82,7 +82,8 @@ public class UserCollectionController {
     }
 
     @PostMapping("/addCollection")
-    public Result addCollection (@RequestBody CollectionTitle collectionTitle) {
+    @Transactional(rollbackFor = RuntimeException.class)
+    public Result addCollection(@RequestBody CollectionTitle collectionTitle) {
         Long collectionId = collectionTitle.getCollectionId ();
         Long titleId = collectionTitle.getTitleId ();
 
@@ -91,8 +92,7 @@ public class UserCollectionController {
         }
 
         QueryWrapper<CollectionTitle> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("collection_id", collectionId)
-                .eq ("title_id", titleId);
+        wrapper.eq ("collection_id", collectionId).eq ("title_id", titleId);
         CollectionTitle one = collectionTitleService.getOne (wrapper);
 
         if (one != null) {
@@ -101,14 +101,18 @@ public class UserCollectionController {
 
         UserCollection userCollection = userCollectionService.getById (collectionId);
         userCollection.setCollectionCount (userCollection.getCollectionCount () + 1);
-        boolean update = userCollectionService.updateById (userCollection);
+        Title title = titleService.getById (titleId);
+        title.setCollectionCount (title.getCollectionCount () + 1);
+        boolean update1 = userCollectionService.updateById (userCollection);
         boolean save = collectionTitleService.save (collectionTitle);
+        boolean update2 = titleService.updateById (title);
 
-        return save && update? Result.success ("收藏成功 !") : Result.fail ("收藏失败");
+        return save && update1 && update2 ? Result.success ("收藏成功 !") : Result.fail ("收藏失败");
     }
 
     @PostMapping("/deleteCollection")
-    public Result deleteCollection (@RequestBody Map<String, Object> params) {
+    @Transactional(rollbackFor = RuntimeException.class)
+    public Result deleteCollection(@RequestBody Map<String, Object> params) {
         long collectionTitleId = Long.parseLong (String.valueOf (params.get ("collectionTitleId")));
 
         CollectionTitle collectionTitle = collectionTitleService.getById (collectionTitleId);
@@ -119,21 +123,23 @@ public class UserCollectionController {
 
         UserCollection userCollection = userCollectionService.getById (collectionTitle.getCollectionId ());
         userCollection.setCollectionCount (userCollection.getCollectionCount () - 1);
-        boolean update = userCollectionService.updateById (userCollection);
+        Title title = titleService.getById (collectionTitle.getTitleId ());
+        title.setCollectionCount (title.getCollectionCount () > 0 ? title.getCollectionCount () - 1 : 0);
+        boolean update1 = userCollectionService.updateById (userCollection);
         boolean remove = collectionTitleService.removeById (collectionTitleId);
+        boolean update2 = titleService.updateById (title);
 
-        return update && remove ? Result.success ("取消收藏成功 !") : Result.fail ("取消收藏失败");
+        return update1 && update2 && remove ? Result.success ("取消收藏成功 !") : Result.fail ("取消收藏失败");
     }
 
     @PostMapping("/getAllCollections")
-    public Result getAllCollections (@RequestBody Map<String, Object> params) {
+    public Result getAllCollections(@RequestBody Map<String, Object> params) {
         long userCollectionId = Long.parseLong (String.valueOf (params.get ("userCollectionId")));
 
         List<CollectionTitle> collectionTitleList = collectionTitleService.
                 getAllCollectionTitle (userCollectionId);
 
-        PageUtils collectionTitlePage =
-                new PageUtils (collectionTitleList, collectionTitleList.size (), 10, 0);
+        PageUtils collectionTitlePage = new PageUtils (collectionTitleList, collectionTitleList.size (), 5, 0);
 
         HashMap<String, Object> map = new HashMap<> (16);
         map.put ("page", collectionTitlePage);

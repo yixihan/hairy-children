@@ -148,6 +148,7 @@ public class AdoptController {
     @PostMapping("/success")
     public Result finish (@RequestBody Map<String, Object> params) {
         long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
+        boolean isSuccess = Boolean.parseBoolean (String.valueOf (params.get ("isSuccess")));
         Adopt adopt = adoptService.getById (adoptId);
         Title title = titleService.getById (adopt.getTitleId ());
 
@@ -155,12 +156,18 @@ public class AdoptController {
             return Result.fail (555, "请勿重复同意申请");
         }
 
-        adopt.setIsSuccess (1);
-        title.setIsFinish (1);
-        boolean update1 = adoptService.updateById (adopt);
-        boolean update2 = titleService.updateById (title);
+        if (isSuccess) {
+            adopt.setIsSuccess (1);
+            title.setIsFinish (1);
+            boolean update1 = adoptService.updateById (adopt);
+            boolean update2 = titleService.updateById (title);
+            return update1 && update2 ? Result.success ("更新成功") : Result.fail ("更新失败");
+        } else {
+            adopt.setIsSuccess (2);
+            boolean update1 = adoptService.updateById (adopt);
+            return update1 ? Result.success ("更新成功") : Result.fail ("更新失败");
+        }
 
-        return update1 && update2 ? Result.success ("更新成功") : Result.fail ("更新失败");
     }
 
     @PostMapping("/getAllUserAdopts")
