@@ -226,7 +226,7 @@ public class TitleController {
 
         // 城市限制
         if (!"".equals (city)) {
-            wrapper.eq ("user_address", city);
+            wrapper.like ("user_address", city);
         }
 
         // 完成状态限制
