@@ -7,7 +7,7 @@
         <el-tag @click="readAll" v-if="userId == myUserId">全部阅读</el-tag>
       </div>
       <div class="null" v-if="isEmpty">
-        <h3>用户暂时没有收到点赞</h3>
+        <el-empty :image-size="200"></el-empty>
       </div>
       <ul>
         <li v-for="(item, index) in messageList" :key="index">

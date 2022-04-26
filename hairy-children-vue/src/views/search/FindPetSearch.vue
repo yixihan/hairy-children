@@ -24,17 +24,17 @@
         </el-form-item>
         <el-form-item label="按发布时间" prop="timeLimit">
           <el-radio-group v-model="data.timeLimit">
-            <el-radio label="今日"></el-radio>
-            <el-radio label="本周"></el-radio>
-            <el-radio label="半年内"></el-radio>
-            <el-radio label="不限"></el-radio>
+            <el-radio :label="1">今日</el-radio>
+            <el-radio :label="2">本周</el-radio>
+            <el-radio :label="3">半年内</el-radio>
+            <el-radio :label="4">不限</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="寻宠进度" prop="isFinish">
           <el-radio-group v-model="data.isFinish">
-            <el-radio label="已找回"></el-radio>
-            <el-radio label="未找回"></el-radio>
-            <el-radio label="不限"></el-radio>
+            <el-radio :label="0">已找回</el-radio>
+            <el-radio :label="1">未找回</el-radio>
+            <el-radio :label="3">不限</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="排序" prop="isFinish">
@@ -58,11 +58,11 @@
     <div class="meetpets" v-if="isSearch">
       <div class="adoption">
         <div class="null" v-if="isEmpty">
-          <h3>无贴子</h3>
+          <el-empty :image-size="200"></el-empty>
         </div>
         <ul>
           <li v-for="(item, index) in articleList" :key="index">
-            <a href="javascript:;">
+            <a href="javascript:;" @click="toArticle(item.titleId)">
               <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
               <div class="article">
                 <h3 class="title">{{ item.titleName }}</h3>
@@ -121,9 +121,9 @@ export default {
       data: {
         titleName: "",
         titleType: 2,
-        timeLimit: "不限",
+        timeLimit: 4,
         city: "",
-        isFinish: "不限",
+        isFinish: 3,
         sort: 0,
         time: false,
         like: false,
@@ -218,37 +218,6 @@ export default {
     dealData() {
       this.isEmpty = false;
       this.isSearch = false;
-      // 处理 timeLimit
-      if (this.data.timeLimit == "不限") {
-        this.data.timeLimit = 4;
-      } else if (this.data.timeLimit == "半年内") {
-        this.data.timeLimit = 3;
-      } else if (this.data.timeLimit == "本周") {
-        this.data.timeLimit = 2;
-      } else if (this.data.timeLimit == "今日") {
-        this.data.timeLimit = 1;
-      } else {
-        this.$message({
-          message: "出现未知错误, 请刷新页面重试",
-          type: "error",
-        });
-        this.reload();
-      }
-
-      // 处理 isFinish
-      if (this.data.isFinish == "不限") {
-        this.data.isFinish = 3;
-      } else if (this.data.isFinish == "未找回") {
-        this.data.isFinish = 0;
-      } else if (this.data.isFinish == "已找回") {
-        this.data.isFinish = 1;
-      } else {
-        this.$message({
-          message: "出现未知错误, 请刷新页面重试",
-          type: "error",
-        });
-        this.reload();
-      }
 
       // 处理 sort
       if (this.data.sort == 1) {
@@ -263,8 +232,8 @@ export default {
     },
     resetData() {
       this.data.titleName = "";
-      this.data.timeLimit = "不限";
-      this.data.isFinish = "不限";
+      this.data.timeLimit = 4;
+      this.data.isFinish = 3;
       this.data.city = "";
       this.data.sort = 0;
       this.data.time = false;
@@ -313,7 +282,11 @@ export default {
         val * this.articles.pageSize
       );
     },
+    toArticle (titleId) {
+      this.$router.push('/article/' + titleId)
+    }
   },
+  
 };
 </script>
 

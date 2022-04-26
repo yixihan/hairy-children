@@ -322,6 +322,7 @@ export default {
 
       //存储(共享)全局变量jwt和userInfo
       this.$store.commit("SET_TOKEN", jwt);
+      this.$store.commit("SET_USERID", data.data.userId);
 
       // 获取 userInfo
       this.getUserInfo(data.data.userId, jwt);

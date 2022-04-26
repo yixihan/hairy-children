@@ -24,6 +24,12 @@ import UserCommentReplyMsg from '@/views/user/msg/UserCommentReplyMsg'
 import UserLikeMsg from '@/views/user/msg/UserLikeMsg'
 import AdoptSearch from '@/views/search/AdoptSearch'
 import FindPetSearch from '@/views/search/FindPetSearch'
+import WriteArticle from '@/views/article/WriteArticle'
+import WriteAdopt from '@/views/article/WriteAdopt'
+import WriteClue from '@/views/article/WriteClue'
+import ShowArticle from '@/views/article/ShowArticle'
+import ShowAdopt from '@/views/article/ShowAdopt'
+import ShowClue from '@/views/article/ShowClue'
 
 Vue.use(VueRouter);
 
@@ -44,6 +50,7 @@ const routes = [
       requireAuth: false
     },
     children: [
+      // 主页
       {
         path: '/',
         name: 'index',
@@ -52,22 +59,7 @@ const routes = [
           requireAuth: false
         }
       },
-      {
-        path: '/login',
-        name: 'login',
-        component: Login,
-        meta: {
-          requireAuth: false
-        }
-      },
-      {
-        path: '/register',
-        name: 'register',
-        component: Register,
-        meta: {
-          requireAuth: false
-        }
-      },
+      // 测试页面
       {
         path: '/test',
         name: 'test',
@@ -76,6 +68,25 @@ const routes = [
           requireAuth: true
         }
       },
+      // 登录
+      {
+        path: '/login',
+        name: 'login',
+        component: Login,
+        meta: {
+          requireAuth: false
+        }
+      },
+      // 注册
+      {
+        path: '/register',
+        name: 'register',
+        component: Register,
+        meta: {
+          requireAuth: false
+        }
+      },
+      // 重置密码
       {
         path: '/resetPassword',
         name: 'resetPassword',
@@ -208,6 +219,7 @@ const routes = [
           },
         ]
       },
+      // 搜索相关
       {
         path: '/search/adopt',
         name: 'searchAdopt',
@@ -223,6 +235,57 @@ const routes = [
         meta: {
           requireAuth: true
         }
+      },
+      // 贴子相关
+      {
+        path: '/article/create',
+        name: 'creatArticle',
+        component: WriteArticle,
+        meta: {
+          requireAuth: true
+        },
+      },
+      {
+        path: '/article/:titleId',
+        name: 'showArticle',
+        component: ShowArticle,
+        meta: {
+          requireAuth: true
+        },
+      },
+      // 领养申请
+      {
+        path: '/article/:titleId/adopt/create',
+        name: 'creatAdopt',
+        component: WriteAdopt,
+        meta: {
+          requireAuth: true
+        },
+      },
+      {
+        path: '/article/:titleId/adopt/:adoptId',
+        name: 'showAdopt',
+        component: ShowAdopt,
+        meta: {
+          requireAuth: true
+        },
+      },
+      // 线索
+      {
+        path: '/article/:titleId/clue/create',
+        name: 'creatClue',
+        component: WriteClue,
+        meta: {
+          requireAuth: true
+        },
+      },
+      {
+        path: '/article/:titleId/clue/:clueId',
+        name: 'showClue',
+        component: ShowClue,
+        meta: {
+          requireAuth: true
+        },
       }
     ]
   },

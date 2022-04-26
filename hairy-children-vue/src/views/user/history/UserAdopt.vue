@@ -2,7 +2,7 @@
   <div class="meetpets">
     <div class="adoption">
       <div class="null" v-if="isEmpty">
-        <h3>用户暂无领养申请</h3>
+        <el-empty :image-size="200"></el-empty>
       </div>
       <ul>
         <li v-for="(item, index) in adoptList" :key="index">

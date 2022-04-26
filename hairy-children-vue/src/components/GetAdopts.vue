@@ -5,31 +5,30 @@
         <el-empty :image-size="200"></el-empty>
       </div>
       <ul>
-        <li v-for="(item, index) in articleList" :key="index">
+        <li v-for="(item, index) in adoptList" :key="index">
           <a href="javascript:;">
-            <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
+            <img :src="item.imgs[0]" alt="正在加载中" />
             <div class="article">
-              <h3 class="title">{{ item.titleName }}</h3>
-              <p>
-                {{ item.titleContent }}
-              </p>
+              <h3 class="title">
+                申请人 :
+                <el-avatar size="small" :src="item.userAvatar"></el-avatar
+                ><span v-text="item.userName"></span>
+              </h3>
+              <p>申请理由 : {{ item.adoptReason }}</p>
               <div class="petstatus">
-                <el-tag>点赞 : {{ item.likeCount }}</el-tag>
-                <el-tag>评论 : {{ item.commentCount }}</el-tag>
-                <el-tag>收藏 : {{ item.collectionCount }}</el-tag>
-                <el-tag>发布城市 : {{ item.userAddress }}</el-tag>
+                <el-tag>{{ item.adoptUserAddress }}</el-tag>
                 <el-tag
-                  >发布于 :
-                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
+                  >申请于 :
+                  {{
+                    new Date(item.gmtCreate).format("yyyy-MM-dd hh:mm:ss")
+                  }}</el-tag
                 >
                 <el-tag class="adopted">{{
-                  item.titleType == 1
-                    ? item.isFinish == 1
-                      ? "已领养"
-                      : "未领养"
-                    : item.isFinish == 1
-                    ? "已找到"
-                    : "未找到"
+                  item.isSuccess == 1
+                    ? "已通过"
+                    : item.isSuccess == 0
+                    ? "暂未审核"
+                    : "已拒绝"
                 }}</el-tag>
               </div>
             </div>
@@ -39,13 +38,12 @@
       <el-pagination
         background
         layout="prev, pager, next"
-        :page-size="article.pageSize"
-        :total="article.totalCount"
+        :page-size="adopt.pageSize"
+        :total="adopt.totalCount"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         class="pagination"
-        v-if="!isEmpty"
-        :hide-on-single-page="article.totalCount <= article.pageSize"
+        :hide-on-single-page="adopt.totalCount <= adopt.pageSize"
       >
       </el-pagination>
     </div>
@@ -53,14 +51,16 @@
 </template>
 
 <script>
-import format from "../../../utils/DateFormat.js";
+import format from "@/utils/DateFormat.js";
 
 export default {
+  name: "GetAdopts",
   format,
+  props: ["titleId"],
   data() {
     return {
-      articleList: [],
-      article: {
+      adoptList: [],
+      adopt: {
         currPage: 0,
         list: [],
         pageSize: 0,
@@ -77,20 +77,20 @@ export default {
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
-      this.articleList = this.article.list.slice(
-        (val - 1) * this.article.pageSize,
-        val * this.article.pageSize
+      this.adoptList = this.adopt.list.slice(
+        (val - 1) * this.adopt.pageSize,
+        val * this.adopt.pageSize
       );
     },
-    async getUserArticle() {
+    async getUserAdopt() {
       const data = await this.$axios({
-        url: "/title/getAllUserTitles",
+        url: "/adopt/getAllTitleAdopts",
         method: "post",
         headers: {
           "Jwt-Token": this.$store.getters.getToken,
         },
         data: {
-          userId: this.userId,
+          titleId: this.titleId,
         },
       });
 
@@ -98,24 +98,37 @@ export default {
     },
     setInfo() {
       this.userId = this.$route.params.userId;
-      this.getUserArticle().then(({ data }) => {
-        this.article = data.data.page;
-        if (this.article.list.length == 0) {
+      this.getUserAdopt().then(({ data }) => {
+        console.log(data);
+        this.adopt = data.data.page;
+        if (this.adopt.list.length == 0) {
           this.isEmpty = true;
           return;
         }
+        for (var i = 0; i < this.adopt.list.length; i++) {
+          if (this.adopt.list[i].imgs == null) {
+            this.adopt.list[i].imgs = [];
+            this.adopt.list[i].imgs.push("/adopt/default/default.png");
+          }
+          this.adopt.list[i].imgs[0] =
+            "http://175.24.229.41:9421/" + this.adopt.list[i].imgs[0];
+          this.adopt.list[i].userAvatar =
+            "http://175.24.229.41:9421/" + this.adopt.list[i].userAvatar;
+        }
 
-        this.articleList = this.article.list.slice(0, this.article.pageSize);
+        this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);
       });
     },
   },
+
   created() {
     this.setInfo();
   },
 };
 </script>
 
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 * {
   margin: 0;
   padding: 0;
@@ -123,6 +136,7 @@ export default {
 .meetpets {
   margin: 26px auto;
   width: 100%;
+  height: 100%;
   max-width: 1280px;
   // height: 600px;
   background: #fff;

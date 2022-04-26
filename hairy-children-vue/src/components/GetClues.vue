@@ -5,31 +5,21 @@
         <el-empty :image-size="200"></el-empty>
       </div>
       <ul>
-        <li v-for="(item, index) in articleList" :key="index">
+        <li v-for="(item, index) in clueList" :key="index">
           <a href="javascript:;">
-            <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
+            <img :src="item.imgs[0]" alt="正在加载中" />
             <div class="article">
-              <h3 class="title">{{ item.titleName }}</h3>
-              <p>
-                {{ item.titleContent }}
-              </p>
+              <h3 class="title">线索内容 :</h3>
+              <p>{{ item.clueContent }}</p>
               <div class="petstatus">
-                <el-tag>点赞 : {{ item.likeCount }}</el-tag>
-                <el-tag>评论 : {{ item.commentCount }}</el-tag>
-                <el-tag>收藏 : {{ item.collectionCount }}</el-tag>
-                <el-tag>发布城市 : {{ item.userAddress }}</el-tag>
                 <el-tag
                   >发布于 :
-                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
+                  {{
+                    new Date(item.gmtCreate).format("yyyy-MM-dd hh:mm:ss")
+                  }}</el-tag
                 >
                 <el-tag class="adopted">{{
-                  item.titleType == 1
-                    ? item.isFinish == 1
-                      ? "已领养"
-                      : "未领养"
-                    : item.isFinish == 1
-                    ? "已找到"
-                    : "未找到"
+                  item.isSuccess == 1 ? "已被采用" : "暂未被采用"
                 }}</el-tag>
               </div>
             </div>
@@ -39,13 +29,12 @@
       <el-pagination
         background
         layout="prev, pager, next"
-        :page-size="article.pageSize"
-        :total="article.totalCount"
+        :page-size="clue.pageSize"
+        :total="clue.totalCount"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         class="pagination"
-        v-if="!isEmpty"
-        :hide-on-single-page="article.totalCount <= article.pageSize"
+        :hide-on-single-page="clue.totalCount <= clue.pageSize"
       >
       </el-pagination>
     </div>
@@ -53,14 +42,16 @@
 </template>
 
 <script>
-import format from "../../../utils/DateFormat.js";
+import format from "@/utils/DateFormat.js";
 
 export default {
+  name: "GetClues",
   format,
+  props: ["titleId"],
   data() {
     return {
-      articleList: [],
-      article: {
+      clueList: [],
+      clue: {
         currPage: 0,
         list: [],
         pageSize: 0,
@@ -77,20 +68,20 @@ export default {
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
-      this.articleList = this.article.list.slice(
-        (val - 1) * this.article.pageSize,
-        val * this.article.pageSize
+      this.clueList = this.clue.list.slice(
+        (val - 1) * this.clue.pageSize,
+        val * this.clue.pageSize
       );
     },
-    async getUserArticle() {
+    async getUserClue() {
       const data = await this.$axios({
-        url: "/title/getAllUserTitles",
+        url: "/clue/getAllTitleClues",
         method: "post",
         headers: {
           "Jwt-Token": this.$store.getters.getToken,
         },
         data: {
-          userId: this.userId,
+          titleId: this.titleId,
         },
       });
 
@@ -98,30 +89,42 @@ export default {
     },
     setInfo() {
       this.userId = this.$route.params.userId;
-      this.getUserArticle().then(({ data }) => {
-        this.article = data.data.page;
-        if (this.article.list.length == 0) {
+      this.getUserClue().then(({ data }) => {
+        console.log(data);
+        this.clue = data.data.page;
+        if (this.clue.list.length == 0) {
           this.isEmpty = true;
           return;
         }
+        for (var i = 0; i < this.clue.list.length; i++) {
+          if (this.clue.list[i].imgs == null) {
+            this.clue.list[i].imgs = [];
+            this.clue.list[i].imgs.push("/clue/default/default.png");
+          }
+          this.clue.list[i].imgs[0] =
+            "http://175.24.229.41:9421/" + this.clue.list[i].imgs[0];
+        }
 
-        this.articleList = this.article.list.slice(0, this.article.pageSize);
+        this.clueList = this.clue.list.slice(0, this.clue.pageSize);
       });
     },
   },
+
   created() {
     this.setInfo();
   },
 };
 </script>
 
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 * {
   margin: 0;
   padding: 0;
 }
 .meetpets {
   margin: 26px auto;
+  width: 100%;
   width: 100%;
   max-width: 1280px;
   // height: 600px;

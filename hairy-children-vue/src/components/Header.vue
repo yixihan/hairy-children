@@ -5,8 +5,13 @@
       <li class="col" v-if="!isLogin" @click="toLogin">登录</li>
       <li class="col" v-if="!isLogin" @click="toRegister">注册</li>
       <span class="col text" v-if="isLogin">{{ userName }}, 欢迎回来</span>
-      <li class="col" v-if="isLogin" @click="toCenter">个人中心</li>
-      <li class="col" v-if="isLogin" @click="toWriteArticle">我要发布</li>
+      <li class="col" v-if="isLogin" @click="toCenter">
+        <i class="el-icon-user"></i>个人中心
+      </li>
+      
+      <li class="col" v-if="isLogin" @click="toWriteArticle">
+        <i class="el-icon-plus"></i>我要发布
+      </li>
       <li class="col" v-if="isLogin" @click="cancellation">注销</li>
     </ul>
   </div>
@@ -44,6 +49,8 @@ export default {
     toWriteArticle() {
       if (this.$store.getters.getUser.userIdentityCard == null) {
         this.open();
+      } else {
+        this.$router.push("/article/create");
       }
     },
     open() {
@@ -51,7 +58,7 @@ export default {
         confirmButtonText: "实名认证",
         cancelButtonText: "取消",
         type: "warning",
-        center: true
+        center: true,
       })
         .then(() => {
           this.$router.push(

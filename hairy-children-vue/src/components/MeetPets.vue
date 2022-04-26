@@ -4,7 +4,7 @@
       <h2 @click="toAdoptSearch">领养</h2>
       <ul>
         <li v-for="(item, index) in adoptArticles.list" :key="index">
-          <a href="javascript:;">
+          <a href="javascript:;" @click="toArticle(item.titleId)">
             <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
             <div class="article">
               <h3 class="title">{{ item.titleName }}</h3>
@@ -31,7 +31,7 @@
       <h2 @click="toFindPetSearch">寻宠</h2>
       <ul>
         <li v-for="(item, index) in findPetsArticles.list" :key="index">
-          <a href="javascript:;">
+          <a href="javascript:;" @click="toArticle(item.titleId)">
             <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
             <div class="article">
               <h3 class="title">{{ item.titleName }}</h3>
@@ -121,6 +121,9 @@ export default {
     toAdoptSearch() {
       this.$router.push("/search/adopt");
     },
+    toArticle (titleId) {
+      this.$router.push('/article/' + titleId)
+    }
   },
   created() {
     this.setInfo();
