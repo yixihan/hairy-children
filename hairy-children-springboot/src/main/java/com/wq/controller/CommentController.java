@@ -164,13 +164,15 @@ public class CommentController {
 
         List<CommentRoot> commentRootList = commentRootService.getAll (titleId);
 
-        for (CommentRoot commentRoot : commentRootList) {
-            for (CommentReply commentReply : commentRoot.getCommentReplyList ()) {
-                setUserInfo (commentReply);
+        if (commentRootList != null) {
+            for (CommentRoot commentRoot : commentRootList) {
+                for (CommentReply commentReply : commentRoot.getCommentReplyList ()) {
+                    setUserInfo (commentReply);
+                }
+                setUserInfo (commentRoot);
             }
-            setUserInfo (commentRoot);
         }
-        PageUtils commentPage = new PageUtils (commentRootList, commentRootList.size (), 5, 0);
+        PageUtils commentPage = new PageUtils (commentRootList, commentRootList == null ? 0 : commentRootList.size (), 5, 0);
 
         HashMap<String, Object> map = new HashMap<> (8);
         map.put ("page", commentPage);

@@ -187,6 +187,20 @@ public class TitleController {
         return Result.success (map);
     }
 
+    @PostMapping("/getTitleType")
+    public Result getTitleType(@RequestBody Map<String, Object> params) {
+        long titleId = Long.parseLong (String.valueOf (params.get ("titleId")));
+
+        QueryWrapper<Title> wrapper = new QueryWrapper<> ();
+        wrapper.eq ("title_id", titleId).select ("title_type");
+        Title title = titleService.getOne (wrapper);
+
+        Map<String, Object> map = new HashMap<> (16);
+        map.put ("titleType", title.getTitleType ());
+
+        return Result.success (map);
+    }
+
     /**
      * 查询文章
      * <p>
