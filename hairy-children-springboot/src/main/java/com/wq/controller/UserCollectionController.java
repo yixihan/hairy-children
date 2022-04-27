@@ -3,12 +3,8 @@ package com.wq.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wq.common.pojo.Result;
-import com.wq.pojo.CollectionTitle;
-import com.wq.pojo.Title;
-import com.wq.pojo.UserCollection;
-import com.wq.service.CollectionTitleService;
-import com.wq.service.TitleService;
-import com.wq.service.UserCollectionService;
+import com.wq.pojo.*;
+import com.wq.service.*;
 import com.wq.util.PageUtils;
 import com.wq.util.shiro.ShiroUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +36,12 @@ public class UserCollectionController {
 
     @Resource
     private CollectionTitleService collectionTitleService;
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private UserInfoService userInfoService;
 
     @Resource
     private TitleService titleService;
@@ -139,11 +142,27 @@ public class UserCollectionController {
         List<CollectionTitle> collectionTitleList = collectionTitleService.
                 getAllCollectionTitle (userCollectionId);
 
-        PageUtils collectionTitlePage = new PageUtils (collectionTitleList, collectionTitleList.size (), 5, 0);
+        List<Title> listList = new ArrayList<>();
+
+        for (CollectionTitle collectionTitle : collectionTitleList) {
+            Title title = titleService.getById (collectionTitle.getTitleId ());
+            setUserInfo (title);
+            listList.add(title);
+        }
+
+        PageUtils titlePage = new PageUtils (listList, listList.size (), 5, 0);
 
         HashMap<String, Object> map = new HashMap<> (16);
-        map.put ("page", collectionTitlePage);
+        map.put ("page", titlePage);
         return Result.success (map);
+    }
+
+    private void setUserInfo (Title title) {
+        UserInfo info = userInfoService.getUserInfoById (title.getUserId ());
+        User user = userService.getById (title.getUserId ());
+
+        title.setUserAvatar (info.getUserAvatar ());
+        title.setUserName (user.getUserName ());
     }
 
 }

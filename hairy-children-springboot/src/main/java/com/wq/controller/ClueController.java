@@ -150,7 +150,7 @@ public class ClueController {
         clue.setImgsDir (imgsDir.replaceAll (imgUrl + "::", ""));
         boolean update = clueService.updateById (clue);
 
-        return update ? Result.success ("删除成功") : Result.fail ("删除失败");
+        return update ? Result.success ("图片删除成功") : Result.fail ("图片删除失败");
     }
 
     @PostMapping("/getClue")
