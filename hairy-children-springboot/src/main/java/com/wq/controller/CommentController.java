@@ -272,7 +272,7 @@ public class CommentController {
         Map<String, Object> columns = new HashMap<>(16);
         columns.put ("title_id", commentLikeMailbox.getTitleId ());
         columns.put ("send_user_id", commentLikeMailbox.getSendUserId ());
-        columns.put ("receive_user", commentLikeMailbox.getReceiveUserId ());
+        columns.put ("receive_user_id", commentLikeMailbox.getReceiveUserId ());
         columns.put ("gmt_create", commentLikeMailbox.getGmtCreate ());
         wrapper.allEq (true, columns, true);
 

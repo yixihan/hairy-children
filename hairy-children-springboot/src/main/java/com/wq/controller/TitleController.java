@@ -350,6 +350,7 @@ public class TitleController {
         titleLikeMailbox.setTitleId (titleId);
         titleLikeMailbox.setSendUserId (userId);
         titleLikeMailbox.setReceiveUserId (title.getUserId ());
+        titleLikeMailbox.setGmtCreate (new Date ());
 
         boolean save = titleLikeMailboxService.save (titleLikeMailbox);
 
@@ -358,7 +359,13 @@ public class TitleController {
             throw new RuntimeException ("点赞失败");
         }
         QueryWrapper<TitleLikeMailbox> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("title_id", titleLikeMailbox.getTitleId ()).eq ("send_user_id", titleLikeMailbox.getSendUserId ()).like ("receive_user_id", titleLikeMailbox.getReceiveUserId ());
+        Map<String, Object> columns = new HashMap<>(16);
+        columns.put ("title_id", titleLikeMailbox.getTitleId ());
+        columns.put ("send_user_id", titleLikeMailbox.getSendUserId ());
+        columns.put ("receive_user_id", titleLikeMailbox.getReceiveUserId ());
+        columns.put ("gmt_create", titleLikeMailbox.getGmtCreate ());
+        wrapper.allEq (true, columns, true);
+        wrapper.allEq (true, columns, true);
 
         TitleLikeMailbox one = titleLikeMailboxService.getOne (wrapper);
 
