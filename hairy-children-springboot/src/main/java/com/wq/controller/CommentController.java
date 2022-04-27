@@ -208,13 +208,14 @@ public class CommentController {
         }
 
         List<UserComments> userCommentList = commentRootService.getUserComments (userId);
-
-        for (UserComments userComments : userCommentList) {
-            setUserInfo (userComments);
-            setTitleInfo (userComments);
+        if (userCommentList != null) {
+            for (UserComments userComments : userCommentList) {
+                setUserInfo (userComments);
+                setTitleInfo (userComments);
+            }
         }
 
-        PageUtils commentPage = new PageUtils (userCommentList, userCommentList.size (), 5, 0);
+        PageUtils commentPage = new PageUtils (userCommentList, userCommentList == null ? 0 : userCommentList.size (), 5, 0);
 
         HashMap<String, Object> map = new HashMap<> (8);
         map.put ("page", commentPage);
@@ -255,7 +256,7 @@ public class CommentController {
 
         commentRoot.setLikeCount (Math.toIntExact (redisService.getLikeValueAll (key)));
         boolean update = commentRootService.updateById (commentRoot);
-        commentRootService.updateRedis(userId, commentRoot.getAnswerId ());
+        commentRootService.updateRedis (userId, commentRoot.getAnswerId ());
 
         if (!update) {
             log.error ("评论更新失败");
@@ -276,7 +277,7 @@ public class CommentController {
             throw new RuntimeException ("点赞失败");
         }
         QueryWrapper<CommentLikeMailbox> wrapper = new QueryWrapper<> ();
-        Map<String, Object> columns = new HashMap<>(16);
+        Map<String, Object> columns = new HashMap<> (16);
         columns.put ("title_id", commentLikeMailbox.getTitleId ());
         columns.put ("send_user_id", commentLikeMailbox.getSendUserId ());
         columns.put ("receive_user_id", commentLikeMailbox.getReceiveUserId ());
@@ -376,7 +377,7 @@ public class CommentController {
         return commentRootService.updateById (commentRoot);
     }
 
-    private void setUserInfo (CommentRoot commentRoot) {
+    private void setUserInfo(CommentRoot commentRoot) {
         UserInfo info = userInfoService.getUserInfoById (commentRoot.getUserId ());
         User user = userService.getById (commentRoot.getUserId ());
 
@@ -384,7 +385,7 @@ public class CommentController {
         commentRoot.setUserName (user.getUserName ());
     }
 
-    private void setUserInfo (CommentReply commentReply) {
+    private void setUserInfo(CommentReply commentReply) {
         UserInfo info = userInfoService.getUserInfoById (commentReply.getUserId ());
         User user = userService.getById (commentReply.getUserId ());
 
@@ -400,7 +401,7 @@ public class CommentController {
         }
     }
 
-    private void setUserInfo (UserComments userComments) {
+    private void setUserInfo(UserComments userComments) {
 
         UserInfo info = userInfoService.getUserInfoById (userComments.getUserId ());
         User user = userService.getById (userComments.getUserId ());
@@ -420,15 +421,17 @@ public class CommentController {
 
     }
 
-    private void setTitleInfo (UserComments userComments) {
+    private void setTitleInfo(UserComments userComments) {
         Title title = titleService.getById (userComments.getAnswerId ());
 
-        userComments.setTitleAuthorId (title.getUserId ());
-        userComments.setTitleName (title.getTitleName ());
-        userComments.setTitleImg (title.getTitleImg ());
+        if (title != null) {
+            userComments.setTitleAuthorId (title.getUserId ());
+            userComments.setTitleName (title.getTitleName ());
+            userComments.setTitleImg (title.getTitleImg ());
+        } else {
+            userComments.setTitleImg ("/title/default.png");
+        }
     }
-
-
 
 
 }
