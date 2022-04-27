@@ -25,7 +25,7 @@ axios.interceptors.request.use(config => {
 axios.interceptors.response.use(response => {
   let res = response.data;
   // eslint-disable-next-line no-constant-condition
-  if (res.code == 200) {
+  if (res.code == 200 || res.code == 555) {
     return response
   } else {
     Element.Message.error(res.msg, { duration: 2 * 1000 })
@@ -36,7 +36,7 @@ axios.interceptors.response.use(response => {
 }, error => {
   // 使得异常信息更加友好
   console.log("error : ", error)
-  if (error.response.data) { //data不为空时
+  if (error.response.msg) { //data不为空时
     error.message = error.response.data.msg
     console.log("-------------------------")
     console.log(error.message)

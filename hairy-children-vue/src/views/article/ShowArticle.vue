@@ -5,10 +5,20 @@
     </div>
 
     <div class="adopt-or-clue">
-      <h2 v-if="titleType == 1">领养申请列表</h2>
-      <Adopt v-if="titleType == 1" :titleId="titleId"></Adopt>
-      <h2 v-if="titleType == 2">线索列表</h2>
-      <Clue v-if="titleType == 2" :titleId="titleId"></Clue>
+      <div v-if="titleType == 1">
+        <h2>领养申请列表</h2>
+        <el-button type="primary" @click="toCreatAdopt"
+          >申请领养</el-button
+        >
+        <Adopt :titleId="titleId"></Adopt>
+      </div>
+      <div v-if="titleType == 2">
+        <h2>线索列表</h2>
+        <el-button type="primary" @click="toCreatClue"
+          >提供线索</el-button
+        >
+        <Clue :titleId="titleId"></Clue>
+      </div>
     </div>
 
     <div class="comment">
@@ -54,13 +64,83 @@ export default {
       return data;
     },
     init() {
+      this.titleId = this.$route.params.titleId;
       this.getTitleType().then(({ data }) => {
-        this.titleType = data.data.titleType;
+        if (data.code == 200) {
+          this.titleType = data.data.titleType;
+        } else {
+          this.$message({
+            type: "error",
+            message: "没有该贴子",
+          });
+          this.$router.push("/");
+        }
       });
+    },
+    toCreatAdopt() {
+      this.creatAdopt().then(({ data }) => {
+        if (data.code == 200) {
+          this.$message({
+            type: "success",
+            message: data.msg,
+          });
+          this.$router.push("/adopt/" + data.data.adoptId + "/edit");
+        } else {
+           this.$message({
+            type: "error",
+            message: data.msg,
+          });
+        }
+      });
+    },
+    async creatAdopt() {
+      const data = await this.$axios({
+        url: "/adopt/creatAdopt",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          titleId: this.titleId,
+          userId: this.$store.getters.getUserId,
+        },
+      });
+
+      return data;
+    },
+    toCreatClue() {
+      this.creatClue().then(({ data }) => {
+        if (data.code == 200) {
+          this.$message({
+            type: "success",
+            message: data.msg,
+          });
+          this.$router.push("/adopclue/" + data.data.clueId + "/edit");
+        } else {
+           this.$message({
+            type: "error",
+            message: data.msg,
+          });
+        }
+      });
+    },
+    async creatClue() {
+      const data = await this.$axios({
+        url: "/clue/creatClue",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          titleId: this.titleId,
+          userId: this.$store.getters.getUserId,
+        },
+      });
+
+      return data;
     },
   },
   created() {
-    this.titleId = this.$route.params.titleId;
     this.init();
   },
 };
@@ -74,7 +154,7 @@ export default {
 
   .article {
     margin: 0 auto;
-    padding: 10px;
+
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
   }
 

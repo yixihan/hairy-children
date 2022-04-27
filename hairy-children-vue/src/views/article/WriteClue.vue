@@ -1,5 +1,5 @@
 <template>
-  <div>编写线索页面</div>
+  <div class="page">编写线索页面</div>
 </template>
 
 <script>
@@ -8,6 +8,9 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 
-</style>
+.page {
+  margin-top: 70px;
+}
+</style>>

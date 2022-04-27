@@ -182,6 +182,7 @@ export default {
       this.getArticle().then(({ data }) => {
         console.log(data);
         this.title = data.data.title;
+        this.title.markdown = this.title.titleContent
       });
     },
   },

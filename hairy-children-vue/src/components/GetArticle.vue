@@ -12,7 +12,9 @@
         最后修改时间 :
         {{ new Date(title.gmtModified).format("yyyy-MM-dd hh:mm:ss") }}
       </p>
-      <p>贴子类型 : {{title.titleType == 1 ? '领养贴' : '寻宠贴'}}</p>
+      <p>贴子类型 : {{ title.titleType == 1 ? "领养贴" : "寻宠贴" }}</p>
+      <el-button type="primary" @click="editArticle">修改贴子</el-button>
+      <el-button type="primary" @click="deleteArticle">删除贴子</el-button>
     </div>
 
     <mavon-editor
@@ -27,7 +29,7 @@
     ></mavon-editor>
 
     <div class="tag">
-      <el-tag>
+      <el-tag @click="likeTitle">
         <i v-if="!isLike" class="el-icon-like"></i>
         <i v-else class="el-icon-like-plus"></i>
         点赞 : {{ title.likeCount }}
@@ -81,6 +83,80 @@ export default {
           "http://175.24.229.41:9421/" + this.title.userAvatar;
       });
     },
+    likeTitle() {
+      this.$axios({
+        url: "/title/like",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          userId: this.$store.getters.getUserId,
+          titleId: this.titleId,
+        },
+      }).then(({ data }) => {
+        console.log(data);
+        if (data.code == 200) {
+          this.$message({
+            message: "点赞成功",
+            type: "success",
+          });
+          this.title.likeCount++;
+          this.isLike = true;
+        } else if (data.code == 555) {
+          this.$message({
+            message: data.msg,
+            type: "error",
+          });
+        }
+      });
+    },
+    editArticle() {
+      this.$router.push("/article/" + this.titleId + "/edit");
+    },
+    deleteArticle() {
+      this.$confirm("确认是否删除该贴子?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.delete().then(({ data }) => {
+            if (data.code == 200) {
+              this.$message({
+                type: "success",
+                message: "删除成功!",
+              });
+              this.$router.push("/");
+            } else {
+              this.$message({
+                type: "error",
+                message: "删除失败, 请重试!",
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    async delete() {
+      const data = await this.$axios({
+        url: "/title/deleteTitle",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          titleId: this.titleId,
+        },
+      });
+
+      return data;
+    },
   },
   created() {
     this.init();
@@ -107,13 +183,13 @@ export default {
     .el-icon-like {
       width: 15px;
       height: 15px;
-      background: url('~@/assets/icon/like.png') no-repeat;
+      background: url("~@/assets/icon/like.png") no-repeat;
       background-size: 12px;
     }
     .el-icon-like-plus {
       width: 15px;
       height: 15px;
-      background: url('~@/assets/icon/like-plus.png') no-repeat;
+      background: url("~@/assets/icon/like-plus.png") no-repeat;
       background-size: 12px;
     }
   }

@@ -6,7 +6,7 @@
       </div>
       <ul>
         <li v-for="(item, index) in adoptList" :key="index">
-          <a href="javascript:;">
+          <a href="javascript:;" @click="toAdopt(item.adoptId)">
             <img :src="item.imgs[0]" alt="正在加载中" />
             <div class="article">
               <h3 class="title">
@@ -118,6 +118,9 @@ export default {
 
         this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);
       });
+    },
+    toAdopt(adoptId) {
+      this.$router.push("/adopt/" + adoptId);
     },
   },
 

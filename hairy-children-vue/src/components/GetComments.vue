@@ -13,6 +13,12 @@
     </div>
 
     <div class="show-comments">
+      <div v-if="commentsPage.totalCount == 0">
+        <el-empty
+          :image-size="200"
+          description="还没有评论, 快来抢沙发吧"
+        ></el-empty>
+      </div>
       <div v-for="(root, index) in commentList" :key="'root-' + index">
         <div class="show-comment">
           <div class="userAvatar">
@@ -31,7 +37,7 @@
             </div>
 
             <div class="tag">
-              <el-tag>
+              <el-tag @click="likeComment(root.rootId)">
                 <i class="el-icon-like-plus"></i>
                 点赞 : {{ root.likeCount }}
               </el-tag>
@@ -111,7 +117,6 @@ export default {
     };
   },
   created() {
-    console.log(this.titleId);
     this.init();
   },
   methods: {
@@ -128,13 +133,26 @@ export default {
               message: "评论成功",
               type: "success",
             });
+            data.data.rootComment.userAvatar =
+              "http://175.24.229.41:9421/" + data.data.rootComment.userAvatar;
+            this.rootContent = "";
+            if (this.commentsPage.list == null) {
+              this.commentsPage.list = [];
+            }
+            this.commentsPage.list.push(data.data.rootComment);
+            this.commentsPage.totalCount++;
+            if (this.commentList.length < this.commentsPage.pageSize) {
+              if (this.commentList == null) {
+                this.commentList = [];
+              }
+              this.commentList.push(data.data.rootComment);
+            }
           } else {
             this.$message({
               message: "评论失败",
               type: "error",
             });
           }
-          this.reload();
         });
       }
     },
@@ -155,7 +173,6 @@ export default {
     },
     replyComment() {},
     async addSonComment(rootId, replyCommentId) {
-      
       const data = await this.$axios({
         url: "/comment/addSonComment/" + this.titleId,
         method: "post",
@@ -174,7 +191,10 @@ export default {
     getComments() {
       this.getAllTitleComments().then(({ data }) => {
         this.commentsPage = data.data.page;
-        if (this.commentsPage.list.length == 0) {
+        if (
+          this.commentsPage.list == null ||
+          this.commentsPage.list.length == 0
+        ) {
           this.isCommentEmpty = true;
           return;
         }
@@ -215,18 +235,41 @@ export default {
     },
     likeComment(rootId) {
       this.$axios({
-        url: "/comment/getAllTitleComment",
+        url: "/comment/likeComment",
         method: "post",
         headers: {
           "Jwt-Token": this.$store.getters.getToken,
         },
         data: {
-          titleId: this.titleId,
-          rootId: rootId
+          userId: this.$store.getters.getUserId,
+          rootId: rootId,
         },
-      }).then(({data})=>{
+      }).then(({ data }) => {
         console.log(data);
-      })
+        if (data.code == 200) {
+          this.$message({
+            message: "点赞成功",
+            type: "success",
+          });
+          let rootComment = this.selectCommentsByRootId(rootId);
+          rootComment.likeCount++;
+        } else if (data.code == 555) {
+          this.$message({
+            message: data.msg,
+            type: "error",
+          });
+        }
+      });
+    },
+
+    selectCommentsByRootId(rootId) {
+      for (var i = 0; i < this.commentsPage.list.length; i++) {
+        if (this.commentsPage.list[i].rootId === rootId) {
+          return this.commentsPage.list[i];
+        }
+      }
+
+      return null;
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);

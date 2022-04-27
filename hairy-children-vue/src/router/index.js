@@ -30,6 +30,7 @@ import WriteClue from '@/views/article/WriteClue'
 import ShowArticle from '@/views/article/ShowArticle'
 import ShowAdopt from '@/views/article/ShowAdopt'
 import ShowClue from '@/views/article/ShowClue'
+import EditArticle from '@/views/article/EditArticle'
 
 Vue.use(VueRouter);
 
@@ -253,17 +254,25 @@ const routes = [
           requireAuth: true
         },
       },
+      {
+        path: '/article/:titleId/edit',
+        name: 'editArticle',
+        component: EditArticle,
+        meta: {
+          requireAuth: true
+        },
+      },
       // 领养申请
       {
-        path: '/article/:titleId/adopt/create',
-        name: 'creatAdopt',
+        path: '/adopt/:adoptId/edit',
+        name: 'editAdopt',
         component: WriteAdopt,
         meta: {
           requireAuth: true
         },
       },
       {
-        path: '/article/:titleId/adopt/:adoptId',
+        path: '/adopt/:adoptId',
         name: 'showAdopt',
         component: ShowAdopt,
         meta: {
@@ -272,15 +281,15 @@ const routes = [
       },
       // 线索
       {
-        path: '/article/:titleId/clue/create',
-        name: 'creatClue',
+        path: '/clue/:clueId/edit',
+        name: 'editClue',
         component: WriteClue,
         meta: {
           requireAuth: true
         },
       },
       {
-        path: '/article/:titleId/clue/:clueId',
+        path: '/clue/:clueId',
         name: 'showClue',
         component: ShowClue,
         meta: {
