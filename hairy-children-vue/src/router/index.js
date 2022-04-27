@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import Home from '../views/Home.vue'
-import Index from '@/views/index.vue'
+import Index from '@/views/Index.vue'
 import Register from '../views/v/register.vue'
 import Login from '../views/v/login.vue'
 import Test from '../views/v/test.vue'

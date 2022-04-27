@@ -30,6 +30,17 @@
       style="min-height: 20px"
     ></mavon-editor>
 
+    <el-dialog title="添加到收藏夹" :visible.sync="dialogTableVisible" center>
+      <div v-for="(item, index) in userCollections.list" :key="index">
+        <el-checkbox
+          :v-model="item.checked"
+          @click="check(index)"
+        ></el-checkbox>
+        <span>{{ item.collectionName }}</span>
+        <span> {{ item.collectionCount }} / 1000 </span>
+      </div>
+    </el-dialog>
+
     <div class="tag">
       <el-tag @click="likeTitle">
         <i v-if="!isLike" class="el-icon-like"></i>
@@ -40,7 +51,7 @@
         <i class="el-icon-chat-square"></i>
         评论 : {{ title.commentCount }}
       </el-tag>
-      <el-tag>
+      <el-tag @click="collectionTitle">
         <i v-if="!isCollection" class="el-icon-star-off"></i>
         <i v-else class="el-icon-star-on"></i>
         收藏 : {{ title.collectionCount }}
@@ -60,9 +71,33 @@ export default {
       title: "",
       isCollection: false,
       isLike: false,
+      userCollections: {
+        totalCount: 2,
+        pageSize: 5,
+        totalPage: 1,
+        currPage: 0,
+        list: [],
+      },
+      dialogTableVisible: false,
+      checkList: [],
     };
   },
   methods: {
+    init() {
+      this.getArticle().then(({ data }) => {
+        this.title = data.data.title;
+        this.title.userAvatar =
+          "http://175.24.229.41:9421/" + this.title.userAvatar;
+      });
+
+      this.getUserCollections().then(({ data }) => {
+        this.userCollections = data.data.page;
+
+        for (let i = 0; i < this.userCollections.list.length; i++) {
+          this.userCollections.list[i].checked = false;
+        }
+      });
+    },
     async getArticle() {
       const data = await this.$axios({
         url: "/title/getTitle",
@@ -76,14 +111,6 @@ export default {
       });
 
       return data;
-    },
-    init() {
-      this.getArticle().then(({ data }) => {
-        console.log(data);
-        this.title = data.data.title;
-        this.title.userAvatar =
-          "http://175.24.229.41:9421/" + this.title.userAvatar;
-      });
     },
     likeTitle() {
       this.$axios({
@@ -158,6 +185,46 @@ export default {
       });
 
       return data;
+    },
+    async getUserCollections() {
+      const data = await this.$axios({
+        url: "/collection/getAllFavorites",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          userId: this.$store.getters.getUserId,
+        },
+      });
+
+      return data;
+    },
+    collectionTitle() {
+      this.dialogTableVisible = true;
+    },
+    async addTitleCollection(collectionId) {
+      const data = await this.$axios({
+        url: "/collection/addCollection",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          collectionId: collectionId,
+          titleId: this.titleId,
+        },
+      });
+
+      return data;
+    },
+    check(index) {
+      console.log(11);
+      this.userCollections.list[index].checked =
+        !this.userCollections.list[index].checked;
+      if (this.userCollections.list[index].checked) {
+        this.checkList.push(this.userCollections.list[index].collectionId);
+      }
     },
   },
   created() {
