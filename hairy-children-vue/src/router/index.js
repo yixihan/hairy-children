@@ -13,6 +13,8 @@ import Authentication from '@/views/user/setting/Authentication'
 import UserPhone from '@/views/user/setting/UserPhone'
 import UserEmail from '@/views/user/setting/UserEmail'
 import UserPassword from '@/views/user/setting/UserPassword'
+import UserFavorites from '@/views/user/collection/UserFavorites'
+import FavoriteList from '@/views/user/collection/FavoriteList'
 import UserAdopt from '@/views/user/history/UserAdopt'
 import UserClue from '@/views/user/history/UserClue'
 import UserComment from '@/views/user/history/UserComment'
@@ -142,6 +144,22 @@ const routes = [
             path: '/center/:userId/setting/password',
             name: '更改密码',
             component: UserPassword,
+            meta: {
+              requireAuth: true
+            },
+          },
+          {
+            path: '/center/:userId/favorite',
+            name: '收藏夹',
+            component: UserFavorites,
+            meta: {
+              requireAuth: true
+            },
+          },
+          {
+            path: '/center/:userId/favorite/:collectionId',
+            name: '收藏夹列表',
+            component: FavoriteList,
             meta: {
               requireAuth: true
             },

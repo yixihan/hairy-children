@@ -159,7 +159,7 @@ export default {
 
 <style lang="scss" scoped>
 .page {
-  margin: 50px auto auto auto;
+  margin: 80px auto auto auto;
   width: 1240px;
 
   .article {

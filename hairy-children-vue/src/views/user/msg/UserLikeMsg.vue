@@ -66,7 +66,7 @@ export default {
         totalPage: 0,
       },
       userId: "",
-      myUserId: '',
+      myUserId: "",
       isEmpty: false,
       count: 0,
       unreadCount: 0,
@@ -169,22 +169,23 @@ export default {
       this.getCommentLikeMessage().then(({ data }) => {
         this.message = data.data.page;
         console.log(this.message);
-      });
-      this.getTitleLikeMessage().then(({ data }) => {
-        let titleLikeList = data.data.page;
-        console.log(titleLikeList);
-        this.message.list = this.message.list.concat(titleLikeList.list);
-        this.message.totalCount += titleLikeList.totalCount;
-        this.message.totalPage =
-          this.message.totalCount / this.message.pageSize;
-        this.message.totalPage =
-          this.message.totalCount % this.message.pageSize == 0 ? 0 : 1;
-        if (this.message.list.length == 0) {
-          this.isEmpty = true;
-          return;
-        }
-        console.log(this.message);
-        this.messageList = this.message.list.slice(0, this.message.pageSize);
+
+        this.getTitleLikeMessage().then(({ data }) => {
+          let titleLikeList = data.data.page;
+          console.log(titleLikeList);
+          this.message.list = this.message.list.concat(titleLikeList.list);
+          this.message.totalCount += titleLikeList.totalCount;
+          this.message.totalPage =
+            this.message.totalCount / this.message.pageSize;
+          this.message.totalPage =
+            this.message.totalCount % this.message.pageSize == 0 ? 0 : 1;
+          if (this.message.list.length == 0) {
+            this.isEmpty = true;
+            return;
+          }
+          console.log(this.message);
+          this.messageList = this.message.list.slice(0, this.message.pageSize);
+        });
       });
 
       this.getCommentLikeUnReadCount().then(({ data }) => {
@@ -331,7 +332,7 @@ export default {
   },
   created() {
     this.setInfo();
-    this.myUserId = this.$store.getters.getUser.userId
+    this.myUserId = this.$store.getters.getUser.userId;
   },
 };
 </script>

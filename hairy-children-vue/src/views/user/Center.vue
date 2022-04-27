@@ -12,7 +12,14 @@
             <i class="el-icon-user"></i>
             <span slot="title">账户信息</span>
           </el-menu-item>
-          <el-submenu index="账户设置" v-if="userId == this.$store.getters.getUser.userId">
+          <el-menu-item index="收藏夹">
+            <i class="el-icon-star-on"></i>
+            <span slot="title">收藏夹</span>
+          </el-menu-item>
+          <el-submenu
+            index="账户设置"
+            v-if="userId == this.$store.getters.getUser.userId"
+          >
             <template slot="title">
               <i class="el-icon-setting"></i>
               <span>账户设置</span>
@@ -97,7 +104,16 @@ export default {
       unreadCount: 0,
     };
   },
+  created() {
+    this.init();
+  },
   methods: {
+    // 初始化页面信息
+    init() {
+      this.userId = this.$route.params.userId;
+      this.getUnreadCount();
+    },
+    // 导航栏路由跳转
     select(key, keyPath) {
       this.navList = [];
       for (var i = 0; i < keyPath.length; i++) {
@@ -105,6 +121,7 @@ export default {
       }
       this.$router.push({ name: this.navList[this.navList.length - 1] });
     },
+    // 获取未读的线索数
     async getClueUnReadCount() {
       const data = await this.$axios({
         url: "/mailbox/getUnReadClueMailBoxCount",
@@ -118,6 +135,7 @@ export default {
       });
       return data;
     },
+    // 获取未读的领养申请数
     async getAdoptUnReadCount() {
       const data = await this.$axios({
         url: "/mailbox/getUnReadAdoptMailBoxCount",
@@ -131,6 +149,7 @@ export default {
       });
       return data;
     },
+    // 获取未读的评论数
     async getCommentUnReadCount() {
       const data = await this.$axios({
         url: "/mailbox/getUnReadCommentMailBoxCount",
@@ -144,6 +163,7 @@ export default {
       });
       return data;
     },
+    // 获取未读的回复数
     async getReplyUnReadCount() {
       const data = await this.$axios({
         url: "/mailbox/getUnReadReplyMailBoxCount",
@@ -157,6 +177,7 @@ export default {
       });
       return data;
     },
+    // 获取未读的文章点赞数
     async getTitleLikeUnReadCount() {
       const data = await this.$axios({
         url: "/mailbox/getUnReadTitleLikeMailBoxCount",
@@ -170,6 +191,7 @@ export default {
       });
       return data;
     },
+    // 获取未读的评论点赞数
     async getCommentLikeUnReadCount() {
       const data = await this.$axios({
         url: "/mailbox/getUnReadCommentLikeMailBoxCount",
@@ -183,6 +205,7 @@ export default {
       });
       return data;
     },
+    // 获取信箱里所有未读数
     getUnreadCount() {
       this.getClueUnReadCount().then(({ data }) => {
         this.clueUnreadCount = data.data.count;
@@ -214,11 +237,6 @@ export default {
         this.unreadCount += data.data.count;
       });
     },
-  },
-
-  created() {
-    this.userId = this.$route.params.userId;
-    this.getUnreadCount();
   },
 };
 </script>
