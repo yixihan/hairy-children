@@ -9,18 +9,22 @@
           <a href="javascript:;">
             <img :src="item.imgs[0]" alt="正在加载中" />
             <div class="article">
-              <h3 class="title">线索内容 :</h3>
-              <p>{{ item.clueContent }}</p>
+              <div @click="toClue(item.clueId)">
+                <h3 class="title">
+                  提交用户 :
+                  <el-avatar size="small" :src="item.userAvatar"> </el-avatar>
+                  <span v-text="item.userName"></span>
+                </h3>
+                <p>申请理由 : {{ item.clueContent }}</p>
+              </div>
               <div class="petstatus">
-                <el-tag
-                  >发布于 :
-                  {{
-                    new Date(item.gmtCreate).format("yyyy-MM-dd hh:mm:ss")
-                  }}</el-tag
-                >
-                <el-tag class="adopted">{{
-                  item.isSuccess == 1 ? "已被采用" : "暂未被采用"
-                }}</el-tag>
+                <el-tag>
+                  发布于 :
+                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd hh:mm:ss") }}
+                </el-tag>
+                <el-tag class="clueed">
+                  <span v-text="item.isSuccess == 1 ? '已被采用' : '暂未被采用'" @click="examine(item.clueId)"></span>
+                </el-tag>
               </div>
             </div>
           </a>
@@ -92,7 +96,7 @@ export default {
       this.getUserClue().then(({ data }) => {
         console.log(data);
         this.clue = data.data.page;
-        if (this.clue.list.length == 0) {
+        if (this.clue.list == null || this.clue.totalCount == 0) {
           this.isEmpty = true;
           return;
         }
@@ -103,10 +107,71 @@ export default {
           }
           this.clue.list[i].imgs[0] =
             "http://175.24.229.41:9421/" + this.clue.list[i].imgs[0];
+          this.clue.list[i].userAvatar =
+            "http://175.24.229.41:9421/" + this.clue.list[i].userAvatar;
         }
 
         this.clueList = this.clue.list.slice(0, this.clue.pageSize);
       });
+    },
+    examine(clueId) {
+      this.$confirm("是否采用该用户提交的线索?", "提示", {
+        confirmButtonText: "同意",
+        cancelButtonText: "忽略",
+        type: "warning",
+        center: true,
+      })
+        .then(() => {
+          this.success(clueId, true).then(({ data }) => {
+            if (data.code == 200) {
+              this.$message({
+                type: "success",
+                message: "已同意该领养申请!",
+              });
+              let clue = this.selectClueByclueId(clueId);
+              clue.isSuccess = 1;
+            } else {
+              this.$message({
+                type: "error",
+                message: "出现错误, 请刷新页面重试",
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
+    },
+    async success(clueId, isSuccess) {
+      const data = await this.$axios({
+        url: "/clue/success",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          clueId: clueId,
+          isSuccess: isSuccess,
+        },
+      });
+
+      return data;
+    },
+    selectClueByclueId(clueId) {
+      let clue;
+      for (var i = 0; i < this.clue.list.length; i++) {
+        if (this.clue.list[i].clueId == clueId) {
+          clue = this.clue.list[i];
+        }
+      }
+
+      return clue;
+    },
+    toClue(clueId) {
+      this.$router.push("/clue/" + clueId);
     },
   },
 

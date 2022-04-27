@@ -13,8 +13,10 @@
         {{ new Date(title.gmtModified).format("yyyy-MM-dd hh:mm:ss") }}
       </p>
       <p>贴子类型 : {{ title.titleType == 1 ? "领养贴" : "寻宠贴" }}</p>
-      <el-button type="primary" @click="editArticle">修改贴子</el-button>
-      <el-button type="primary" @click="deleteArticle">删除贴子</el-button>
+      <div v-if="title.userId == this.$store.getters.getUserId">
+        <el-button type="primary" @click="editArticle">修改贴子</el-button>
+        <el-button type="primary" @click="deleteArticle">删除贴子</el-button>
+      </div>
     </div>
 
     <mavon-editor

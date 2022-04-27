@@ -26,10 +26,16 @@
           </div>
           <div class="main-comment">
             <div class="userinfo-comment">
-              <i>{{ root.userName }}</i>
-              <i>{{
-                new Date(root.gmtCreate).format("yyyy-MM-dd hh:mm:ss")
-              }}</i>
+              <div class="info">
+                <i>{{ root.userName }}</i>
+                <i>
+                  {{ new Date(root.gmtCreate).format("yyyy-MM-dd hh:mm:ss") }}
+                </i>
+              </div>
+              <i
+                class="el-icon-delete"
+                @click="delRootComment(root.rootId)"
+              ></i>
             </div>
 
             <div class="text-comment">
@@ -48,31 +54,39 @@
             </div>
 
             <div
+              class="show-comment"
               v-for="(son, index) in root.commentReplyList"
               :key="'son-' + index"
+              style="width: 100%"
             >
-              <div class="show-comment">
-                <div class="userAvatar">
-                  <el-avatar size="medium" :src="son.userAvatar"></el-avatar>
+              <div class="userAvatar">
+                <el-avatar size="medium" :src="son.userAvatar"></el-avatar>
+              </div>
+              <div class="main-comment">
+                <div class="userinfo-comment">
+                  <div class="info">
+                    <i>{{ root.userName }}</i>
+                    <i>
+                      {{
+                        new Date(root.gmtCreate).format("yyyy-MM-dd hh:mm:ss")
+                      }}
+                    </i>
+                  </div>
+                  <i
+                    class="el-icon-delete"
+                    @click="delRootComment(root.rootId)"
+                  ></i>
                 </div>
-                <div class="main-comment">
-                  <div class="userinfo-comment">
-                    <i>{{ son.userName }}</i>
-                    <i>{{
-                      new Date(son.gmtCreate).format("yyyy-MM-dd hh:mm:ss")
-                    }}</i>
-                  </div>
 
-                  <div class="text-comment">
-                    <p>{{ son.content }}</p>
-                  </div>
+                <div class="text-comment">
+                  <p>{{ son.content }}</p>
+                </div>
 
-                  <div class="tag">
-                    <el-tag>
-                      <i class="el-icon-chat-square"></i>
-                      评论
-                    </el-tag>
-                  </div>
+                <div class="tag">
+                  <el-tag>
+                    <i class="el-icon-chat-square"></i>
+                    评论
+                  </el-tag>
                 </div>
               </div>
             </div>
@@ -120,6 +134,7 @@ export default {
     this.init();
   },
   methods: {
+    // 父评论 (评论文章)
     replyTitie() {
       if (this.rootContent == null || this.rootContent == "") {
         this.$message({
@@ -156,6 +171,7 @@ export default {
         });
       }
     },
+    // 添加父评论
     async addRootComment() {
       const data = await this.$axios({
         url: "/comment/addRootComment",
@@ -171,7 +187,9 @@ export default {
 
       return data;
     },
+    // 子评论 (评论评论)
     replyComment() {},
+    // 添加子评论
     async addSonComment(rootId, replyCommentId) {
       const data = await this.$axios({
         url: "/comment/addSonComment/" + this.titleId,
@@ -188,6 +206,7 @@ export default {
 
       return data;
     },
+    // 获取文章的所有评论
     getComments() {
       this.getAllTitleComments().then(({ data }) => {
         this.commentsPage = data.data.page;
@@ -219,6 +238,7 @@ export default {
         );
       });
     },
+    // 获取文章的所有评论
     async getAllTitleComments() {
       const data = await this.$axios({
         url: "/comment/getAllTitleComment",
@@ -233,6 +253,151 @@ export default {
 
       return data;
     },
+    // 删除父评论
+    delRootComment(rootId) {
+      this.$confirm("是否删除该评论?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        center: true,
+      })
+        .then(() => {
+          this.deleteRootComment(rootId).then(({ data }) => {
+            if (data.code == 200) {
+              this.$message({
+                type: "success",
+                message: "删除成功!",
+              });
+              this.delRootCommentInCommentsPage(rootId);
+            } else {
+              this.$message({
+                type: "error",
+                message: "删除失败!",
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    // 删除父评论 => 数据库数据
+    async deleteRootComment(rootId) {
+      const data = await this.$axios({
+        url: "/comment/removeRootComment",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          titleId: this.titleId,
+          rootId: rootId,
+        },
+      });
+
+      return data;
+    },
+    // 删除父评论 => 前端数据
+    delRootCommentInCommentsPage(rootId) {
+      // 在总数据中删除该评论内容
+      for (let i = 0; i < this.commentsPage.list.length; i++) {
+        if (this.commentsPage.list[i].rootId === rootId) {
+          this.commentsPage.list.splice(i, 1);
+          break;
+        }
+      }
+      // 如果在当前页中也有该元素, 则也删除
+      for (let i = 0; i < this.commentList.length; i++) {
+        if (this.commentList[i].rootId === rootId) {
+          this.commentList.splice(i, 1);
+          break;
+        }
+      }
+    },
+    // 删除子评论
+    delSonComment(rootId, replyId) {
+      this.$confirm("是否删除该评论?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        center: true,
+      })
+        .then(() => {
+          this.deleteSonComment(replyId).then(({ data }) => {
+            if (data.code == 200) {
+              this.$message({
+                type: "success",
+                message: "删除成功!",
+              });
+              this.delSonCommentInCommentsPage(rootId, replyId);
+            } else {
+              this.$message({
+                type: "error",
+                message: "删除失败!",
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    // 删除子评论 => 数据库数据
+    async deleteSonComment(replyId) {
+      const data = await this.$axios({
+        url: "/comment/removeSonComment",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          titleId: this.titleId,
+          replyId: replyId,
+        },
+      });
+
+      return data;
+    },
+    // 删除子评论 => 前端数据
+    delSonCommentInCommentsPage(rootId, replyId) {
+      // 在总数据中删除该评论内容
+      for (let i = 0; i < this.commentsPage.list.length; i++) {
+        if (this.commentsPage.list[i].rootId === rootId) {
+          for (let j = 0; j < this.commentsPage.list[i].commentReplyList; j++) {
+            if (
+              this.commentsPage.list[i].commentReplyList[j].replyId ==
+                replyId ||
+              this.commentsPage.list[i].commentReplyList[j].replyCommentId ==
+                replyId
+            ) {
+              this.commentsPage.list[i].commentReplyList.splice(i, 1);
+            }
+          }
+          break;
+        }
+      }
+      // 如果在当前页中也有该元素, 则也删除
+      for (let i = 0; i < this.commentList.length; i++) {
+        if (this.commentList[i].rootId === rootId) {
+          for (let j = 0; j < this.commentList[i].commentReplyList; j++) {
+            if (
+              this.commentList[i].commentReplyList[j].replyId == replyId ||
+              this.commentList[i].commentReplyList[j].replyCommentId == replyId
+            ) {
+              this.commentList[i].commentReplyList[j].splice(i, 1);
+            }
+          }
+          break;
+        }
+      }
+    },
+    // 点赞评论
     likeComment(rootId) {
       this.$axios({
         url: "/comment/likeComment",
@@ -261,7 +426,7 @@ export default {
         }
       });
     },
-
+    // 通过 rootId 获取 父评论 对象
     selectCommentsByRootId(rootId) {
       for (var i = 0; i < this.commentsPage.list.length; i++) {
         if (this.commentsPage.list[i].rootId === rootId) {
@@ -271,9 +436,11 @@ export default {
 
       return null;
     },
+    // 获取每页有多少条父评论
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
     },
+    // 换页更新每页的评论
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
       this.commentList = this.commentsPage.list.slice(
@@ -281,6 +448,7 @@ export default {
         val * this.commentsPage.pageSize
       );
     },
+    // 初始化评论页
     init() {
       this.userAvatar =
         "http://175.24.229.41:9421/" + this.$store.getters.getUser.userAvatar;
@@ -304,6 +472,7 @@ export default {
 
     .el-button {
       margin-left: 10px !important;
+      max-height: 46px !important;
     }
 
     .el-avatar {
@@ -337,6 +506,8 @@ export default {
           align-self: flex-start;
         }
         .userinfo-comment {
+          position: relative;
+          width: 100%;
           i {
             &:first-child {
               font-size: 18px;
@@ -344,6 +515,15 @@ export default {
             }
             margin-right: 8px;
             font-size: 12px;
+          }
+
+          .el-icon-delete {
+            position: absolute;
+            right: 0;
+          }
+          .info {
+            position: absolute;
+            left: 0;
           }
         }
         .text-comment {

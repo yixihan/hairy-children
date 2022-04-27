@@ -7,17 +7,13 @@
     <div class="adopt-or-clue">
       <div v-if="titleType == 1">
         <h2>领养申请列表</h2>
-        <el-button type="primary" @click="toCreatAdopt"
-          >申请领养</el-button
-        >
-        <Adopt :titleId="titleId"></Adopt>
+        <el-button type="primary" @click="toCreatAdopt"> 申请领养 </el-button>
+        <Adopt :titleId="titleId" :authorId="title.userId"></Adopt>
       </div>
       <div v-if="titleType == 2">
         <h2>线索列表</h2>
-        <el-button type="primary" @click="toCreatClue"
-          >提供线索</el-button
-        >
-        <Clue :titleId="titleId"></Clue>
+        <el-button type="primary" @click="toCreatClue"> 提供线索 </el-button>
+        <Clue :titleId="titleId" :authorId="title.userId"></Clue>
       </div>
     </div>
 
@@ -63,6 +59,20 @@ export default {
 
       return data;
     },
+    async getTitle() {
+      const data = await this.$axios({
+        url: "/title/getTitle",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          titleId: this.titleId,
+        },
+      });
+
+      return data;
+    },
     init() {
       this.titleId = this.$route.params.titleId;
       this.getTitleType().then(({ data }) => {
@@ -86,7 +96,7 @@ export default {
           });
           this.$router.push("/adopt/" + data.data.adoptId + "/edit");
         } else {
-           this.$message({
+          this.$message({
             type: "error",
             message: data.msg,
           });
@@ -115,9 +125,9 @@ export default {
             type: "success",
             message: data.msg,
           });
-          this.$router.push("/adopclue/" + data.data.clueId + "/edit");
+          this.$router.push("/clue/" + data.data.clueId + "/edit");
         } else {
-           this.$message({
+          this.$message({
             type: "error",
             message: data.msg,
           });

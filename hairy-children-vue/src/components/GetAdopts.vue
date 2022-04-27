@@ -6,30 +6,37 @@
       </div>
       <ul>
         <li v-for="(item, index) in adoptList" :key="index">
-          <a href="javascript:;" @click="toAdopt(item.adoptId)">
+          <a href="javascript:;">
             <img :src="item.imgs[0]" alt="正在加载中" />
             <div class="article">
-              <h3 class="title">
-                申请人 :
-                <el-avatar size="small" :src="item.userAvatar"></el-avatar
-                ><span v-text="item.userName"></span>
-              </h3>
-              <p>申请理由 : {{ item.adoptReason }}</p>
+              <div @click="toAdopt(item.adoptId)">
+                <h3 class="title">
+                  申请人 :
+                  <el-avatar size="small" :src="item.userAvatar"> </el-avatar>
+                  <span v-text="item.userName"></span>
+                </h3>
+                <p>申请理由 : {{ item.adoptReason }}</p>
+              </div>
               <div class="petstatus">
                 <el-tag>{{ item.adoptUserAddress }}</el-tag>
-                <el-tag
-                  >申请于 :
-                  {{
-                    new Date(item.gmtCreate).format("yyyy-MM-dd hh:mm:ss")
-                  }}</el-tag
-                >
-                <el-tag class="adopted">{{
-                  item.isSuccess == 1
-                    ? "已通过"
-                    : item.isSuccess == 0
-                    ? "暂未审核"
-                    : "已拒绝"
-                }}</el-tag>
+                <el-tag>
+                  申请于 :
+                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd hh:mm:ss") }}
+                </el-tag>
+
+                <el-tag class="adopted">
+                  <span
+                    @click="examine(item.adoptId)"
+                    v-text="
+                      item.isSuccess == 1
+                        ? '已通过'
+                        : item.isSuccess == 0
+                        ? '暂未审核'
+                        : '已拒绝'
+                    "
+                  >
+                  </span>
+                </el-tag>
               </div>
             </div>
           </a>
@@ -56,7 +63,7 @@ import format from "@/utils/DateFormat.js";
 export default {
   name: "GetAdopts",
   format,
-  props: ["titleId"],
+  props: ["titleId", "authorId"],
   data() {
     return {
       adoptList: [],
@@ -118,6 +125,82 @@ export default {
 
         this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);
       });
+    },
+    examine(adoptId) {
+      this.$confirm("是否同意该用户的领养申请?", "提示", {
+        confirmButtonText: "同意",
+        cancelButtonText: "拒绝",
+        type: "warning",
+        center: true,
+      })
+        .then(() => {
+          this.success(adoptId, true).then(({ data }) => {
+            if (data.code == 200) {
+              this.$message({
+                type: "success",
+                message: "已同意该领养申请!",
+              });
+              let adopt = this.selectAdoptByadoptId(adoptId);
+              adopt.isSuccess = 1;
+            } else {
+              this.$message({
+                type: "error",
+                message: "出现错误, 请刷新页面重试",
+              });
+              
+              
+            }
+          });
+        })
+        .catch((action) => {
+          if (action == "cancel") {
+            this.success(adoptId, false).then(({ data }) => {
+              if (data.code == 200) {
+                this.$message({
+                  type: "success",
+                  message: "已拒绝该领养申请!",
+                });
+                let adopt = this.selectAdoptByadoptId(adoptId);
+                adopt.isSuccess = 2;
+              } else {
+                this.$message({
+                  type: "error",
+                  message: "出现错误, 请刷新页面重试",
+                });
+              }
+            });
+          } else {
+            this.$message({
+              type: "info",
+              message: "已取消",
+            });
+          }
+        });
+    },
+    async success(adoptId, isSuccess) {
+      const data = await this.$axios({
+        url: "/adopt/success",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          adoptId: adoptId,
+          isSuccess: isSuccess,
+        },
+      });
+
+      return data;
+    },
+    selectAdoptByadoptId (adoptId) {
+      let adopt;
+      for (var i = 0; i < this.adopt.list.length; i++) {
+        if (this.adopt.list[i].adoptId == adoptId) {
+          adopt =  this.adopt.list[i];
+        }
+      }
+
+      return adopt;
     },
     toAdopt(adoptId) {
       this.$router.push("/adopt/" + adoptId);
