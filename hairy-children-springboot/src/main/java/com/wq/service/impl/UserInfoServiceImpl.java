@@ -46,9 +46,6 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
         // 文件校验
         FileUtils.isEmpty (file);
-        log.info ("getContentType" + file.getContentType ());
-        log.info ("getOriginalFilename" + file.getOriginalFilename ());
-        log.info ("getName" + file.getName ());
 
         // 生成文件名, 以用户 id 为文件名
         String fileName = String.format (FileUtils.IMG_NAME, "userAvatar-" + userId);

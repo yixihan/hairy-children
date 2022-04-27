@@ -51,7 +51,6 @@ public class LoginController {
         // 从 json 中提取参数
         String userName = String.valueOf (params.get ("userName"));
         String password = String.valueOf (params.get ("password"));
-        log.info ("userName : " + userName + ", password : " + password);
 
         // 查询数据库
         User user = userService.getUserByName (userName);
@@ -92,7 +91,7 @@ public class LoginController {
     public Result loginByEmail(@RequestBody Map<String, Object> params) {
         // 从 json 中提取参数
         String email = String.valueOf (params.get ("email"));
-        log.info ("email : " + email);
+
         if (!VerifyUtils.isEmail (email)) {
             return Result.fail (555, "邮箱格式错误");
         }
@@ -125,7 +124,7 @@ public class LoginController {
 
         // 从 json 中提取参数
         String phone = String.valueOf (params.get ("phone"));
-        log.info ("phone : " + phone);
+
         if (!VerifyUtils.isModel (phone)) {
             return Result.fail (555, "电话格式错误");
         }
@@ -156,7 +155,6 @@ public class LoginController {
      */
     @PostMapping("/register")
     public Result register(@RequestBody User user) {
-        log.info ("user : " + user);
 
         boolean name = codeService.verifyUserName (user.getUserName ());
 
@@ -204,7 +202,6 @@ public class LoginController {
         // 从 json 中提取参数
         String email = String.valueOf (params.get ("email"));
         String password = String.valueOf (params.get ("password"));
-        log.info ("email : " + email + ", password : " + password);
 
         if (!VerifyUtils.isEmail (email)) {
             return Result.fail (555, "邮箱格式错误");
@@ -233,7 +230,6 @@ public class LoginController {
         // 从 json 中提取参数
         String phone = String.valueOf (params.get ("phone"));
         String password = String.valueOf (params.get ("password"));
-        log.info ("phone : " + phone + ", password : " + password);
 
         if (!VerifyUtils.isModel (phone)) {
             return Result.fail (555, "电话格式错误");

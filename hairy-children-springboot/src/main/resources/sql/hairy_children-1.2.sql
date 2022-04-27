@@ -11,7 +11,7 @@
  Target Server Version : 50736
  File Encoding         : 65001
 
- Date: 25/04/2022 22:03:48
+ Date: 27/04/2022 09:56:34
 */
 
 SET NAMES utf8mb4;
@@ -26,22 +26,22 @@ CREATE TABLE `adopt`  (
   `user_id` bigint(20) NOT NULL COMMENT '申请人 id',
   `title_id` bigint(20) NOT NULL COMMENT '文章 id',
   `adopt_reason` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '申请理由',
-  `adopt_user_address` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '申请人当前所在城市',
-  `adopt_user_phone` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '申请人联系方式',
-  `adopt_concept` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '养宠理念',
-  `adopt_way` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '接动物方式',
+  `adopt_user_address` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '申请人当前所在城市',
+  `adopt_user_phone` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '申请人联系方式',
+  `adopt_concept` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '养宠理念',
+  `adopt_way` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '接动物方式',
   `adopt_user_age` int(11) NULL DEFAULT NULL COMMENT '申请人年龄',
   `adopt_dir` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图片存储路径',
   `imgs_dir` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '图片url',
   `is_return_visit` int(11) NOT NULL DEFAULT 1 COMMENT '是否接受定期回访, 0 : 否, 1 : 是',
   `is_feedback` int(11) NOT NULL DEFAULT 1 COMMENT '是否接受定期反馈领养信息, 0 : 否, 1 : 是',
   `is_success` int(11) NOT NULL DEFAULT -1 COMMENT '是否成功, -1 : 未完成编写, 0 : 未成功, 1 : 成功',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`adopt_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for adopt_mailbox
@@ -54,12 +54,12 @@ CREATE TABLE `adopt_mailbox`  (
   `send_user_id` bigint(20) NOT NULL COMMENT '发送者 id',
   `receive_user_id` bigint(20) NOT NULL COMMENT '接受者 id',
   `is_read` int(11) NOT NULL DEFAULT 0 COMMENT '是否已阅读, 0 : 否, 1 :是',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for clue
@@ -73,12 +73,12 @@ CREATE TABLE `clue`  (
   `clue_dir` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图片存储路径',
   `imgs_dir` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '图片url',
   `is_success` int(11) NOT NULL DEFAULT -1 COMMENT '是否成功, -1 :  未完成编写, 0 : 未成功, 1 : 成功',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`clue_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for clue_mailbox
@@ -91,12 +91,12 @@ CREATE TABLE `clue_mailbox`  (
   `send_user_id` bigint(20) NOT NULL COMMENT '发送者 id',
   `receive_user_id` bigint(20) NOT NULL COMMENT '接受者 id',
   `is_read` int(11) NOT NULL DEFAULT 0 COMMENT '是否已阅读, 0 : 否, 1 :是',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for collection_title
@@ -106,8 +106,8 @@ CREATE TABLE `collection_title`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键 id',
   `collection_id` bigint(20) NOT NULL COMMENT '收藏夹 id',
   `title_id` bigint(20) NOT NULL COMMENT '文章 id',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
@@ -124,12 +124,12 @@ CREATE TABLE `comment_like_mailbox`  (
   `send_user_id` bigint(20) NOT NULL COMMENT '发送者 id',
   `receive_user_id` bigint(20) NOT NULL COMMENT '接受者 id',
   `is_read` int(11) NOT NULL DEFAULT 0 COMMENT '是否已阅读, 0 : 否, 1 :是',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for comment_mailbox
@@ -143,12 +143,12 @@ CREATE TABLE `comment_mailbox`  (
   `send_user_id` bigint(20) NOT NULL COMMENT '发送者 id',
   `receive_user_id` bigint(20) NOT NULL COMMENT '接受者 id',
   `is_read` int(11) NOT NULL DEFAULT 0 COMMENT '是否已阅读, 0 : 否, 1 :是',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for comment_reply
@@ -161,8 +161,8 @@ CREATE TABLE `comment_reply`  (
   `reply_user_id` bigint(20) NULL DEFAULT NULL COMMENT '回复的子评论 用户 id',
   `user_id` bigint(20) NOT NULL COMMENT '评论者 id',
   `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '评论内容',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`reply_id`) USING BTREE
@@ -179,12 +179,12 @@ CREATE TABLE `comment_root`  (
   `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '评论内容',
   `like_count` int(11) NOT NULL DEFAULT 0 COMMENT '点赞数',
   `reply_count` int(11) NOT NULL DEFAULT 0 COMMENT '回复数',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`root_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for reply_mailbox
@@ -199,8 +199,8 @@ CREATE TABLE `reply_mailbox`  (
   `send_user_id` bigint(20) NOT NULL COMMENT '发送者 id',
   `receive_user_id` bigint(20) NOT NULL COMMENT '接受者 id',
   `is_read` int(11) NOT NULL DEFAULT 0 COMMENT '是否已阅读, 0 : 否, 1 :是',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
@@ -223,12 +223,12 @@ CREATE TABLE `title`  (
   `comment_count` int(11) NOT NULL DEFAULT 0 COMMENT '评论数',
   `like_count` int(11) NOT NULL DEFAULT 0 COMMENT '点赞数',
   `is_finish` int(11) NOT NULL DEFAULT -1 COMMENT '是否完成, -1, 文章未发布, 0 : 未完成, 1 : 完成',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`title_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for title_like_mailbox
@@ -240,8 +240,8 @@ CREATE TABLE `title_like_mailbox`  (
   `send_user_id` bigint(20) NOT NULL COMMENT '发送者 id',
   `receive_user_id` bigint(20) NOT NULL COMMENT '接受者 id',
   `is_read` int(11) NOT NULL DEFAULT 0 COMMENT '是否已阅读, 0 : 否, 1 :是',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
@@ -258,13 +258,13 @@ CREATE TABLE `user`  (
   `user_salt` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '用户密码盐',
   `user_phone` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '用户手机',
   `user_email` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '用户邮箱',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`user_id`) USING BTREE,
   UNIQUE INDEX `user_name`(`user_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_collection
@@ -275,12 +275,12 @@ CREATE TABLE `user_collection`  (
   `user_id` bigint(20) NOT NULL COMMENT '用户 id',
   `collection_name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收藏夹名',
   `collection_count` int(11) NOT NULL DEFAULT 0 COMMENT '收藏数量',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`collection_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_info
@@ -300,12 +300,12 @@ CREATE TABLE `user_info`  (
   `user_avatar` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '//avatar//default.png' COMMENT '用户头像',
   `user_autograph` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '用户个性签名',
   `user_pet_cond` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '目前养宠情况',
-  `gmt_create` datetime NOT NULL COMMENT '创建时间',
-  `gmt_modified` datetime NOT NULL COMMENT '修改时间',
+  `gmt_create` datetime(3) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(3) NOT NULL COMMENT '修改时间',
   `version` int(11) NOT NULL DEFAULT 1 COMMENT '乐观锁',
   `is_deleted` int(11) NOT NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `user_id`(`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;

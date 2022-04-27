@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,13 +71,20 @@ public class CommentController {
     @PostMapping("/addRootComment")
     public Result addRootComment(@RequestBody CommentRoot commentRoot) {
 
-        // 设置 用户 id
+        // 设置 用户 id, gmtCreate
+        commentRoot.setGmtCreate (new Date ());
         commentRoot.setUserId (ShiroUtils.getUserId ());
 
         Boolean add = commentRootService.addRootComment (commentRoot);
 
         QueryWrapper<CommentRoot> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("answer_id", commentRoot.getAnswerId ()).eq ("user_id", commentRoot.getUserId ()).eq ("content", commentRoot.getContent ());
+        Map<String, Object> columns = new HashMap<> (16);
+        columns.put ("answer_id", commentRoot.getAnswerId ());
+        columns.put ("user_id", commentRoot.getUserId ());
+        columns.put ("content", commentRoot.getContent ());
+        columns.put ("gmt_create", commentRoot.getGmtCreate ());
+
+        wrapper.allEq (true, columns, true);
         CommentRoot one = commentRootService.getOne (wrapper);
 
         Title title = titleService.getById (commentRoot.getAnswerId ());
@@ -99,10 +107,16 @@ public class CommentController {
     @PostMapping("/addSonComment/{titleId}")
     public Result addSonComment(@PathVariable Long titleId, @RequestBody CommentReply commentReply) {
 
+        commentReply.setGmtCreate (new Date ());
         Boolean add = commentRootService.addSonComment (commentReply, titleId);
 
         QueryWrapper<CommentReply> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("root_id", commentReply.getRootId ()).eq ("user_id", commentReply.getUserId ()).eq ("content", commentReply.getContent ());
+        Map<String, Object> columns = new HashMap<> (16);
+        columns.put ("root_id", commentReply.getRootId ());
+        columns.put ("user_id", commentReply.getUserId ());
+        columns.put ("content", commentReply.getContent ());
+        columns.put ("gmt_create", commentReply.getGmtCreate ());
+        wrapper.allEq (true, columns, true);
 
         if (commentReply.getReplyCommentId () != null) {
             wrapper.eq ("reply_comment_id", commentReply.getReplyCommentId ());
@@ -221,7 +235,7 @@ public class CommentController {
         }
 
         // 点赞
-        String key = String.format (USER_COMMENT_LIKE_KEY, commentRoot.getUserId (), rootId);
+        String key = String.format (USER_COMMENT_LIKE_KEY, userId, rootId);
         Boolean bit = redisService.getBit (key, userId);
         if (bit) {
             log.warn ("已点赞, 请勿重复点赞");
@@ -247,7 +261,7 @@ public class CommentController {
         commentLikeMailbox.setRootId (rootId);
         commentLikeMailbox.setSendUserId (userId);
         commentLikeMailbox.setReceiveUserId (commentRoot.getUserId ());
-
+        commentLikeMailbox.setGmtCreate (new Date ());
         boolean save = commentLikeMailboxService.save (commentLikeMailbox);
 
         if (!save) {
@@ -255,7 +269,12 @@ public class CommentController {
             throw new RuntimeException ("点赞失败");
         }
         QueryWrapper<CommentLikeMailbox> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("title_id", commentLikeMailbox.getTitleId ()).eq ("send_user_id", commentLikeMailbox.getSendUserId ()).like ("receive_user_id", commentLikeMailbox.getReceiveUserId ());
+        Map<String, Object> columns = new HashMap<>(16);
+        columns.put ("title_id", commentLikeMailbox.getTitleId ());
+        columns.put ("send_user_id", commentLikeMailbox.getSendUserId ());
+        columns.put ("receive_user", commentLikeMailbox.getReceiveUserId ());
+        columns.put ("gmt_create", commentLikeMailbox.getGmtCreate ());
+        wrapper.allEq (true, columns, true);
 
         CommentLikeMailbox one = commentLikeMailboxService.getOne (wrapper);
 

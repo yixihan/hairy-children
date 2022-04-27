@@ -19,13 +19,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author wq
@@ -55,7 +56,7 @@ public class AdoptController {
     private PhotoProperties photoProperties;
 
     @PostMapping("/creatAdopt")
-    public Result createAdopt (@RequestBody Adopt adopt) {
+    public Result createAdopt(@RequestBody Adopt adopt) {
 
         if (userService.count (new QueryWrapper<User> ().eq ("user_id", adopt.getUserId ())) <= 0) {
             return Result.fail (555, "没有该用户");
@@ -65,29 +66,34 @@ public class AdoptController {
             return Result.fail (555, "没有该文章");
         }
 
-        if (! adoptService.isExists (adopt.getTitleId (), adopt.getUserId ())) {
+        if (!adoptService.isExists (adopt.getTitleId (), adopt.getUserId ())) {
             return Result.fail ("请勿重复申请领养贴");
         }
 
+        adopt.setGmtCreate (new Date ());
         Boolean create = adoptService.createAdopt (adopt);
 
         if (create) {
             QueryWrapper<Adopt> wrapper = new QueryWrapper<> ();
-            wrapper.eq ("user_id", adopt.getUserId ())
-                    .eq ("title_id", adopt.getTitleId ());
+            Map<String, Object> columns = new HashMap<> (16);
+            columns.put ("user_id", adopt.getUserId ());
+            columns.put ("title_id", adopt.getTitleId ());
+            columns.put ("gmt_create", adopt.getGmtCreate ());
 
-            Adopt one = adoptService.getOne (wrapper);
+            wrapper.allEq (true, columns, true).select ("adopt_id");
+
+            adopt = adoptService.getOne (wrapper);
 
             Map<String, Object> map = new HashMap<> (16);
-            map.put("adoptId", one.getAdoptId ());
-            return Result.success("创建成功", map);
+            map.put ("adoptId", adopt.getAdoptId ());
+            return Result.success ("创建成功", map);
         }
 
         return Result.fail ("创建失败");
     }
 
     @PostMapping("/updateAdopt")
-    public Result updateAdopt (@RequestBody Adopt adopt) {
+    public Result updateAdopt(@RequestBody Adopt adopt) {
         boolean update = adoptService.updateById (adopt);
         adopt = adoptService.getById (adopt.getAdoptId ());
 
@@ -101,21 +107,21 @@ public class AdoptController {
 
         sendAdoptMailBox (mailbox);
 
-        return update ? Result.success("更新成功") : Result.fail("更新失败");
+        return update ? Result.success ("更新成功") : Result.fail ("更新失败");
     }
 
     @PostMapping("/deleteAdopt")
-    public Result deleteAdopt (@RequestBody Map<String, Object> params) {
+    public Result deleteAdopt(@RequestBody Map<String, Object> params) {
         long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
 
         boolean remove = adoptService.removeById (adoptId);
 
-        return remove ? Result.success("删除成功") : Result.fail("删除失败");
+        return remove ? Result.success ("删除成功") : Result.fail ("删除失败");
     }
 
     @PostMapping("/updateImg/{adoptId}")
-    public Result updateImg (@PathVariable Long adoptId, @RequestParam("imgs") MultipartFile[] imgs) {
-        StringBuilder adoptImgs = new StringBuilder();
+    public Result updateImg(@PathVariable Long adoptId, @RequestParam("imgs") MultipartFile[] imgs) {
+        StringBuilder adoptImgs = new StringBuilder ();
 
         for (MultipartFile img : imgs) {
             String adoptImg = adoptService.uploadImg (adoptId, img);
@@ -126,11 +132,11 @@ public class AdoptController {
         adopt.setImgsDir (adoptImgs.toString ());
         adoptService.updateById (adopt);
 
-        return Result.success("图片上传成功");
+        return Result.success ("图片上传成功");
     }
 
     @PostMapping("/getAdopt")
-    public Result getAdopt (@RequestBody Map<String, Object> params) {
+    public Result getAdopt(@RequestBody Map<String, Object> params) {
         long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
         Adopt adopt = adoptService.getById (adoptId);
 
@@ -140,38 +146,29 @@ public class AdoptController {
         setUserInfo (adopt);
         setTitleInfo (adopt);
 
-        Map<String, Object> map = new HashMap<>(16);
-        map.put("adopt", adopt);
-        return Result.success("获取成功", map);
+        Map<String, Object> map = new HashMap<> (16);
+        map.put ("adopt", adopt);
+        return Result.success ("获取成功", map);
     }
 
     @PostMapping("/success")
-    public Result finish (@RequestBody Map<String, Object> params) {
+    public Result finish(@RequestBody Map<String, Object> params) {
         long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
         boolean isSuccess = Boolean.parseBoolean (String.valueOf (params.get ("isSuccess")));
         Adopt adopt = adoptService.getById (adoptId);
-        Title title = titleService.getById (adopt.getTitleId ());
 
         if (adopt.getIsSuccess () == 1) {
             return Result.fail (555, "请勿重复同意申请");
         }
 
-        if (isSuccess) {
-            adopt.setIsSuccess (1);
-            title.setIsFinish (1);
-            boolean update1 = adoptService.updateById (adopt);
-            boolean update2 = titleService.updateById (title);
-            return update1 && update2 ? Result.success ("更新成功") : Result.fail ("更新失败");
-        } else {
-            adopt.setIsSuccess (2);
-            boolean update1 = adoptService.updateById (adopt);
-            return update1 ? Result.success ("更新成功") : Result.fail ("更新失败");
-        }
+        adopt.setIsSuccess (isSuccess ? 1 : 2);
+        boolean update1 = adoptService.updateById (adopt);
+        return update1 ? Result.success ("更新成功") : Result.fail ("更新失败");
 
     }
 
     @PostMapping("/getAllUserAdopts")
-    public Result getAllUserAdopts (@RequestBody Map<String, Object> params) {
+    public Result getAllUserAdopts(@RequestBody Map<String, Object> params) {
         long userId = Long.parseLong (String.valueOf (params.get ("userId")));
 
         if (userService.count (new QueryWrapper<User> ().eq ("user_id", userId)) <= 0) {
@@ -190,13 +187,13 @@ public class AdoptController {
 
         PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 5, 0);
 
-        Map<String, Object> map = new HashMap<>(16);
-        map.put("page", adoptPage);
-        return Result.success("获取成功", map);
+        Map<String, Object> map = new HashMap<> (16);
+        map.put ("page", adoptPage);
+        return Result.success ("获取成功", map);
     }
 
     @PostMapping("/getAllTitleAdopts")
-    public Result getAllTitleAdopts (@RequestBody Map<String, Object> params) {
+    public Result getAllTitleAdopts(@RequestBody Map<String, Object> params) {
         long titleId = Long.parseLong (String.valueOf (params.get ("titleId")));
 
         if (titleService.count (new QueryWrapper<Title> ().eq ("title_id", titleId)) <= 0) {
@@ -216,13 +213,14 @@ public class AdoptController {
 
         PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 5, 0);
 
-        Map<String, Object> map = new HashMap<>(16);
-        map.put("page", adoptPage);
-        return Result.success("获取成功", map);
+        Map<String, Object> map = new HashMap<> (16);
+        map.put ("page", adoptPage);
+        return Result.success ("获取成功", map);
     }
 
     /**
      * 发送消息 - 领养申请
+     *
      * @param mailbox
      */
     @Async
@@ -230,7 +228,7 @@ public class AdoptController {
     public void sendAdoptMailBox(AdoptMailbox mailbox) {
         boolean save = adoptMailboxService.save (mailbox);
 
-        if (! save) {
+        if (!save) {
             log.warn ("消息持久化失败");
             throw new RuntimeException ("消息持久化失败");
         }
@@ -238,7 +236,7 @@ public class AdoptController {
         adoptMailboxService.sendMailbox (mailbox);
     }
 
-    private void setUserInfo (Adopt adopt) {
+    private void setUserInfo(Adopt adopt) {
         UserInfo info = userInfoService.getUserInfoById (adopt.getUserId ());
         User user = userService.getById (adopt.getUserId ());
 
@@ -246,7 +244,7 @@ public class AdoptController {
         adopt.setUserName (user.getUserName ());
     }
 
-    private void setTitleInfo (Adopt adopt) {
+    private void setTitleInfo(Adopt adopt) {
         Title title = titleService.getById (adopt.getTitleId ());
         User author = userService.getById (title.getUserId ());
 

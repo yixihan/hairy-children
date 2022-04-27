@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,11 +69,17 @@ public class TitleController {
             return Result.fail (555, "没有此用户");
         }
 
+        title.setGmtCreate (new Date ());
         Boolean creat = titleService.createTitle (title);
 
         if (creat) {
             QueryWrapper<Title> wrapper = new QueryWrapper<> ();
-            wrapper.eq ("user_id", title.getUserId ()).eq ("title_type", title.getTitleType ()).eq ("title_name", title.getTitleName ());
+            Map<String, Object> columns = new HashMap<> (16);
+            columns.put ("user_id", title.getUserId ());
+            columns.put ("title_type", title.getTitleType ());
+            columns.put ("title_name", title.getTitleName ());
+            columns.put ("gmt_create", title.getGmtCreate ());
+            wrapper.allEq (true, columns, true).select ("title_id");
 
             Title one = titleService.getOne (wrapper);
 

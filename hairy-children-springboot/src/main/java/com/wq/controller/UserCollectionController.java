@@ -122,7 +122,7 @@ public class UserCollectionController {
         }
 
         UserCollection userCollection = userCollectionService.getById (collectionTitle.getCollectionId ());
-        userCollection.setCollectionCount (userCollection.getCollectionCount () - 1);
+        userCollection.setCollectionCount (userCollection.getCollectionCount () > 0 ? userCollection.getCollectionCount () - 1 : 0);
         Title title = titleService.getById (collectionTitle.getTitleId ());
         title.setCollectionCount (title.getCollectionCount () > 0 ? title.getCollectionCount () - 1 : 0);
         boolean update1 = userCollectionService.updateById (userCollection);

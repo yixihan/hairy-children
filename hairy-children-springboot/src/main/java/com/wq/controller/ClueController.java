@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,16 +69,22 @@ public class ClueController {
         if (!clueService.isExists (clue.getTitleId (), clue.getUserId ())) {
             return Result.fail ("请勿重复创建线索贴");
         }
+
+        clue.setGmtCreate (new Date ());
         Boolean create = clueService.createClue (clue);
 
         if (create) {
             QueryWrapper<Clue> wrapper = new QueryWrapper<> ();
-            wrapper.eq ("user_id", clue.getUserId ()).eq ("title_id", clue.getTitleId ());
+            Map<String, Object> columns = new HashMap<> (16);
+            columns.put ("user_id", clue.getUserId ());
+            columns.put ("title_id", clue.getTitleId ());
+            columns.put ("gmt_create", clue.getGmtCreate ());
+            wrapper.allEq (true, columns, true).select ("clue_id");
 
-            Clue one = clueService.getOne (wrapper);
+            clue = clueService.getOne (wrapper);
 
             Map<String, Object> map = new HashMap<> (16);
-            map.put ("clueId", one.getClueId ());
+            map.put ("clueId", clue.getClueId ());
             return Result.success ("创建成功", map);
         }
 

@@ -53,7 +53,7 @@ public class UserController {
 
         // 从 json 中提取参数
         String email = String.valueOf (params.get ("email"));
-        log.info ("email : " + email);
+
         // 判断邮箱格式是否正确
         if (!VerifyUtils.isEmail (email)) {
             return Result.fail (555, "邮箱格式错误");
@@ -99,7 +99,6 @@ public class UserController {
 
         // 从 json 中提取参数
         String phone = String.valueOf (params.get ("phone"));
-        log.info ("phone : " + phone);
 
         // 判断电话格式是否正确
         if (!VerifyUtils.isModel (phone)) {

@@ -85,7 +85,7 @@ public class UserInfoController {
 
         String realName = String.valueOf (params.get ("realName"));
         String identityCard = String.valueOf (params.get ("identityCard"));
-        log.info ("realName : " + realName + ", identityCard : " + identityCard);
+
 
         String url = "https://puhui.shumaidata.com/id_card/check/puhui";
 
