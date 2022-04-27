@@ -83,4 +83,10 @@ public interface CommentRootService extends IService<CommentRoot> {
     List<UserComments> getAllUserSonComments(Long userId);
 
 
+    /**
+     * 更新redis
+     * @param userId 用户 id
+     * @param titleId 文章 id
+     */
+    void updateRedis(Long userId, Long titleId);
 }

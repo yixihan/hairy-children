@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -120,18 +117,40 @@ public class ClueController {
     @PostMapping("/updateImg/{clueId}")
     public Result updateImg(@PathVariable Long clueId, @RequestParam("imgs") MultipartFile[] imgs) {
         StringBuilder clueImgs = new StringBuilder ();
+        List<String> imgList = new ArrayList<>();
 
         for (MultipartFile img : imgs) {
             String clueImg = clueService.uploadImg (clueId, img);
+            imgList.add (clueImg);
             clueImgs.append (clueImg).append ("::");
         }
 
 
         Clue clue = clueService.getById (clueId);
-        clue.setImgsDir (clueImgs.toString ());
+        clue.setImgsDir (clue.getImgsDir () + clueImgs.toString ());
         clueService.updateById (clue);
+        Map<String, Object> map= new HashMap<> (16);
+        map.put ("imgList", imgList);
 
-        return Result.success ("图片上传成功");
+        return Result.success ("图片上传成功", map);
+    }
+
+    @PostMapping("/deleteImg")
+    public Result deleteImg(@RequestBody Map<String, Object> params) {
+        long clueId = Long.parseLong (String.valueOf (params.get ("clueId")));
+        String imgUrl = String.valueOf (params.get ("imgUrl"));
+
+        if (clueService.count (new QueryWrapper<Clue> ().eq ("clue_id", clueId)) <= 0) {
+            return Result.fail (555, "没有该领养申请");
+        }
+
+        Clue clue = clueService.getById (clueId);
+
+        String imgsDir = clue.getImgsDir ();
+        clue.setImgsDir (imgsDir.replaceAll (imgUrl + "::", ""));
+        boolean update = clueService.updateById (clue);
+
+        return update ? Result.success ("删除成功") : Result.fail ("删除失败");
     }
 
     @PostMapping("/getClue")

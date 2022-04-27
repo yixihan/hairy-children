@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -122,17 +119,39 @@ public class AdoptController {
     @PostMapping("/updateImg/{adoptId}")
     public Result updateImg(@PathVariable Long adoptId, @RequestParam("imgs") MultipartFile[] imgs) {
         StringBuilder adoptImgs = new StringBuilder ();
+        List<String> imgList = new ArrayList<> ();
 
         for (MultipartFile img : imgs) {
             String adoptImg = adoptService.uploadImg (adoptId, img);
+            imgList.add (adoptImg);
             adoptImgs.append (adoptImg).append ("::");
         }
 
         Adopt adopt = adoptService.getById (adoptId);
-        adopt.setImgsDir (adoptImgs.toString ());
+        adopt.setImgsDir (adopt.getImgsDir () + adoptImgs.toString ());
         adoptService.updateById (adopt);
+        Map<String, Object> map= new HashMap<> (16);
+        map.put ("imgList", imgList);
 
-        return Result.success ("图片上传成功");
+        return Result.success ("图片上传成功", map);
+    }
+
+    @PostMapping("/deleteImg")
+    public Result deleteImg(@RequestBody Map<String, Object> params) {
+        long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
+        String imgUrl = String.valueOf (params.get ("imgUrl"));
+
+        if (adoptService.count (new QueryWrapper<Adopt> ().eq ("adopt_id", adoptId)) <= 0) {
+            return Result.fail (555, "没有该领养申请");
+        }
+
+        Adopt adopt = adoptService.getById (adoptId);
+
+        String imgsDir = adopt.getImgsDir ();
+        adopt.setImgsDir (imgsDir.replaceAll (imgUrl + "::", ""));
+        boolean update = adoptService.updateById (adopt);
+
+        return update ? Result.success ("删除成功") : Result.fail ("删除失败");
     }
 
     @PostMapping("/getAdopt")

@@ -99,8 +99,11 @@ public class CommentController {
 
         // 给被评论者发送信息
         sendCommentRootMailBox (mailbox);
+        Map<String, Object> map = new HashMap<> (16);
+        setUserInfo (one);
+        map.put ("rootComment", one);
 
-        return add ? Result.success ("评论成功") : Result.fail ("评论失败");
+        return add ? Result.success ("评论成功", map) : Result.fail ("评论失败");
     }
 
 
@@ -134,8 +137,11 @@ public class CommentController {
         mailbox.setReceiveUserId (title.getUserId ());
         // 给被评论者发送信息
         sendCommentReplyMailBox (mailbox);
+        Map<String, Object> map = new HashMap<> (16);
+        setUserInfo (one);
+        map.put ("rootComment", one);
 
-        return add ? Result.success ("评论成功") : Result.fail ("评论失败");
+        return add ? Result.success ("评论成功", map) : Result.fail ("评论失败");
     }
 
     @PostMapping("/removeRootComment")
@@ -249,6 +255,7 @@ public class CommentController {
 
         commentRoot.setLikeCount (Math.toIntExact (redisService.getLikeValueAll (key)));
         boolean update = commentRootService.updateById (commentRoot);
+        commentRootService.updateRedis(userId, commentRoot.getAnswerId ());
 
         if (!update) {
             log.error ("评论更新失败");

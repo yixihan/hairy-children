@@ -198,6 +198,10 @@ public class TitleController {
     public Result getTitleType(@RequestBody Map<String, Object> params) {
         long titleId = Long.parseLong (String.valueOf (params.get ("titleId")));
 
+        if (titleService.count (new QueryWrapper<Title> ().eq ("title_id", titleId)) <= 0) {
+            return Result.fail (555, "没有该文章");
+        }
+
         QueryWrapper<Title> wrapper = new QueryWrapper<> ();
         wrapper.eq ("title_id", titleId).select ("title_type");
         Title title = titleService.getOne (wrapper);

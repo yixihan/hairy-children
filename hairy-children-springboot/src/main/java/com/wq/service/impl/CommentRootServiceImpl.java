@@ -192,6 +192,15 @@ public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, Comme
         return commentRootMapper.getAllUserSonComments (userId);
     }
 
+    /**
+     * 更新redis
+     */
+    @Override
+    public void updateRedis(Long userId, Long titleId) {
+        updateTitleComment (titleId);
+        updateUserComment (userId);
+    }
+
 
     @Async
     public void updateTitleComment (Long titleId) {
