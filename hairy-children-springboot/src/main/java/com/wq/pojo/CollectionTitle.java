@@ -38,6 +38,30 @@ public class CollectionTitle implements Serializable {
     @ApiModelProperty(value = "文章 id")
     private Long titleId;
 
+    @ApiModelProperty(value = "文章 名")
+    @TableField(exist = false)
+    private String titleName;
+
+    @ApiModelProperty(value = "文章 预览图")
+    @TableField(exist = false)
+    private String titleAvatar;
+
+    @ApiModelProperty(value = "文章 正文")
+    @TableField(exist = false)
+    private String titleContent;
+
+    @ApiModelProperty(value = "文章作者 id")
+    @TableField(exist = false)
+    private Long titleAuthorId;
+
+    @ApiModelProperty(value = "文章作者 用户名")
+    @TableField(exist = false)
+    private String titleAuthorName;
+
+    @ApiModelProperty(value = "文章作者 头像")
+    @TableField(exist = false)
+    private String titleAuthorAvatar;
+
     @ApiModelProperty(value = "创建时间")
     @TableField(fill = FieldFill.INSERT)
     private Date gmtCreate;

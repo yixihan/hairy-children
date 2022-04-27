@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,27 +141,29 @@ public class UserCollectionController {
         List<CollectionTitle> collectionTitleList = collectionTitleService.
                 getAllCollectionTitle (userCollectionId);
 
-        List<Title> listList = new ArrayList<>();
 
         for (CollectionTitle collectionTitle : collectionTitleList) {
-            Title title = titleService.getById (collectionTitle.getTitleId ());
-            setUserInfo (title);
-            listList.add(title);
+            setCollectionsInfo (collectionTitle);
         }
 
-        PageUtils titlePage = new PageUtils (listList, listList.size (), 5, 0);
+        PageUtils titlePage = new PageUtils (collectionTitleList, collectionTitleList.size (), 5, 0);
 
         HashMap<String, Object> map = new HashMap<> (16);
         map.put ("page", titlePage);
         return Result.success (map);
     }
 
-    private void setUserInfo (Title title) {
+    private void setCollectionsInfo (CollectionTitle collectionTitle) {
+        Title title = titleService.getById (collectionTitle.getTitleId ());
         UserInfo info = userInfoService.getUserInfoById (title.getUserId ());
         User user = userService.getById (title.getUserId ());
 
-        title.setUserAvatar (info.getUserAvatar ());
-        title.setUserName (user.getUserName ());
+        collectionTitle.setTitleName (title.getTitleName ());
+        collectionTitle.setTitleAvatar (title.getTitleImg ());
+        collectionTitle.setTitleContent (title.getTitleContent ());
+        collectionTitle.setTitleAuthorAvatar (info.getUserAvatar ());
+        collectionTitle.setTitleAuthorName (user.getUserName ());
+        collectionTitle.setTitleAuthorId (user.getUserId ());
     }
 
 }
