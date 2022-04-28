@@ -2,27 +2,50 @@
   <div class="page">
     <div class="article-header">
       <div class="article-title">
-        <h1>{{ title.titleName }}</h1>
+        <h1 class="title-name">{{ title.titleName }}</h1>
+        <div class="title-tag">
+          <el-tag>
+            {{ title.isFinish == 1 ? "已完成" : "未完成" }}
+          </el-tag>
+          <el-tag>
+            {{ title.titleType == 1 ? "领养贴" : "寻宠贴" }}
+          </el-tag>
+        </div>
       </div>
-      <p>城市 : {{ title.userAddress }}</p>
-      <el-avatar size="small" :src="title.userAvatar"></el-avatar>
-      <p>作者 : {{ title.userName }}</p>
-      <p>
-        发布于 : {{ new Date(title.gmtCreate).format("yyyy-MM-dd hh:mm:ss") }}
-      </p>
-      <p>
-        最后修改时间 :
-        {{ new Date(title.gmtModified).format("yyyy-MM-dd hh:mm:ss") }}
-      </p>
-      <p>
-        贴子完成状态 :
-        {{ title.isFinish == 1 ? "已完成" : "未完成" }}
-      </p>
-      <p>贴子类型 : {{ title.titleType == 1 ? "领养贴" : "寻宠贴" }}</p>
+      <div class="article-info">
+        <div class="author-info">
+          <div class="author-avatar">
+            <el-avatar size="meduim" :src="title.userAvatar"></el-avatar>
+          </div>
+          <div class="author-name">
+            <i>{{ title.userName }}</i>
+          </div>
+          <div class="author-city">
+            <i>{{ title.userAddress }}</i>
+          </div>
+        </div>
+
+        <div class="time-info">
+          <i>
+            发布于 :
+            {{ new Date(title.gmtCreate).format("yyyy-MM-dd hh:mm:ss") }}
+          </i>
+          <i>
+            最后修改时间 :
+            {{ new Date(title.gmtModified).format("yyyy-MM-dd hh:mm:ss") }}
+          </i>
+        </div>
+      </div>
       <div class="button" v-if="title.userId == this.$store.getters.getUserId">
-        <el-tag type="primary" @click="editArticle">修改贴子</el-tag>
-        <el-tag type="primary" @click="deleteArticle">删除贴子</el-tag>
-        <el-tag type="primary" @click="finishArticle">修改贴子状态</el-tag>
+        <el-tag class="update" type="primary" @click="editArticle"
+          >修改贴子</el-tag
+        >
+        <el-tag class="delete" type="primary" @click="deleteArticle"
+          >删除贴子</el-tag
+        >
+        <el-tag class="finish" type="primary" @click="finishArticle"
+          >修改贴子状态</el-tag
+        >
       </div>
     </div>
 
@@ -399,21 +422,80 @@ export default {
   position: relative;
 
   .article-header {
+    min-height: 150px;
     .article-title {
-      margin-bottom: 8px;
+      position: relative;
+      margin-bottom: 20px;
+      height: 32px;
+      padding: 30px 0 0 0;
+      background: transparent;
+      font-family: "Helvetica Neue", Helvetica, "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 
-      h1 {
-        font-size: 28px;
-        word-wrap: break-word;
-        color: #222226;
-        font-weight: 600;
-        margin: 0;
-        word-break: break-all;
+      .title-name {
+        position: absolute;
+        left: 0;
+        margin: 0 0 0 25px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #3f3f3f;
+      }
+
+      .title-tag {
+        position: absolute;
+        right: 6px;
+
+        .el-tag {
+          margin-right: 5px;
+        }
+      }
+    }
+
+    .article-info {
+      height: 50px;
+      width: 100%;
+      position: relative;
+      margin-bottom: 10px;
+
+      .author-info {
+        position: absolute;
+        left: 5px;
+        display: flex;
+
+        .author-avatar {
+          margin-right: 16px;
+          margin-left: 25px;
+        }
+
+        .author-name {
+          margin-top: 11px;
+          margin-right: 16px;
+          font-size: 18px;
+        }
+
+        .author-city {
+          margin-top: 15px;
+          margin-right: 16px;
+          font-size: 12px;
+        }
+      }
+
+      .time-info {
+        position: absolute;
+        right: 5px;
+        font-size: 12px;
+
+        i {
+          margin-right: 6px;
+        }
       }
     }
     .button {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: flex-end;
       .el-tag {
-        margin-right: 16px;
+        margin-right: 5px;
       }
     }
   }

@@ -127,9 +127,13 @@ export default {
       });
     },
     examine(adoptId) {
+      if (this.authorId != this.$store.getters.getUserId) {
+        return
+      }
       this.$confirm("是否同意该用户的领养申请?", "提示", {
         confirmButtonText: "同意",
         cancelButtonText: "拒绝",
+        distinguishCancelAndClose: true,
         type: "warning",
         center: true,
       })
@@ -138,34 +142,33 @@ export default {
             if (data.code == 200) {
               this.$message({
                 type: "success",
-                message: "已同意该领养申请!",
+                message: data.msg,
               });
               let adopt = this.selectAdoptByadoptId(adoptId);
               adopt.isSuccess = 1;
             } else {
               this.$message({
                 type: "error",
-                message: "出现错误, 请刷新页面重试",
+                message: data.msg,
               });
-              
-              
             }
           });
         })
         .catch((action) => {
+          console.log(action);
           if (action == "cancel") {
             this.success(adoptId, false).then(({ data }) => {
               if (data.code == 200) {
                 this.$message({
                   type: "success",
-                  message: "已拒绝该领养申请!",
+                  message: data.msg,
                 });
                 let adopt = this.selectAdoptByadoptId(adoptId);
                 adopt.isSuccess = 2;
               } else {
                 this.$message({
                   type: "error",
-                  message: "出现错误, 请刷新页面重试",
+                  message: data.msg,
                 });
               }
             });

@@ -23,7 +23,10 @@
                   {{ new Date(item.gmtCreate).format("yyyy-MM-dd hh:mm:ss") }}
                 </el-tag>
                 <el-tag class="clueed">
-                  <span v-text="item.isSuccess == 1 ? '已被采用' : '暂未被采用'" @click="examine(item.clueId)"></span>
+                  <span
+                    v-text="item.isSuccess == 1 ? '已被采用' : '暂未被采用'"
+                    @click="examine(item.clueId)"
+                  ></span>
                 </el-tag>
               </div>
             </div>
@@ -115,6 +118,9 @@ export default {
       });
     },
     examine(clueId) {
+      if (this.authorId != this.$store.getters.getUserId) {
+        return;
+      }
       this.$confirm("是否采用该用户提交的线索?", "提示", {
         confirmButtonText: "同意",
         cancelButtonText: "忽略",
