@@ -6,7 +6,7 @@
       </div>
       <ul>
         <li v-for="(item, index) in articleList" :key="index">
-          <a href="javascript:;">
+          <a href="javascript:;" @click="toArticle(item.titleId)">
             <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
             <div class="article">
               <h3 class="title">{{ item.titleName }}</h3>
@@ -18,19 +18,21 @@
                 <el-tag>评论 : {{ item.commentCount }}</el-tag>
                 <el-tag>收藏 : {{ item.collectionCount }}</el-tag>
                 <el-tag>发布城市 : {{ item.userAddress }}</el-tag>
-                <el-tag
-                  >发布于 :
-                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
-                >
-                <el-tag class="adopted">{{
-                  item.titleType == 1
-                    ? item.isFinish == 1
-                      ? "已领养"
-                      : "未领养"
-                    : item.isFinish == 1
-                    ? "已找到"
-                    : "未找到"
-                }}</el-tag>
+                <el-tag>
+                  发布于 :
+                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}
+                </el-tag>
+                <el-tag class="adopted">
+                  {{
+                    item.titleType == 1
+                      ? item.isFinish == 1
+                        ? "已领养"
+                        : "未领养"
+                      : item.isFinish == 1
+                      ? "已找到"
+                      : "未找到"
+                  }}
+                </el-tag>
               </div>
             </div>
           </a>
@@ -107,6 +109,9 @@ export default {
 
         this.articleList = this.article.list.slice(0, this.article.pageSize);
       });
+    },
+    toArticle(titleId) {
+      this.$router.push("/article/" + titleId);
     },
   },
   created() {

@@ -7,8 +7,8 @@ export default new Vuex.Store({
   state: {
     token: localStorage.getItem("token"), //方法一 localStorage.getItem("token") 
     //反序列化获取session会话中的 userInfo对象
-    userInfo: JSON.parse(localStorage.getItem("userInfo")),
-    userId: JSON.parse(localStorage.getItem("userId")),
+    userInfo: JSON.parse(sessionStorage.getItem("userInfo")),
+    userId: localStorage.getItem("userId"),
   },
   mutations: {
     //相当于实体类的set
@@ -27,8 +27,8 @@ export default new Vuex.Store({
     SET_USERINFO: (state, userInfo) => {
       state.userInfo = userInfo//将传入的tuserInfo赋值 给state的userInfo
       //同时可以存入会话的sessionStorage里面 sessionStorage中只能存字符串 不能存入对象所以我们存入序列化 jons串
-      localStorage.setItem("userInfo", JSON.stringify(userInfo))
-      // sessionStorage.setItem("userInfo", JSON.stringify(userInfo))
+      // localStorage.setItem("userInfo", JSON.stringify(userInfo))
+      sessionStorage.setItem("userInfo", JSON.stringify(userInfo))
     },
     //删除token及userInfo
     REMOVE_INFO: (state) => {
@@ -37,7 +37,7 @@ export default new Vuex.Store({
       state.userInfo = {};
       localStorage.setItem("token", '')
       localStorage.setItem("userId", '')
-      localStorage.setItem("userInfo", JSON.stringify(''))
+      // localStorage.setItem("userInfo", JSON.stringify(''))
       // localStorage.setItem("userInfo", JSON.stringify(''))
       sessionStorage.setItem("token", JSON.stringify(''))
       // sessionStorage.setItem("userInfo", JSON.stringify(''))

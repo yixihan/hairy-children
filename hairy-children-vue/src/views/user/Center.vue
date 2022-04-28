@@ -52,9 +52,9 @@
             </template>
             <el-menu-item-group>
               <el-badge :value="adoptUnreadCount" class="item">
-                <el-menu-item index="收到的领养申请"
-                  >收到的领养申请</el-menu-item
-                >
+                <el-menu-item index="收到的领养申请">
+                  收到的领养申请
+                </el-menu-item>
               </el-badge>
               <el-badge :value="clueUnreadCount" class="item">
                 <el-menu-item index="收到的线索">收到的线索</el-menu-item>

@@ -6,7 +6,7 @@
       </div>
       <ul>
         <li v-for="(item, index) in clueList" :key="index">
-          <a href="javascript:;">
+          <a href="javascript:;" @click="toClue(item.clueId)">
             <img
               :src="'http://175.24.229.41:9421/' + item.imgs[0]"
               alt="正在加载中"
@@ -15,13 +15,13 @@
               <h3 class="title">文章 : {{ item.titleName }}</h3>
               <p>线索内容 : {{ item.clueContent }}</p>
               <div class="petstatus">
-                <el-tag
-                  >发布于 :
-                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
-                >
-                <el-tag class="adopted">{{
-                  item.isSuccess == 1 ? "已被采用" : "暂未被采用"
-                }}</el-tag>
+                <el-tag>
+                  发布于 :
+                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}
+                </el-tag>
+                <el-tag class="adopted">
+                  {{ item.isSuccess == 1 ? "已被采用" : "暂未被采用" }}
+                </el-tag>
               </div>
             </div>
           </a>
@@ -98,7 +98,6 @@ export default {
         }
         for (var i = 0; i < this.clue.list.length; i++) {
           if (this.clue.list[i].imgs == null) {
-            
             this.clue.list[i].imgs = [];
             this.clue.list[i].imgs.push("/clue/default/default.png");
           }
@@ -106,6 +105,9 @@ export default {
 
         this.clueList = this.clue.list.slice(0, this.clue.pageSize);
       });
+    },
+    toClue(clueId) {
+      this.$router.push("/clue/" + clueId);
     },
   },
   created() {

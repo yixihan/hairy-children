@@ -11,7 +11,7 @@
       </div>
       <ul>
         <li v-for="(item, index) in messageList" :key="index">
-          <a href="javascript:;">
+          <a href="javascript:;" @click="toArticle(item.answerId)">
             <img
               :src="'http://175.24.229.41:9421/' + item.sendUserAvatar"
               alt="正在加载中"
@@ -21,22 +21,21 @@
               <p>
                 <span>评论内容 : {{ item.commentContent }}</span>
                 <el-link
-                  href="#"
                   target="_blank"
                   :underline="false"
-                  icon="el-icon-d-arrow-right
-"
+                  icon="el-icon-d-arrow-right"
+                  @click="toArticle(item.titleId)"
                   >贴子传送门</el-link
                 >
               </p>
               <div class="petstatus">
-                <el-tag
-                  >发送于 :
-                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
-                >
-                <el-tag @click="read(index)" v-if="userId == myUserId">{{
-                  item.isRead === 0 ? "未读" : "已读"
-                }}</el-tag>
+                <el-tag>
+                  发送于 :
+                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}
+                </el-tag>
+                <el-tag @click="read(index)" v-if="userId == myUserId">
+                  {{ item.isRead === 0 ? "未读" : "已读" }}
+                </el-tag>
               </div>
             </div>
           </a>
@@ -75,7 +74,7 @@ export default {
         totalPage: 0,
       },
       userId: "",
-      myUserId: '',
+      myUserId: "",
       isEmpty: false,
       count: 0,
       unreadCount: 0,
@@ -114,8 +113,8 @@ export default {
           "Jwt-Token": this.$store.getters.getToken,
         },
         data: {
-          userId: this.userId
-        }
+          userId: this.userId,
+        },
       });
       return data;
     },
@@ -127,8 +126,8 @@ export default {
           "Jwt-Token": this.$store.getters.getToken,
         },
         data: {
-          userId: this.userId
-        }
+          userId: this.userId,
+        },
       });
       return data;
     },
@@ -221,10 +220,13 @@ export default {
 
       return data;
     },
+    toArticle(titleId) {
+      this.$router.push("/article/" + titleId);
+    },
   },
   created() {
     this.setInfo();
-    this.myUserId = this.$store.getters.getUser.userId
+    this.myUserId = this.$store.getters.getUser.userId;
   },
 };
 </script>

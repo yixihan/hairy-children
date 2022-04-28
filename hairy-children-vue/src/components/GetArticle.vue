@@ -30,16 +30,32 @@
       style="min-height: 20px"
     ></mavon-editor>
 
-    <el-dialog title="添加到收藏夹" :visible.sync="dialogTableVisible" center>
-      <div v-for="(item, index) in userCollections.list" :key="index">
-        <el-checkbox
-          :v-model="item.checked"
-          @click="check(index)"
-        ></el-checkbox>
-        <span>{{ item.collectionName }}</span>
-        <span> {{ item.collectionCount }} / 1000 </span>
-      </div>
-    </el-dialog>
+    <div class="dialong">
+      <el-dialog
+        title="添加到收藏夹"
+        :visible.sync="dialogTableVisible"
+        center
+        width="30%"
+      >
+        <div class="show">
+          <div v-for="(item, index) in userCollections.list" :key="index">
+            <el-checkbox
+              :v-model="item.checked"
+              @click="check(index)"
+            ></el-checkbox>
+            <i class="name">{{ item.collectionName }}</i>
+            <span class="count"> {{ item.collectionCount }} / 1000 </span>
+          </div>
+          <div class="add">
+            <el-input
+              v-model="collectionName"
+              placeholder="新建收藏夹"
+            ></el-input>
+            <el-button type="primary" @click="createCollection">确定</el-button>
+          </div>
+        </div>
+      </el-dialog>
+    </div>
 
     <div class="tag">
       <el-tag @click="likeTitle">
@@ -80,6 +96,7 @@ export default {
       },
       dialogTableVisible: false,
       checkList: [],
+      collectionName: "",
     };
   },
   methods: {
@@ -226,6 +243,53 @@ export default {
         this.checkList.push(this.userCollections.list[index].collectionId);
       }
     },
+    createCollection() {
+      if (!this.inputValidator(this.collectionName)) {
+        this.$message({
+          type: "error",
+          message: "请正确输入",
+        });
+      } else {
+        this.addCollection(this.collectionName).then(({ data }) => {
+          if (data.code == 200) {
+            this.$message({
+              type: "success",
+              message: data.msg,
+            });
+            this.collectionName = ""
+            let item = data.data.data;
+            console.log(item);
+            item.checked = false;
+            console.log(item);
+            this.userCollections.list.push(item);
+          } else {
+            this.$message({
+              type: "error",
+              message: "收藏夹创建失败",
+            });
+          }
+        });
+      }
+    },
+    // 校验弹窗输入
+    inputValidator(val) {
+      return val != null && val != "";
+    },
+    // 创建收藏夹 => 数据库数据
+    async addCollection(collectionName) {
+      const data = await this.$axios({
+        url: "/collection/createFavorites",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          collectionName: collectionName,
+        },
+      });
+
+      return data;
+    },
   },
   created() {
     this.init();
@@ -262,5 +326,51 @@ export default {
       background-size: 12px;
     }
   }
+
+  .dialong {
+    position: relative;
+
+    .el-dialog__body {
+      padding-bottom: 50px !important;
+      max-height: 300px !important;
+      .show {
+        .el-checkbox {
+          margin-right: 10px;
+          margin-bottom: 16px;
+        }
+
+        .name {
+          font: italic small-caps bold 16px/24px Georgia, serif;
+          margin-left: 10px;
+          margin-right: 10px;
+        }
+
+        .count {
+          position: absolute;
+          right: 16px;
+          font-size: 12px;
+        }
+      }
+
+      .add {
+        width: 100%;
+        position: relative;
+
+        .el-input {
+          position: absolute;
+          left: 5px;
+        }
+
+        .el-button {
+          position: absolute !important;
+          right: -5px !important;
+        }
+      }
+    }
+  }
+}
+
+::v-deep .el-dialog--center .el-dialog__body {
+  padding-bottom: 50px !important;
 }
 </style>

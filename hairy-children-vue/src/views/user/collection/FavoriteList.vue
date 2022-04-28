@@ -3,7 +3,7 @@
     <div class="adoption">
       <div class="head">
         <el-tag type="primary" @click="goback">返回</el-tag>
-        <el-tag> 一共收藏了 : {{ page.totalCount }} 篇贴子</el-tag>
+        <el-tag> 一共收藏了 : {{ page.totalCount }} 篇贴子 </el-tag>
       </div>
       <div v-if="isEmpty">
         <el-empty :image-size="200"></el-empty>
@@ -179,7 +179,7 @@ export default {
     },
     goback() {
       this.$router.push("/center/" + this.userId + "/favorite/");
-    }
+    },
   },
 };
 </script>

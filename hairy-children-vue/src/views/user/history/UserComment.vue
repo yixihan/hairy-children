@@ -6,7 +6,7 @@
       </div>
       <ul>
         <li v-for="(item, index) in commentList" :key="index">
-          <a href="javascript:;">
+          <a href="javascript:;" @click="toArticle(item.answerId)">
             <img
               :src="'http://175.24.229.41:9421/' + item.titleImg"
               alt="正在加载中"
@@ -18,16 +18,16 @@
                 父评论内容 : {{ item.replyContent }}
               </p>
               <div class="petstatus">
-                <el-tag
-                  >评论于 :
-                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
-                >
-                <el-tag v-if="item.likeCount != null"
-                  >点赞 : {{ item.likeCount }}</el-tag
-                >
-                <el-tag v-if="item.replyCount != null"
-                  >回复 : {{ item.replyCount }}</el-tag
-                >
+                <el-tag>
+                  评论于 :
+                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}
+                </el-tag>
+                <el-tag v-if="item.likeCount != null">
+                  点赞 : {{ item.likeCount }}
+                </el-tag>
+                <el-tag v-if="item.replyCount != null">
+                  回复 : {{ item.replyCount }}
+                </el-tag>
               </div>
             </div>
           </a>
@@ -104,6 +104,9 @@ export default {
 
         this.commentList = this.comment.list.slice(0, this.comment.pageSize);
       });
+    },
+    toArticle(titleId) {
+      this.$router.push("/article/" + titleId);
     },
   },
   created() {

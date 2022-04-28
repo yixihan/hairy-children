@@ -39,9 +39,9 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="resetForm('form')">重置</el-button>
-        <el-button type="primary" @click="next('form')" v-if="active == 0"
-          >下一步</el-button
-        >
+        <el-button type="primary" @click="next('form')" v-if="active == 0">
+          下一步
+        </el-button>
       </el-form-item>
     </el-form>
 

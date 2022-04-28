@@ -59,9 +59,9 @@
       </el-form-item>
 
       <el-form-item label="" class="pa">
-        <router-link to="/resetPassword" class="resetPassword"
-          >忘记密码?</router-link
-        >
+        <router-link to="/resetPassword" class="resetPassword">
+          忘记密码?
+        </router-link>
       </el-form-item>
 
       <el-form-item class="submit">
@@ -337,7 +337,7 @@ export default {
         url: "/user/getUserInfo",
         method: "post",
         data: {
-          userId: userId
+          userId: userId,
         },
         headers: {
           "Jwt-Token": jwt,
@@ -401,7 +401,7 @@ export default {
   right: 0;
 }
 .el-button--primary {
-  position: absolute;
+  position: absolute !important;
   right: 0;
   display: inline-block;
 }

@@ -21,13 +21,13 @@
               <p v-if="item.rootId != null">类型 : 评论点赞</p>
               <p v-else>类型 : 文章点赞</p>
               <div class="petstatus">
-                <el-tag
-                  >发送于 :
-                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
-                >
-                <el-tag @click="read(index)" v-if="userId == myUserId">{{
-                  item.isRead === 0 ? "未读" : "已读"
-                }}</el-tag>
+                <el-tag>
+                  发送于 :
+                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}
+                </el-tag>
+                <el-tag @click="read(index)" v-if="userId == myUserId">
+                  {{ item.isRead === 0 ? "未读" : "已读" }}
+                </el-tag>
               </div>
             </div>
           </a>

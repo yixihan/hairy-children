@@ -65,28 +65,32 @@
             <a href="javascript:;" @click="toArticle(item.titleId)">
               <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
               <div class="article">
-                <h3 class="title">{{ item.titleName }}</h3>
+                <h3 class="title">
+                  {{ item.titleName }}
+                </h3>
                 <p>
                   {{ item.titleContent }}
                 </p>
                 <div class="petstatus">
-                  <el-tag>点赞 : {{ item.likeCount }}</el-tag>
-                  <el-tag>评论 : {{ item.commentCount }}</el-tag>
-                  <el-tag>收藏 : {{ item.collectionCount }}</el-tag>
-                  <el-tag>发布城市 : {{ item.userAddress }}</el-tag>
-                  <el-tag
-                    >发布于 :
-                    {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
-                  >
-                  <el-tag class="adopted">{{
-                    item.titleType == 1
-                      ? item.isFinish == 1
-                        ? "已领养"
-                        : "未领养"
-                      : item.isFinish == 1
-                      ? "已找到"
-                      : "未找到"
-                  }}</el-tag>
+                  <el-tag> 点赞 : {{ item.likeCount }} </el-tag>
+                  <el-tag> 评论 : {{ item.commentCount }} </el-tag>
+                  <el-tag> 收藏 : {{ item.collectionCount }} </el-tag>
+                  <el-tag> 发布城市 : {{ item.userAddress }} </el-tag>
+                  <el-tag>
+                    发布于 :
+                    {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}
+                  </el-tag>
+                  <el-tag class="adopted">
+                    {{
+                      item.titleType == 1
+                        ? item.isFinish == 1
+                          ? "已领养"
+                          : "未领养"
+                        : item.isFinish == 1
+                        ? "已找到"
+                        : "未找到"
+                    }}
+                  </el-tag>
                 </div>
               </div>
             </a>
@@ -282,11 +286,10 @@ export default {
         val * this.articles.pageSize
       );
     },
-    toArticle (titleId) {
-      this.$router.push('/article/' + titleId)
-    }
+    toArticle(titleId) {
+      this.$router.push("/article/" + titleId);
+    },
   },
-  
 };
 </script>
 
@@ -319,7 +322,7 @@ export default {
       margin: 20px 20px 90px 20px;
       padding: 20px;
       writing-mode: vertical-lr;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
     }
     .el-form {
       width: 90% !important;

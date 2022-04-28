@@ -9,11 +9,8 @@
       </template>
       <el-descriptions-item label="用户头像">
         <template>
-          <el-avatar
-            v-if="!checked"
-            class="avatar"
-            :src="userInfo.userAvatar"
-          ></el-avatar>
+          <el-avatar v-if="!checked" class="avatar" :src="userInfo.userAvatar">
+          </el-avatar>
           <el-upload
             class="avatar-uploader"
             action="http://175.24.229.41:9421/user-info/uploadAvatar"
@@ -34,13 +31,16 @@
         </template>
       </el-descriptions-item>
       <el-descriptions-item label="用户名">
-        <span v-text="userInfo.userName"></span
-      ></el-descriptions-item>
-      <el-descriptions-item label="用户 ID"
-        ><span v-text="userInfo.userId"></span>
+        <span v-text="userInfo.userName"></span>
       </el-descriptions-item>
-      <el-descriptions-item label="所在城市" v-if="userInfo.userAddress != null"
-        ><span v-text="userInfo.userAddress" v-if="!checked"></span>
+      <el-descriptions-item label="用户 ID">
+        <span v-text="userInfo.userId"></span>
+      </el-descriptions-item>
+      <el-descriptions-item
+        label="所在城市"
+        v-if="userInfo.userAddress != null"
+      >
+        <span v-text="userInfo.userAddress" v-if="!checked"></span>
         <el-cascader
           v-if="checked"
           size="mini"
@@ -62,17 +62,20 @@
       <el-descriptions-item
         label="真实姓名"
         v-if="userInfo.userRealName != null"
-        ><span v-text="userInfo.userRealName"></span>
+      >
+        <span v-text="userInfo.userRealName"></span>
       </el-descriptions-item>
       <el-descriptions-item
         label="身份证号"
         v-if="userInfo.userIdentityCard != null"
-        ><span v-text="userInfo.userIdentityCard"></span>
+      >
+        <span v-text="userInfo.userIdentityCard"></span>
       </el-descriptions-item>
       <el-descriptions-item
         label="性别"
         v-if="userInfo.userGender != null && userInfo.userGender != ''"
-        ><span v-text="userInfo.userGender" v-if="!checked"></span>
+      >
+        <span v-text="userInfo.userGender" v-if="!checked"></span>
         <el-input v-model="userInfo.userGender" v-if="checked"></el-input>
         <el-switch
           v-model="userInfo.genderShow"
@@ -84,14 +87,15 @@
         >
         </el-switch>
       </el-descriptions-item>
-      <el-descriptions-item label="年龄" v-if="userInfo.userAge != null"
-        ><span v-text="userInfo.userAge" v-if="!checked"></span>
+      <el-descriptions-item label="年龄" v-if="userInfo.userAge != null">
+        <span v-text="userInfo.userAge" v-if="!checked"></span>
         <el-date-picker
           type="date"
           v-model="userInfo.userBirth"
           v-if="checked"
           style="width: 100%"
-        ></el-date-picker>
+        >
+        </el-date-picker>
         <el-switch
           v-model="userInfo.birthShow"
           active-text="展示"
@@ -102,30 +106,32 @@
         >
         </el-switch>
       </el-descriptions-item>
-      <el-descriptions-item label="手机号" v-if="userInfo.userPhone != null"
-        ><span v-text="userInfo.userPhone"></span>
+      <el-descriptions-item label="手机号" v-if="userInfo.userPhone != null">
+        <span v-text="userInfo.userPhone"></span>
       </el-descriptions-item>
-      <el-descriptions-item label="邮箱" v-if="userInfo.userEmail != null"
-        ><span v-text="userInfo.userEmail"></span>
+      <el-descriptions-item label="邮箱" v-if="userInfo.userEmail != null">
+        <span v-text="userInfo.userEmail"></span>
       </el-descriptions-item>
-      <el-descriptions-item label="个人宣言"
-        ><span v-text="userInfo.userAutograph" v-if="!checked"></span>
+      <el-descriptions-item label="个人宣言">
+        <span v-text="userInfo.userAutograph" v-if="!checked"></span>
         <el-input
           type="textarea"
           v-model="userInfo.userAutograph"
           :rows="2"
           v-if="checked"
-        ></el-input
-      ></el-descriptions-item>
-      <el-descriptions-item label="目前养宠情况"
-        ><span v-text="userInfo.userPetCond" v-if="!checked"></span>
+        >
+        </el-input>
+      </el-descriptions-item>
+      <el-descriptions-item label="目前养宠情况">
+        <span v-text="userInfo.userPetCond" v-if="!checked"></span>
         <el-input
           type="textarea"
           v-model="userInfo.userPetCond"
           :rows="2"
           v-if="checked"
-        ></el-input
-      ></el-descriptions-item>
+        >
+        </el-input>
+      </el-descriptions-item>
     </el-descriptions>
   </div>
 </template>
@@ -258,7 +264,6 @@ export default {
     this.JwtToken = JSON.parse(
       `{"Jwt-Token": "` + this.$store.getters.getToken + `"}`
     );
-    
   },
   mounted() {},
 };

@@ -4,11 +4,7 @@
       <div class="messageTag">
         <el-tag>未读数 : {{ unreadCount }}</el-tag>
         <el-tag>消息总数 : {{ count }}</el-tag>
-        <el-tag
-          @click="readAll"
-          v-if="userId == myUserId"
-          >全部阅读</el-tag
-        >
+        <el-tag @click="readAll" v-if="userId == myUserId">全部阅读</el-tag>
       </div>
       <div class="null" v-if="isEmpty">
         <el-empty :image-size="200"></el-empty>
@@ -24,24 +20,22 @@
               <h3 class="title">来自 {{ item.sendUserName }} 的领养申请</h3>
               <p>
                 <el-link
-                  href="#"
+                  @click="toAdopt(item.adoptId)"
                   target="_blank"
                   :underline="false"
-                  icon="el-icon-d-arrow-right
-"
-                  >贴子传送门</el-link
+                  icon="el-icon-d-arrow-right"
                 >
+                  贴子传送门
+                </el-link>
               </p>
               <div class="petstatus">
-                <el-tag
-                  >发送于 :
-                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
-                >
-                <el-tag
-                  @click="read(index)"
-                  v-if="userId == myUserId"
-                  >{{ item.isRead === 0 ? "未读" : "已读" }}</el-tag
-                >
+                <el-tag>
+                  发送于 :
+                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}
+                </el-tag>
+                <el-tag @click="read(index)" v-if="userId == myUserId">
+                  {{ item.isRead === 0 ? "未读" : "已读" }}
+                </el-tag>
               </div>
             </div>
           </a>
@@ -80,7 +74,7 @@ export default {
         totalPage: 0,
       },
       userId: "",
-      myUserId: '',
+      myUserId: "",
       isEmpty: false,
       count: 0,
       unreadCount: 0,
@@ -227,10 +221,13 @@ export default {
 
       return data;
     },
+    toAdopt(adoptId) {
+      this.$router.push("/adopt/" + adoptId);
+    },
   },
   created() {
     this.setInfo();
-    this.myUserId = this.$store.getters.getUser.userId
+    this.myUserId = this.$store.getters.getUser.userId;
   },
 };
 </script>

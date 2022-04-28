@@ -33,13 +33,12 @@
             controls-position="right"
             :min="1"
             :max="100"
-          ></el-input-number>
+          >
+          </el-input-number>
         </el-form-item>
         <el-form-item label="电话" prop="adoptUserPhone">
-          <el-input
-            v-model="form.adoptUserPhone"
-            placeholder="请输入联系电话"
-          ></el-input>
+          <el-input v-model="form.adoptUserPhone" placeholder="请输入联系电话">
+          </el-input>
         </el-form-item>
         <el-form-item label="养宠理念" prop="adoptConcept">
           <el-input
@@ -51,10 +50,8 @@
           </el-input>
         </el-form-item>
         <el-form-item label="接动物方式" prop="adoptWay">
-          <el-input
-            v-model="form.adoptWay"
-            placeholder="请输入接动物方式"
-          ></el-input>
+          <el-input v-model="form.adoptWay" placeholder="请输入接动物方式">
+          </el-input>
         </el-form-item>
         <el-form-item label="接受定期回访" required>
           <el-radio-group v-model="form.isReturnVisit">

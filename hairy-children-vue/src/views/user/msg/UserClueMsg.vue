@@ -20,22 +20,21 @@
               <h3 class="title">来自 {{ item.sendUserName }} 的线索</h3>
               <p>
                 <el-link
-                  href="#"
+                  @click="toClue(item.clueId)"
                   target="_blank"
                   :underline="false"
-                  icon="el-icon-d-arrow-right
-"
+                  icon="el-icon-d-arrow-right"
                   >贴子传送门</el-link
                 >
               </p>
               <div class="petstatus">
-                <el-tag
-                  >发送于 :
-                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
-                >
-                <el-tag @click="read(index)" v-if="userId == myUserId">{{
-                  item.isRead === 0 ? "未读" : "已读"
-                }}</el-tag>
+                <el-tag>
+                  发送于 :
+                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}
+                </el-tag>
+                <el-tag @click="read(index)" v-if="userId == myUserId">
+                  {{ item.isRead === 0 ? "未读" : "已读" }}
+                </el-tag>
               </div>
             </div>
           </a>
@@ -74,7 +73,7 @@ export default {
         totalPage: 0,
       },
       userId: "",
-      myUserId: '',
+      myUserId: "",
       isEmpty: false,
       count: 0,
       unreadCount: 0,
@@ -221,10 +220,13 @@ export default {
 
       return data;
     },
+    toClue(clueId) {
+      this.$router.push("/clue/" + clueId);
+    },
   },
   created() {
     this.setInfo();
-    this.myUserId = this.$store.getters.getUser.userId
+    this.myUserId = this.$store.getters.getUser.userId;
   },
 };
 </script>

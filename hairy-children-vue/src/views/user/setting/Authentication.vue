@@ -5,18 +5,18 @@
         <i class="el-icon-postcard"></i>
         <span>您已完成个人实名认证</span>
       </div>
-      <el-button class="primary button" @click="checked = !checked"
-        >修改实名认证</el-button
-      >
+      <el-button class="primary button" @click="checked = !checked">
+        修改实名认证
+      </el-button>
     </div>
     <div v-if="!isAuthentication">
       <div class="msg">
         <i class="el-icon-postcard"></i>
         <span>您还未完成个人实名认证</span>
       </div>
-      <el-button class="primary button" @click="checked = !checked"
-        >实名认证</el-button
-      >
+      <el-button class="primary button" @click="checked = !checked">
+        实名认证
+      </el-button>
     </div>
 
     <div v-if="checked">
@@ -34,9 +34,9 @@
           <el-input v-model="form.identityCard"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="success" class="submit" @click="submitForm('form')"
-            >认证</el-button
-          >
+          <el-button type="success" class="submit" @click="submitForm('form')">
+            认证
+          </el-button>
           <el-button type="primary" @click="unSubmit">取消</el-button>
         </el-form-item>
       </el-form>

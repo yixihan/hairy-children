@@ -6,7 +6,7 @@
       </div>
       <ul>
         <li v-for="(item, index) in adoptList" :key="index">
-          <a href="javascript:;">
+          <a href="javascript:;" @click="toAdopt(item.adoptId)">
             <img
               :src="'http://175.24.229.41:9421/' + item.imgs[0]"
               alt="正在加载中"
@@ -16,13 +16,19 @@
               <p>申请理由 : {{ item.adoptReason }}</p>
               <div class="petstatus">
                 <el-tag>{{ item.adoptUserAddress }}</el-tag>
-                <el-tag
-                  >申请于 :
-                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}</el-tag
-                >
-                <el-tag class="adopted">{{
-                  item.isSuccess == 1 ? "已通过" : item.isSuccess == 0 ? "暂未审核" : '已拒绝'
-                }}</el-tag>
+                <el-tag>
+                  申请于 :
+                  {{ new Date(item.gmtCreate).format("yyyy-MM-dd") }}
+                </el-tag>
+                <el-tag class="adopted">
+                  {{
+                    item.isSuccess == 1
+                      ? "已通过"
+                      : item.isSuccess == 0
+                      ? "暂未审核"
+                      : "已拒绝"
+                  }}
+                </el-tag>
               </div>
             </div>
           </a>
@@ -99,7 +105,6 @@ export default {
         }
         for (var i = 0; i < this.adopt.list.length; i++) {
           if (this.adopt.list[i].imgs == null) {
-            
             this.adopt.list[i].imgs = [];
             this.adopt.list[i].imgs.push("/adopt/default/default.png");
           }
@@ -107,6 +112,9 @@ export default {
 
         this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);
       });
+    },
+    toAdopt(adoptId) {
+      this.$router.push("/adopt/" + adoptId);
     },
   },
 

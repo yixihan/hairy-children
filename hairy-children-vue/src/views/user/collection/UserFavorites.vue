@@ -203,7 +203,7 @@ export default {
           });
         });
     },
-    // 创建收藏夹 => 数据库数据
+    // 更新收藏夹 => 数据库数据
     async editCollection(collectionName, collectionId) {
       const data = await this.$axios({
         url: "/collection/updateFavorites",
@@ -249,7 +249,7 @@ export default {
           });
         });
     },
-    // 创建收藏夹 => 数据库数据
+    // 删除收藏夹 => 数据库数据
     async deleteCollection(userCollectionId) {
       const data = await this.$axios({
         url: "/collection/deleteFavorites",

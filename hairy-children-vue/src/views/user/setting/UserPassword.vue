@@ -30,7 +30,8 @@
             v-model="user.password1"
             type="password"
             placeholder="请输入密码"
-          ></el-input>
+          >
+          </el-input>
         </el-form-item>
         <el-form-item
           label="确认密码"
@@ -41,7 +42,8 @@
             v-model="user.password2"
             type="password"
             placeholder="请输入密码"
-          ></el-input>
+          >
+          </el-input>
         </el-form-item>
         <el-form-item label="验证码" prop="code" placeholder="请输入验证码">
           <el-input v-model="user.code" class="verify"></el-input>
@@ -53,12 +55,12 @@
         <el-button type="success" @click="toLogin">登录</el-button>
       </div>
       <el-form-item>
-        <el-button v-if="active < 2" type="primary" @click="next('user')"
-          >下一步</el-button
-        >
-        <el-button v-if="active > 0 && active < 2" @click="pre"
-          >上一步</el-button
-        >
+        <el-button v-if="active < 2" type="primary" @click="next('user')">
+          下一步
+        </el-button>
+        <el-button v-if="active > 0 && active < 2" @click="pre">
+          上一步
+        </el-button>
       </el-form-item>
     </el-form>
   </div>

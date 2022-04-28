@@ -5,18 +5,18 @@
         <i class="el-icon-message"></i>
         <span>您已绑定邮箱</span>
       </div>
-      <el-button class="primary button" @click="unboundEmail"
-        >取消绑定邮箱</el-button
-      >
+      <el-button class="primary button" @click="unboundEmail">
+        取消绑定邮箱
+      </el-button>
     </div>
     <div v-if="!isBindEmail">
       <div class="msg">
         <i class="el-icon-message"></i>
         <span>您还未绑定邮箱</span>
       </div>
-      <el-button class="primary button" @click="checked = !checked"
-        >绑定邮箱</el-button
-      >
+      <el-button class="primary button" @click="checked = !checked">
+        绑定邮箱
+      </el-button>
     </div>
 
     <div v-if="checked">
@@ -31,9 +31,9 @@
           <el-input v-model="form.email"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="success" class="submit" @click="submitForm('form')"
-            >绑定邮箱</el-button
-          >
+          <el-button type="success" class="submit" @click="submitForm('form')">
+            绑定邮箱
+          </el-button>
           <el-button type="primary" @click="unSubmit">取消</el-button>
         </el-form-item>
       </el-form>
