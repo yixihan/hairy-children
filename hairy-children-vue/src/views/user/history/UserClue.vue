@@ -6,7 +6,7 @@
       </div>
       <ul>
         <li v-for="(item, index) in clueList" :key="index">
-          <a href="javascript:;" @click="toClue(item.clueId)">
+          <a href="javascript:;" @click="toArticle(item.titleId)">
             <img
               :src="'http://175.24.229.41:9421/' + item.imgs[0]"
               alt="正在加载中"
@@ -106,8 +106,8 @@ export default {
         this.clueList = this.clue.list.slice(0, this.clue.pageSize);
       });
     },
-    toClue(clueId) {
-      this.$router.push("/clue/" + clueId);
+    toArticle(titleId) {
+      this.$router.push("/article/" + titleId);
     },
   },
   created() {

@@ -7,15 +7,20 @@
       <ul>
         <li v-for="(item, index) in clueList" :key="index">
           <a href="javascript:;">
-            <img :src="item.imgs[0]" alt="正在加载中" />
+            <el-image
+              style="width: 100px; height: 100px; margin-right: 16px"
+              :src="item.imgs[0]"
+              :preview-src-list="item.imgs"
+            >
+            </el-image>
             <div class="article">
-              <div @click="toClue(item.clueId)">
+              <div>
                 <h3 class="title">
                   提交用户 :
                   <el-avatar size="small" :src="item.userAvatar"> </el-avatar>
                   <span v-text="item.userName"></span>
                 </h3>
-                <p>申请理由 : {{ item.clueContent }}</p>
+                <p>线索内容 : {{ item.clueContent }}</p>
               </div>
               <div class="petstatus">
                 <el-tag>
@@ -108,8 +113,11 @@ export default {
             this.clue.list[i].imgs = [];
             this.clue.list[i].imgs.push("/clue/default/default.png");
           }
-          this.clue.list[i].imgs[0] =
-            "http://175.24.229.41:9421/" + this.clue.list[i].imgs[0];
+          for (let j = 0; j < this.clue.list[i].imgs.length; j++) {
+            this.clue.list[i].imgs[j] =
+            "http://175.24.229.41:9421/" + this.clue.list[i].imgs[j];
+          }
+
           this.clue.list[i].userAvatar =
             "http://175.24.229.41:9421/" + this.clue.list[i].userAvatar;
         }
@@ -175,9 +183,6 @@ export default {
       }
 
       return clue;
-    },
-    toClue(clueId) {
-      this.$router.push("/clue/" + clueId);
     },
   },
 

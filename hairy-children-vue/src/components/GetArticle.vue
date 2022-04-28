@@ -14,10 +14,10 @@
       </div>
       <div class="article-info">
         <div class="author-info">
-          <div class="author-avatar">
+          <div class="author-avatar" @click="toUserCenter(title.userId)">
             <el-avatar size="medium" :src="title.userAvatar"></el-avatar>
           </div>
-          <div class="author-name">
+          <div class="author-name" @click="toUserCenter(title.userId)">
             <i>{{ title.userName }}</i>
           </div>
           <div class="author-city">
@@ -408,6 +408,9 @@ export default {
 
       return data;
     },
+    toUserCenter(userId) {
+      this.$router.push("/center/" + userId);
+    },
   },
   created() {
     this.init();
@@ -463,11 +466,13 @@ export default {
         display: flex;
 
         .author-avatar {
+          cursor: pointer;
           margin-right: 16px;
           margin-left: 25px;
         }
 
         .author-name {
+          cursor: pointer;
           margin-top: 11px;
           margin-right: 16px;
           font-size: 18px;

@@ -21,13 +21,13 @@
       </div>
       <div v-for="(root, index) in commentList" :key="'root-' + index">
         <div class="show-comment">
-          <div class="userAvatar">
+          <div class="userAvatar" @click="toUserCenter(root.userId)">
             <el-avatar size="medium" :src="root.userAvatar"></el-avatar>
           </div>
           <div class="main-comment">
             <div class="userinfo-comment">
               <div class="info">
-                <i>{{ root.userName }}</i>
+                <i @click="toUserCenter(root.userId)">{{ root.userName }}</i>
                 <i>
                   {{ new Date(root.gmtCreate).format("yyyy-MM-dd hh:mm:ss") }}
                 </i>
@@ -47,10 +47,29 @@
                 <i class="el-icon-like-plus"></i>
                 点赞 : {{ root.likeCount }}
               </el-tag>
-              <el-tag>
+              <el-tag @click="isShowTextF(root.rootId)">
                 <i class="el-icon-chat-square"></i>
                 评论 : {{ root.replyCount }}
               </el-tag>
+            </div>
+            <div
+              v-if="isShowCommentF == root.rootId"
+              class="textarea-comment-son"
+            >
+              <el-input
+                type="textarea"
+                :rows="2"
+                resize="both"
+                placeholder="请输入内容"
+                v-model="sonContent"
+              >
+              </el-input>
+              <el-button type="primary" @click="replyComment(root.rootId)">
+                发布
+              </el-button>
+              <el-button type="info" @click="isShowCommentF = -1">
+                取消
+              </el-button>
             </div>
 
             <div
@@ -59,22 +78,22 @@
               :key="'son-' + index"
               style="width: 100%"
             >
-              <div class="userAvatar">
+              <div class="userAvatar" @click="toUserCenter(son.userId)">
                 <el-avatar size="medium" :src="son.userAvatar"></el-avatar>
               </div>
               <div class="main-comment">
                 <div class="userinfo-comment">
                   <div class="info">
-                    <i>{{ root.userName }}</i>
+                    <i @click="toUserCenter(son.userId)">{{ son.userName }}</i>
                     <i>
                       {{
-                        new Date(root.gmtCreate).format("yyyy-MM-dd hh:mm:ss")
+                        new Date(son.gmtCreate).format("yyyy-MM-dd hh:mm:ss")
                       }}
                     </i>
                   </div>
                   <i
                     class="el-icon-delete"
-                    @click="delRootComment(root.rootId)"
+                    @click="delSonComment(son.rootId, son.replyId)"
                   ></i>
                 </div>
 
@@ -82,11 +101,34 @@
                   <p>{{ son.content }}</p>
                 </div>
 
-                <div class="tag">
+                <div class="tag" @click="isShowText(son.replyId)">
                   <el-tag>
                     <i class="el-icon-chat-square"></i>
                     评论
                   </el-tag>
+                </div>
+
+                <div
+                  v-if="isShowComment == son.replyId"
+                  @blur="isShowText(-1)"
+                  class="textarea-comment-son"
+                >
+                  <el-input
+                    type="textarea"
+                    :rows="2"
+                    resize="both"
+                    placeholder="请输入内容"
+                    v-model="sonContent"
+                  >
+                  </el-input>
+                  <el-button
+                    type="primary"
+                    @click="replyComment(son.rootId, son.replyId)"
+                    >发布</el-button
+                  >
+                  <el-button type="info" @click="isShowComment = -1">
+                    取消
+                  </el-button>
                 </div>
               </div>
             </div>
@@ -120,6 +162,8 @@ export default {
       sonContent: "",
       userAvatar: "",
       isCommentEmpty: false,
+      isShowComment: -1,
+      isShowCommentF: -1,
       commentsPage: {
         currPage: 0,
         list: [],
@@ -134,6 +178,14 @@ export default {
     this.init();
   },
   methods: {
+    // 父评论输入框显示
+    isShowTextF(index) {
+      this.isShowCommentF = index;
+    },
+    // 子评论输入框显示
+    isShowText(index) {
+      this.isShowComment = index;
+    },
     // 父评论 (评论文章)
     replyTitie() {
       if (this.rootContent == null || this.rootContent == "") {
@@ -188,7 +240,42 @@ export default {
       return data;
     },
     // 子评论 (评论评论)
-    replyComment() {},
+    replyComment(rootId, replyCommentId) {
+      this.addSonComment(rootId, replyCommentId).then(({ data }) => {
+        if (data.code == 200) {
+          this.$message({
+            message: "评论成功",
+            type: "success",
+          });
+          this.sonContent = "";
+          if (replyCommentId == null) {
+            this.isShowCommentF = -1;
+          } else {
+            this.isShowComment = -1;
+          }
+          data.data.rootComment.userAvatar =
+            "http://175.24.229.41:9421/" + data.data.rootComment.userAvatar;
+          // 总数据
+          for (let i = 0; i < this.commentsPage.list.length; i++) {
+            if (this.commentsPage.list[i].rootId === rootId) {
+              this.commentsPage.list[i].replyCount++;
+              if (this.commentsPage.list[i].commentReplyList == null) {
+                this.commentsPage.list[i].commentReplyList = [];
+              }
+              this.commentsPage.list[i].commentReplyList.push(
+                data.data.rootComment
+              );
+              break;
+            }
+          }
+        } else {
+          this.$message({
+            message: "评论失败, 请重试",
+            type: "error",
+          });
+        }
+      });
+    },
     // 添加子评论
     async addSonComment(rootId, replyCommentId) {
       const data = await this.$axios({
@@ -198,6 +285,7 @@ export default {
           "Jwt-Token": this.$store.getters.getToken,
         },
         data: {
+          userId: this.$store.getters.getUserId,
           rootId: rootId,
           replyCommentId: replyCommentId,
           content: this.sonContent,
@@ -368,15 +456,17 @@ export default {
     delSonCommentInCommentsPage(rootId, replyId) {
       // 在总数据中删除该评论内容
       for (let i = 0; i < this.commentsPage.list.length; i++) {
-        if (this.commentsPage.list[i].rootId === rootId) {
-          for (let j = 0; j < this.commentsPage.list[i].commentReplyList; j++) {
+        if (this.commentsPage.list[i].rootId == rootId) {
+          for (
+            let j = 0;
+            j < this.commentsPage.list[i].commentReplyList.length;
+            j++
+          ) {
             if (
-              this.commentsPage.list[i].commentReplyList[j].replyId ==
-                replyId ||
-              this.commentsPage.list[i].commentReplyList[j].replyCommentId ==
-                replyId
+              this.commentsPage.list[i].commentReplyList[j].replyId == replyId
             ) {
-              this.commentsPage.list[i].commentReplyList.splice(i, 1);
+              this.commentsPage.list[i].replyCount--;
+              this.commentsPage.list[i].commentReplyList.splice(j, 1);
             }
           }
           break;
@@ -384,13 +474,15 @@ export default {
       }
       // 如果在当前页中也有该元素, 则也删除
       for (let i = 0; i < this.commentList.length; i++) {
-        if (this.commentList[i].rootId === rootId) {
-          for (let j = 0; j < this.commentList[i].commentReplyList; j++) {
-            if (
-              this.commentList[i].commentReplyList[j].replyId == replyId ||
-              this.commentList[i].commentReplyList[j].replyCommentId == replyId
-            ) {
-              this.commentList[i].commentReplyList[j].splice(i, 1);
+        if (this.commentList[i].rootId == rootId) {
+          for (
+            let j = 0;
+            j < this.commentList[i].commentReplyList.length;
+            j++
+          ) {
+            if (this.commentList[i].commentReplyList[j].replyId == replyId) {
+              this.commentList[i].replyCount--;
+              this.commentList[i].commentReplyList[j].splice(j, 1);
             }
           }
           break;
@@ -454,6 +546,9 @@ export default {
         "http://175.24.229.41:9421/" + this.$store.getters.getUser.userAvatar;
       this.getComments();
     },
+    toUserCenter(userId) {
+      this.$router.push("/center/" + userId);
+    },
   },
 };
 </script>
@@ -478,6 +573,7 @@ export default {
     .el-avatar {
       margin-right: 10px !important;
       margin-top: 10px !important;
+      cursor: pointer;
     }
   }
 
@@ -495,6 +591,7 @@ export default {
         // margin: 10px;
         width: 36px;
         height: 36px;
+        cursor: pointer;
       }
       .main-comment {
         width: 100%;
@@ -502,6 +599,7 @@ export default {
         padding: 0 0 10px 15px;
         flex-direction: column;
         align-content: center;
+        transition: 3s all;
         div {
           align-self: flex-start;
         }
@@ -510,6 +608,7 @@ export default {
           width: 100%;
           i {
             &:first-child {
+              cursor: pointer;
               font-size: 18px;
               font-weight: bolder;
             }
@@ -536,11 +635,26 @@ export default {
             margin-right: 16px;
           }
         }
+        .textarea-comment-son {
+          display: flex;
+          align-items: flex-end;
+          div {
+            margin-right: 16px;
+          }
+          // display: none;
+          .el-textarea {
+            margin-bottom: 15px;
+          }
+          .el-button {
+            height: 40px;
+          }
+        }
       }
     }
   }
 
   .tag {
+    cursor: pointer;
     .el-tag {
       width: 90px;
       padding-left: 20px;

@@ -383,6 +383,7 @@ export default {
   position: absolute !important;
   right: 0 !important;
   display: inline-block;
+  width: 30% !important;
 }
 
 #code {
@@ -393,5 +394,6 @@ export default {
   margin-right: 0px;
   width: 150px !important;
 }
+
 
 </style>

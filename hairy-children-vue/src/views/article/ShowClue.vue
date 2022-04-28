@@ -165,4 +165,9 @@ export default {
     border: black;
   }
 }
+.el-descriptions-row {
+  span {
+    cursor: pointer;
+  }
+}
 </style>

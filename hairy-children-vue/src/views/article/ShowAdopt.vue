@@ -79,28 +79,34 @@
         </el-descriptions-item>
       </el-descriptions>
 
-      <div>
-        <p>
-          养宠理念 :
-          {{ adopt.adoptConcept }}
-        </p>
+      <div class="adopt-main">
+        <div class="adopt-concept">
+          <i>
+            养宠理念 :
+            {{ adopt.adoptConcept }}
+          </i>
+        </div>
 
-        <p>
-          申请理由
-          {{ adopt.adoptReason }}
-        </p>
+        <div class="adopt-reason">
+          <i>
+            申请理由 :
+            {{ adopt.adoptReason }}
+          </i>
+        </div>
       </div>
-    </div>
 
-    <div class="adopt-imgs">
-      <h3>附图</h3>
-      <div>
-        <el-image
-          v-for="(item, index) in fileList"
-          :key="index"
-          :src="item.url"
-          lazy
-        ></el-image>
+      <div class="adopt-imgs">
+        <div class="img-title">
+          <i>附图</i>
+        </div>
+        <div>
+          <el-image
+            v-for="(item, index) in fileList"
+            :key="index"
+            :src="item.url"
+            lazy
+          ></el-image>
+        </div>
       </div>
     </div>
   </div>
@@ -156,7 +162,7 @@ export default {
       this.$router.push("/adopt/" + this.adoptId + "/edit");
     },
     delAdopt() {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+      this.$confirm("此操作将永久删除该领养申请, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -218,6 +224,35 @@ export default {
     padding: 50px;
     border-radius: 30px;
     border: black;
+
+    .adopt-main {
+      display: flex;
+      flex-direction: column;
+
+      .adopt-concept {
+        display: inline-flex;
+        margin-top: 16px;
+        margin-bottom: 16px;
+      }
+      .adopt-reason {
+        display: inline-flex;
+      }
+    }
+
+    .adopt-imgs {
+      margin-top: 50px;
+      width: 100%;
+      .img-title {
+        display: flex;
+        justify-content: flex-start;
+        font-size: 16px;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        font-weight: bold;
+      }
+    }
   }
 }
 </style>

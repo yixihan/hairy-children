@@ -348,6 +348,7 @@ export default {
 .login {
   padding-top: 60px;
   margin: 0 auto;
+  width: 40%;
   .way {
     margin: 0 auto;
     padding: 10px;
@@ -376,11 +377,13 @@ export default {
   left: 0 !important;
   width: 150px !important;
   display: inline-block !important;
+  margin-right: 35px;
 }
 .el-button--primary {
-  position: absolute;
-  right: 0;
+  position: absolute !important;
+  right: 0 !important;
   display: inline-block;
+  width: 30% !important;
 }
 
 #code {

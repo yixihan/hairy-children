@@ -31,7 +31,6 @@ import WriteAdopt from '@/views/article/WriteAdopt'
 import WriteClue from '@/views/article/WriteClue'
 import ShowArticle from '@/views/article/ShowArticle'
 import ShowAdopt from '@/views/article/ShowAdopt'
-import ShowClue from '@/views/article/ShowClue'
 import EditArticle from '@/views/article/EditArticle'
 
 Vue.use(VueRouter);
@@ -60,15 +59,6 @@ const routes = [
         component: Index,
         meta: {
           requireAuth: false
-        }
-      },
-      // 测试页面
-      {
-        path: '/test',
-        name: 'test',
-        component: Test,
-        meta: {
-          requireAuth: true
         }
       },
       // 登录
@@ -306,15 +296,16 @@ const routes = [
           requireAuth: true
         },
       },
-      {
-        path: '/clue/:clueId',
-        name: 'showClue',
-        component: ShowClue,
-        meta: {
-          requireAuth: true
-        },
-      }
     ]
+  },
+  // 测试页面
+  {
+    path: '/test',
+    name: 'test',
+    component: Test,
+    meta: {
+      requireAuth: true
+    }
   },
   
   

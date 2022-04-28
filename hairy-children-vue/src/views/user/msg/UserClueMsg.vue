@@ -20,7 +20,7 @@
               <h3 class="title">来自 {{ item.sendUserName }} 的线索</h3>
               <p>
                 <el-link
-                  @click="toClue(item.clueId)"
+                  @click="toArticle(item.titleId)"
                   target="_blank"
                   :underline="false"
                   icon="el-icon-d-arrow-right"
@@ -220,8 +220,8 @@ export default {
 
       return data;
     },
-    toClue(clueId) {
-      this.$router.push("/clue/" + clueId);
+    toArticle(titleId) {
+      this.$router.push("/article/" + titleId);
     },
   },
   created() {
