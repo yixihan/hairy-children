@@ -2,6 +2,9 @@
   <div class="meetpets">
     <div class="adoption">
       <h2 @click="toAdoptSearch">领养</h2>
+      <div v-if="adoptArticles.list == null || adoptArticles.list.length == 0">
+        <el-empty :image-size="200"></el-empty>
+      </div>
       <ul>
         <li v-for="(item, index) in adoptArticles.list" :key="index">
           <a href="javascript:;" @click="toArticle(item.titleId)">
@@ -29,6 +32,9 @@
     </div>
     <div class="findpets">
       <h2 @click="toFindPetSearch">寻宠</h2>
+      <div v-if="findPetsArticles.list == null || findPetsArticles.list.length == 0">
+        <el-empty :image-size="200"></el-empty>
+      </div>
       <ul>
         <li v-for="(item, index) in findPetsArticles.list" :key="index">
           <a href="javascript:;" @click="toArticle(item.titleId)">
@@ -121,9 +127,9 @@ export default {
     toAdoptSearch() {
       this.$router.push("/search/adopt");
     },
-    toArticle (titleId) {
-      this.$router.push('/article/' + titleId)
-    }
+    toArticle(titleId) {
+      this.$router.push("/article/" + titleId);
+    },
   },
   created() {
     this.setInfo();

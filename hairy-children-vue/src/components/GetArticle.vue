@@ -1,7 +1,9 @@
 <template>
   <div class="page">
-    <div class="desc">
-      <h1>{{ title.titleName }}</h1>
+    <div class="article-header">
+      <div class="article-title">
+        <h1>{{ title.titleName }}</h1>
+      </div>
       <p>城市 : {{ title.userAddress }}</p>
       <el-avatar size="small" :src="title.userAvatar"></el-avatar>
       <p>作者 : {{ title.userName }}</p>
@@ -12,10 +14,15 @@
         最后修改时间 :
         {{ new Date(title.gmtModified).format("yyyy-MM-dd hh:mm:ss") }}
       </p>
+      <p>
+        贴子完成状态 :
+        {{ title.isFinish == 1 ? "已完成" : "未完成" }}
+      </p>
       <p>贴子类型 : {{ title.titleType == 1 ? "领养贴" : "寻宠贴" }}</p>
-      <div v-if="title.userId == this.$store.getters.getUserId">
-        <el-button type="primary" @click="editArticle">修改贴子</el-button>
-        <el-button type="primary" @click="deleteArticle">删除贴子</el-button>
+      <div class="button" v-if="title.userId == this.$store.getters.getUserId">
+        <el-tag type="primary" @click="editArticle">修改贴子</el-tag>
+        <el-tag type="primary" @click="deleteArticle">删除贴子</el-tag>
+        <el-tag type="primary" @click="finishArticle">修改贴子状态</el-tag>
       </div>
     </div>
 
@@ -38,11 +45,16 @@
         width="30%"
       >
         <div class="show">
-          <div v-for="(item, index) in userCollections.list" :key="index">
-            <el-checkbox
-              :v-model="item.checked"
-              @click="check(index)"
-            ></el-checkbox>
+          <div
+            class="collection-main"
+            v-for="(item, index) in userCollections.list"
+            :key="index"
+          >
+            <input
+              type="checkbox"
+              v-model="item.checked"
+              @click="check(item)"
+            />
             <i class="name">{{ item.collectionName }}</i>
             <span class="count"> {{ item.collectionCount }} / 1000 </span>
           </div>
@@ -51,7 +63,10 @@
               v-model="collectionName"
               placeholder="新建收藏夹"
             ></el-input>
-            <el-button type="primary" @click="createCollection">确定</el-button>
+            <el-button type="primary" @click="createCollection">新建</el-button>
+          </div>
+          <div class="submit">
+            <el-button type="primary" @click="sumbit">确定</el-button>
           </div>
         </div>
       </el-dialog>
@@ -220,6 +235,51 @@ export default {
     collectionTitle() {
       this.dialogTableVisible = true;
     },
+    check(item) {
+      item.checked = !item.checked;
+      if (item.checked) {
+        for (let i = 0; i < this.checkList.length; i++) {
+          if (this.checkList[i] == item.collectionId) {
+            return;
+          }
+        }
+        this.checkList.push(item.collectionId);
+      } else {
+        for (let i = 0; i < this.checkList.length; i++) {
+          if (this.checkList[i] == item.collectionId) {
+            this.checkList.splice(i, 1);
+          }
+        }
+      }
+    },
+    sumbit() {
+      for (let i = 0; i < this.checkList.length; i++) {
+        this.addTitleCollection(this.checkList[i]).then(({ data }) => {
+          if (data.code == 200) {
+            this.$message({
+              type: "success",
+              message: data.msg,
+            });
+            this.title.collectionCount++;
+          } else {
+            this.$message({
+              type: "error",
+              message: data.msg,
+            });
+          }
+        });
+      }
+      this.getUserCollections().then(({ data }) => {
+        this.userCollections = data.data.page;
+
+        for (let i = 0; i < this.userCollections.list.length; i++) {
+          this.userCollections.list[i].checked = false;
+        }
+      });
+      this.checkList = [];
+
+      this.dialogTableVisible = false;
+    },
     async addTitleCollection(collectionId) {
       const data = await this.$axios({
         url: "/collection/addCollection",
@@ -235,14 +295,6 @@ export default {
 
       return data;
     },
-    check(index) {
-      console.log(11);
-      this.userCollections.list[index].checked =
-        !this.userCollections.list[index].checked;
-      if (this.userCollections.list[index].checked) {
-        this.checkList.push(this.userCollections.list[index].collectionId);
-      }
-    },
     createCollection() {
       if (!this.inputValidator(this.collectionName)) {
         this.$message({
@@ -256,7 +308,7 @@ export default {
               type: "success",
               message: data.msg,
             });
-            this.collectionName = ""
+            this.collectionName = "";
             let item = data.data.data;
             console.log(item);
             item.checked = false;
@@ -290,6 +342,49 @@ export default {
 
       return data;
     },
+    finishArticle() {
+      this.$confirm("确定已完成贴子任务", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.finish().then(({ data }) => {
+            if (data.code == 200) {
+              this.$message({
+                type: "success",
+                message: "更新成功!",
+              });
+              this.title.isFinish = 1;
+            } else {
+              this.$message({
+                type: "error",
+                message: "更新失败!",
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    async finish() {
+      const data = await this.$axios({
+        url: "/title/finish",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          titleId: this.titleId,
+        },
+      });
+
+      return data;
+    },
   },
   created() {
     this.init();
@@ -301,11 +396,37 @@ export default {
 <style lang="scss" scoped>
 .page {
   margin: 70px;
+  position: relative;
+
+  .article-header {
+    .article-title {
+      margin-bottom: 8px;
+
+      h1 {
+        font-size: 28px;
+        word-wrap: break-word;
+        color: #222226;
+        font-weight: 600;
+        margin: 0;
+        word-break: break-all;
+      }
+    }
+    .button {
+      .el-tag {
+        margin-right: 16px;
+      }
+    }
+  }
 
   .tag {
+    position: absolute;
+    right: 0;
+    height: 50px;
+    margin-bottom: 40px;
     .el-tag {
       width: 90px;
       padding-left: 20px;
+      margin-right: 6px;
       position: relative;
       i {
         position: absolute;
@@ -332,28 +453,36 @@ export default {
 
     .el-dialog__body {
       padding-bottom: 50px !important;
-      max-height: 300px !important;
+
       .show {
-        .el-checkbox {
-          margin-right: 10px;
-          margin-bottom: 16px;
-        }
+        .collection-main {
+          margin-bottom: 10px;
+          .el-checkbox {
+            position: relative;
 
-        .name {
-          font: italic small-caps bold 16px/24px Georgia, serif;
-          margin-left: 10px;
-          margin-right: 10px;
-        }
+            margin-right: 10px;
+            margin-bottom: 16px;
+          }
 
-        .count {
-          position: absolute;
-          right: 16px;
-          font-size: 12px;
+          .name {
+            margin-left: 10px;
+            margin-right: 10px;
+            display: inline-block;
+            overflow: hidden;
+          }
+
+          .count {
+            float: right;
+
+            right: 16px;
+            font-size: 12px;
+          }
         }
       }
 
       .add {
         width: 100%;
+        height: 50px;
         position: relative;
 
         .el-input {
@@ -366,11 +495,25 @@ export default {
           right: -5px !important;
         }
       }
+
+      .submit {
+        height: 40px;
+        widows: 100% !important;
+        display: flex;
+
+        .el-button--primary {
+          flex: auto;
+          margin: 0 auto;
+          max-width: 200px;
+        }
+      }
     }
   }
 }
 
 ::v-deep .el-dialog--center .el-dialog__body {
   padding-bottom: 50px !important;
+  height: 300px !important;
+  overflow: auto !important;
 }
 </style>

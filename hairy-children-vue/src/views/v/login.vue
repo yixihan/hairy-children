@@ -365,7 +365,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .login {
   padding-top: 60px;
   margin: 0 auto;

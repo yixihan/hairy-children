@@ -169,6 +169,7 @@ export default {
   }
 
   .adopt-or-clue {
+    margin-top: 50px !important;
     margin: 0 auto;
   }
 
