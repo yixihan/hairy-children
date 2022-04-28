@@ -165,10 +165,6 @@ public class AdoptController {
         boolean isSuccess = Boolean.parseBoolean (String.valueOf (params.get ("isSuccess")));
         Adopt adopt = adoptService.getById (adoptId);
 
-        if (adopt.getIsSuccess () == 1) {
-            return Result.fail (555, "请勿重复同意申请");
-        }
-
         adopt.setIsSuccess (isSuccess ? 1 : 2);
         boolean update1 = adoptService.updateById (adopt);
         return update1 ? Result.success ("更新成功") : Result.fail ("更新失败");
