@@ -8,7 +8,7 @@
       <li class="col" v-if="isLogin" @click="toCenter">
         <i class="el-icon-user"></i>个人中心
       </li>
-      
+
       <li class="col" v-if="isLogin" @click="toWriteArticle">
         <i class="el-icon-plus"></i>我要发布
       </li>
@@ -18,6 +18,8 @@
 </template>
 
 <script>
+
+
 export default {
   name: "Header",
   data() {
@@ -47,7 +49,11 @@ export default {
       });
     },
     toWriteArticle() {
-      if (this.$store.getters.getUser.userIdentityCard == null) {
+      console.log(this.$store.getters.getUser.userIdentityCard);
+      if (
+        this.$store.getters.getUser.userIdentityCard == null ||
+        this.$store.getters.getUser.userIdentityCard == ""
+      ) {
         this.open();
       } else {
         this.$router.push("/article/create");

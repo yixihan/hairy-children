@@ -15,7 +15,7 @@
       <div class="article-info">
         <div class="author-info">
           <div class="author-avatar">
-            <el-avatar size="meduim" :src="title.userAvatar"></el-avatar>
+            <el-avatar size="medium" :src="title.userAvatar"></el-avatar>
           </div>
           <div class="author-name">
             <i>{{ title.userName }}</i>
@@ -505,10 +505,11 @@ export default {
     right: 0;
     height: 50px;
     margin-bottom: 40px;
+    margin-top: 5px;
     .el-tag {
       width: 90px;
       padding-left: 20px;
-      margin-right: 6px;
+      margin-left: 5px;
       position: relative;
       i {
         position: absolute;

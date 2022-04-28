@@ -14,7 +14,7 @@
           <el-button type="primary" size="small" @click="toEditAdopt">
             <i class="el-icon-edit"></i> 更新
           </el-button>
-          <el-button type="danger" size="small" @click="deleteAdopt">
+          <el-button type="danger" size="small" @click="delAdopt">
             <i class="el-icon-delete"></i> 删除
           </el-button>
         </template>
@@ -155,8 +155,37 @@ export default {
     toEditAdopt() {
       this.$router.push("/adopt/" + this.adoptId + "/edit");
     },
-    deleteAdopt() {
-      this.$axios({
+    delAdopt() {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.deleteAdopt().then(({ data }) => {
+            if (data.code == 200) {
+              this.$message({
+                message: data.msg,
+                type: "success",
+              });
+              this.toArticle();
+            } else {
+              this.$message({
+                message: data.msg,
+                type: "error",
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    async deleteAdopt() {
+      const data = await this.$axios({
         url: "/adopt/deleteAdopt",
         method: "post",
         headers: {
@@ -165,20 +194,9 @@ export default {
         data: {
           adoptId: this.adoptId,
         },
-      }).then(({ data }) => {
-        if (data.code == 200) {
-          this.$message({
-            message: data.msg,
-            type: "success",
-          });
-          this.toArticle();
-        } else {
-          this.$message({
-            message: data.msg,
-            type: "error",
-          });
-        }
       });
+
+      return data;
     },
     toArticle() {
       this.$router.push("/article/" + this.adopt.titleId);

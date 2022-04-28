@@ -348,6 +348,7 @@ export default {
 .login {
   padding-top: 60px;
   margin: 0 auto;
+  width: 30%;
   .way {
     margin: 0 auto;
     padding: 10px;
@@ -392,4 +393,5 @@ export default {
   margin-right: 0px;
   width: 150px !important;
 }
+
 </style>

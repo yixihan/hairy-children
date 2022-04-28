@@ -185,6 +185,7 @@ export default {
         this.title.markdown = this.title.titleContent
       });
     },
+    
   },
 };
 </script>

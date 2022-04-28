@@ -1,12 +1,7 @@
 <template>
   <div class="page">
     <div class="clue-info">
-      <el-descriptions
-        class="margin-top"
-        title="线索详情"
-        :column="2"
-        border
-      >
+      <el-descriptions class="margin-top" title="线索详情" :column="2" border>
         <template
           slot="extra"
           v-if="clue.userId == this.$store.getters.getUserId"
@@ -14,7 +9,7 @@
           <el-button type="primary" size="small" @click="toEditClue">
             <i class="el-icon-edit"></i> 更新
           </el-button>
-          <el-button type="danger" size="small" @click="deleteClue">
+          <el-button type="danger" size="small" @click="delClue">
             <i class="el-icon-delete"></i> 删除
           </el-button>
         </template>
@@ -39,7 +34,6 @@
           线索内容 :
           {{ clue.clueContent }}
         </p>
-
       </div>
     </div>
 
@@ -106,8 +100,37 @@ export default {
     toEditClue() {
       this.$router.push("/clue/" + this.clueId + "/edit");
     },
-    deleteClue() {
-      this.$axios({
+    delClue() {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.deleteClue().then(({ data }) => {
+            if (data.code == 200) {
+              this.$message({
+                message: data.msg,
+                type: "success",
+              });
+              this.toArticle();
+            } else {
+              this.$message({
+                message: data.msg,
+                type: "error",
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    async deleteClue() {
+      const data = await this.$axios({
         url: "/clue/deleteClue",
         method: "post",
         headers: {
@@ -116,20 +139,9 @@ export default {
         data: {
           clueId: this.clueId,
         },
-      }).then(({ data }) => {
-        if (data.code == 200) {
-          this.$message({
-            message: data.msg,
-            type: "success",
-          });
-          this.toArticle();
-        } else {
-          this.$message({
-            message: data.msg,
-            type: "error",
-          });
-        }
       });
+
+      return data;
     },
     toArticle() {
       this.$router.push("/article/" + this.clue.titleId);

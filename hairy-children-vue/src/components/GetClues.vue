@@ -54,7 +54,7 @@ import format from "@/utils/DateFormat.js";
 export default {
   name: "GetClues",
   format,
-  props: ["titleId"],
+  props: ["titleId", "authorId"],
   data() {
     return {
       clueList: [],

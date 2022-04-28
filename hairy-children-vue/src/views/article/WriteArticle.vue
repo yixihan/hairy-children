@@ -58,6 +58,7 @@
         <i class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </div>
+
     <Edit v-if="active == 2" :titleId="titleId"></Edit>
   </div>
 </template>
@@ -211,10 +212,16 @@ export default {
   }
   .write {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    margin-top: 80px !important;
+    width: 80%;
+    margin: 0 auto;
+    min-height: 500px !important;
   }
 
-  .from {
+  ::v-deep .from {
     margin-top: 20px !important;
+    width: 30% !important;
+    margin: 0 auto !important;
   }
 
   .uploadImg {

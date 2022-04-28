@@ -130,6 +130,7 @@ export default {
 .login {
   padding-top: 60px;
   margin: 0 auto;
+  width: 30% !important;
   .way {
     margin: 0 auto;
     padding: 10px;

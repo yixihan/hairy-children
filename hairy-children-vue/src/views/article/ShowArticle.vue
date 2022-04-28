@@ -86,8 +86,18 @@ export default {
           this.$router.push("/");
         }
       });
+
+      this.getTitle().then(({ data }) => {
+        if (data.code == 200) {
+          this.title = data.data.title;
+        }
+      });
     },
     toCreatAdopt() {
+      if (this.verify()) {
+        this.open();
+        return;
+      }
       this.creatAdopt().then(({ data }) => {
         if (data.code == 200) {
           this.$message({
@@ -119,6 +129,10 @@ export default {
       return data;
     },
     toCreatClue() {
+      if (this.verify()) {
+        this.open();
+        return;
+      }
       this.creatClue().then(({ data }) => {
         if (data.code == 200) {
           this.$message({
@@ -148,6 +162,28 @@ export default {
       });
 
       return data;
+    },
+    verify() {
+      return (
+        this.$store.getters.getUser.userIdentityCard == null ||
+        this.$store.getters.getUser.userIdentityCard == ""
+      );
+    },
+    open() {
+      this.$confirm("您还没实名认证, 请先实名认证?", "提示", {
+        confirmButtonText: "实名认证",
+        cancelButtonText: "取消",
+        type: "warning",
+        center: true,
+      })
+        .then(() => {
+          this.$router.push(
+            "/center/" +
+              this.$store.getters.getUser.userId +
+              "/setting/authentication"
+          );
+        })
+        .catch(() => {});
     },
   },
   created() {
