@@ -69,22 +69,11 @@ public class TitleController {
             return Result.fail (555, "没有此用户");
         }
 
-        title.setGmtCreate (new Date ());
         Boolean creat = titleService.createTitle (title);
 
         if (creat) {
-            QueryWrapper<Title> wrapper = new QueryWrapper<> ();
-            Map<String, Object> columns = new HashMap<> (16);
-            columns.put ("user_id", title.getUserId ());
-            columns.put ("title_type", title.getTitleType ());
-            columns.put ("title_name", title.getTitleName ());
-            columns.put ("gmt_create", title.getGmtCreate ());
-            wrapper.allEq (true, columns, true).select ("title_id");
-
-            Title one = titleService.getOne (wrapper);
-
             Map<String, Object> map = new HashMap<> (16);
-            map.put ("titleId", one.getTitleId ());
+            map.put ("titleId", title.getTitleId ());
             return Result.success ("创建成功", map);
         }
 

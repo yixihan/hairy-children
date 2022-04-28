@@ -67,19 +67,9 @@ public class ClueController {
             return Result.fail ("请勿重复创建线索贴");
         }
 
-        clue.setGmtCreate (new Date ());
         Boolean create = clueService.createClue (clue);
 
         if (create) {
-            QueryWrapper<Clue> wrapper = new QueryWrapper<> ();
-            Map<String, Object> columns = new HashMap<> (16);
-            columns.put ("user_id", clue.getUserId ());
-            columns.put ("title_id", clue.getTitleId ());
-            columns.put ("gmt_create", clue.getGmtCreate ());
-            wrapper.allEq (true, columns, true).select ("clue_id");
-
-            clue = clueService.getOne (wrapper);
-
             Map<String, Object> map = new HashMap<> (16);
             map.put ("clueId", clue.getClueId ());
             return Result.success ("创建成功", map);

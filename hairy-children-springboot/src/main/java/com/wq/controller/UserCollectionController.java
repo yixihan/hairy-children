@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +49,18 @@ public class UserCollectionController {
     @PostMapping("/createFavorites")
     public Result createFavorites(@RequestBody UserCollection userCollection) {
         userCollection.setUserId (ShiroUtils.getUserId ());
+        userCollection.setGmtCreate (new Date ());
         boolean save = userCollectionService.save (userCollection);
 
-        return save ? Result.success ("创建收藏夹成功 !") : Result.fail ("创建收藏夹失败");
+        if (save) {
+            Map<String, Object> map = new HashMap<> (16);
+            userCollection.setCollectionCount (0);
+            map.put ("data", userCollection);
+
+            return Result.success ("创建收藏夹成功 !", map);
+        }
+
+        return Result.fail ("创建收藏夹失败");
     }
 
     @PostMapping("/updateFavorites")
@@ -153,7 +163,7 @@ public class UserCollectionController {
         return Result.success (map);
     }
 
-    private void setCollectionsInfo (CollectionTitle collectionTitle) {
+    private void setCollectionsInfo(CollectionTitle collectionTitle) {
         Title title = titleService.getById (collectionTitle.getTitleId ());
         UserInfo info = userInfoService.getUserInfoById (title.getUserId ());
         User user = userService.getById (title.getUserId ());

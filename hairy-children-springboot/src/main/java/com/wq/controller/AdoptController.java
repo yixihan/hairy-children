@@ -67,20 +67,9 @@ public class AdoptController {
             return Result.fail ("请勿重复申请领养贴");
         }
 
-        adopt.setGmtCreate (new Date ());
         Boolean create = adoptService.createAdopt (adopt);
 
         if (create) {
-            QueryWrapper<Adopt> wrapper = new QueryWrapper<> ();
-            Map<String, Object> columns = new HashMap<> (16);
-            columns.put ("user_id", adopt.getUserId ());
-            columns.put ("title_id", adopt.getTitleId ());
-            columns.put ("gmt_create", adopt.getGmtCreate ());
-
-            wrapper.allEq (true, columns, true).select ("adopt_id");
-
-            adopt = adoptService.getOne (wrapper);
-
             Map<String, Object> map = new HashMap<> (16);
             map.put ("adoptId", adopt.getAdoptId ());
             return Result.success ("创建成功", map);
