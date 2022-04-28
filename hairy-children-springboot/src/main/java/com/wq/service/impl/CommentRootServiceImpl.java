@@ -1,6 +1,5 @@
 package com.wq.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wq.mapper.CommentReplyMapper;
 import com.wq.mapper.CommentRootMapper;
@@ -145,25 +144,10 @@ public class CommentRootServiceImpl extends ServiceImpl<CommentRootMapper, Comme
         CommentRoot commentRoot = commentRootMapper.selectById (commentReply.getRootId ());
         int delete = commentReplyMapper.deleteById (replyId);
 
-        // 删除子评论的回复
-        // 记录被删除数
-        int count = 0;
-        QueryWrapper<CommentReply> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("reply_comment_id", replyId);
-        List<CommentReply> commentReplyList = commentReplyMapper.selectList (wrapper);
-        for (CommentReply reply : commentReplyList) {
-            // 删评
-            commentReplyMapper.deleteById (reply.getReplyId ());
-            // 更新被删评用户的redis表
-            updateUserComment (reply.getUserId ());
-            // 计数
-            count++;
-        }
-
         // 异步方法更新 redis 内的评论内容
         updateTitleComment (commentRoot.getAnswerId ());
         updateUserComment (commentReply.getUserId ());
-        return delete + count;
+        return delete;
     }
 
 
