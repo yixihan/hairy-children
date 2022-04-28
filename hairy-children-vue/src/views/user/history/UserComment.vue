@@ -8,7 +8,7 @@
         <li v-for="(item, index) in commentList" :key="index">
           <a href="javascript:;" @click="toArticle(item.answerId)">
             <img
-              :src="'http://175.24.229.41:9421/' + item.titleImg"
+              :src="item.titleImg"
               alt="正在加载中"
             />
             <div class="article">
@@ -98,8 +98,15 @@ export default {
       this.getUserComment().then(({ data }) => {
         console.log(data);
         this.comment = data.data.page;
-        if (this.comment.list.length == 0) {
+
+        if (this.comment.list == null || this.comment.list.length == 0) {
           this.isEmpty = true;
+          return;
+        }
+
+        for (var i = 0; i < this.comment.list.length; i++) {
+          
+          this.comment.list[i].titleImg = this.$store.getters.getUrl + this.comment.list[i].titleImg
         }
 
         this.commentList = this.comment.list.slice(0, this.comment.pageSize);

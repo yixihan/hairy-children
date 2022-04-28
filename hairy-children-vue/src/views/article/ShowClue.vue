@@ -75,7 +75,7 @@ export default {
           for (let i = 0; i < this.clue.imgs.length; i++) {
             let item = {
               img: this.clue.imgs[i],
-              url: "http://175.24.229.41:9421/" + this.clue.imgs[i],
+              url: this.$store.getters.getUrl + this.clue.imgs[i],
             };
 
             this.fileList.push(item);

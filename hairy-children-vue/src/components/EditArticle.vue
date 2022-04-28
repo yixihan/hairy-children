@@ -106,7 +106,7 @@ export default {
         console.log(res);
         this.$refs.md.$img2Url(
           pos,
-          "http://175.24.229.41:9421/" + res.data.data.imgDir
+          this.$store.getters.getUrl + res.data.data.imgDir
         );
       });
     },

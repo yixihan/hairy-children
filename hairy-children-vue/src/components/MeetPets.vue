@@ -8,7 +8,7 @@
       <ul>
         <li v-for="(item, index) in adoptArticles.list" :key="index">
           <a href="javascript:;" @click="toArticle(item.titleId)">
-            <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
+            <img :src="item.titleImg" alt="" />
             <div class="article">
               <h3 class="title">{{ item.titleName }}</h3>
               <p>
@@ -32,13 +32,17 @@
     </div>
     <div class="findpets">
       <h2 @click="toFindPetSearch">寻宠</h2>
-      <div v-if="findPetsArticles.list == null || findPetsArticles.list.length == 0">
+      <div
+        v-if="
+          findPetsArticles.list == null || findPetsArticles.list.length == 0
+        "
+      >
         <el-empty :image-size="200"></el-empty>
       </div>
       <ul>
         <li v-for="(item, index) in findPetsArticles.list" :key="index">
           <a href="javascript:;" @click="toArticle(item.titleId)">
-            <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
+            <img :src="item.titleImg" alt="" />
             <div class="article">
               <h3 class="title">{{ item.titleName }}</h3>
               <p>
@@ -113,12 +117,20 @@ export default {
       this.getArticles(1).then(({ data }) => {
         this.adoptArticles = data.data.page;
         this.adoptArticles.list = this.adoptArticles.list.slice(0, 5);
+        for (let i = 0; i < this.adoptArticles.list.length; i++) {
+          this.adoptArticles.list[i].titleImg =
+            this.$store.getters.getUrl + this.adoptArticles.list[i].titleImg;
+        }
       });
 
       // 获取寻宠贴
       this.getArticles(2).then(({ data }) => {
         this.findPetsArticles = data.data.page;
         this.findPetsArticles.list = this.findPetsArticles.list.slice(0, 5);
+        for (let i = 0; i < this.findPetsArticles.list.length; i++) {
+          this.findPetsArticles.list[i].titleImg =
+            this.$store.getters.getUrl + this.findPetsArticles.list[i].titleImg;
+        }
       });
     },
     toFindPetSearch() {

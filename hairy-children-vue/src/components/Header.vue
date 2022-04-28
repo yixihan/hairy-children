@@ -18,8 +18,6 @@
 </template>
 
 <script>
-
-
 export default {
   name: "Header",
   data() {
@@ -84,7 +82,16 @@ export default {
       );
     },
     userName() {
-      return this.$store.getters.getUser.userName;
+      if (
+        this.$store.getters.getUser != null &&
+        this.$store.getters.getUser != ""
+      ) {
+        return this.$store.getters.getUser.userName == null
+          ? ""
+          : this.$store.getters.getUser.userName;
+      } else {
+        return "";
+      }
     },
   },
 };

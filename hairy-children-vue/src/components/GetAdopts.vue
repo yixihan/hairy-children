@@ -118,9 +118,9 @@ export default {
             this.adopt.list[i].imgs.push("/adopt/default/default.png");
           }
           this.adopt.list[i].imgs[0] =
-            "http://175.24.229.41:9421/" + this.adopt.list[i].imgs[0];
+            this.$store.getters.getUrl + this.adopt.list[i].imgs[0];
           this.adopt.list[i].userAvatar =
-            "http://175.24.229.41:9421/" + this.adopt.list[i].userAvatar;
+            this.$store.getters.getUrl + this.adopt.list[i].userAvatar;
         }
 
         this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);

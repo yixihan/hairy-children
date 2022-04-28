@@ -136,7 +136,7 @@ export default {
           for (let i = 0; i < this.adopt.imgs.length; i++) {
             let item = {
               img: this.adopt.imgs[i],
-              url: "http://175.24.229.41:9421/" + this.adopt.imgs[i],
+              url: this.$store.getters.getUrl + this.adopt.imgs[i],
             };
 
             this.fileList.push(item);

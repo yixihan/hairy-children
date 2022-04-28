@@ -201,7 +201,7 @@ export default {
               type: "success",
             });
             data.data.rootComment.userAvatar =
-              "http://175.24.229.41:9421/" + data.data.rootComment.userAvatar;
+              this.$store.getters.getUrl + data.data.rootComment.userAvatar;
             this.rootContent = "";
             if (this.commentsPage.list == null) {
               this.commentsPage.list = [];
@@ -254,7 +254,7 @@ export default {
             this.isShowComment = -1;
           }
           data.data.rootComment.userAvatar =
-            "http://175.24.229.41:9421/" + data.data.rootComment.userAvatar;
+            this.$store.getters.getUrl + data.data.rootComment.userAvatar;
           // 总数据
           for (let i = 0; i < this.commentsPage.list.length; i++) {
             if (this.commentsPage.list[i].rootId === rootId) {
@@ -307,7 +307,7 @@ export default {
         }
         for (var i = 0; i < this.commentsPage.list.length; i++) {
           this.commentsPage.list[i].userAvatar =
-            "http://175.24.229.41:9421/" + this.commentsPage.list[i].userAvatar;
+            this.$store.getters.getUrl + this.commentsPage.list[i].userAvatar;
 
           for (
             var j = 0;
@@ -315,7 +315,7 @@ export default {
             j++
           ) {
             this.commentsPage.list[i].commentReplyList[j].userAvatar =
-              "http://175.24.229.41:9421/" +
+              this.$store.getters.getUrl +
               this.commentsPage.list[i].commentReplyList[j].userAvatar;
           }
         }
@@ -543,7 +543,7 @@ export default {
     // 初始化评论页
     init() {
       this.userAvatar =
-        "http://175.24.229.41:9421/" + this.$store.getters.getUser.userAvatar;
+        this.$store.getters.getUrl + this.$store.getters.getUser.userAvatar;
       this.getComments();
     },
     toUserCenter(userId) {

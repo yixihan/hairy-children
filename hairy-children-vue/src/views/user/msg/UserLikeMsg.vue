@@ -12,10 +12,7 @@
       <ul>
         <li v-for="(item, index) in messageList" :key="index">
           <a href="javascript:;">
-            <img
-              :src="'http://175.24.229.41:9421/' + item.sendUserAvatar"
-              alt="正在加载中"
-            />
+            <img :src="item.sendUserAvatar" alt="正在加载中" />
             <div class="article">
               <h3 class="title">来自 {{ item.sendUserName }} 的点赞</h3>
               <p v-if="item.rootId != null">类型 : 评论点赞</p>
@@ -179,9 +176,13 @@ export default {
             this.message.totalCount / this.message.pageSize;
           this.message.totalPage =
             this.message.totalCount % this.message.pageSize == 0 ? 0 : 1;
-          if (this.message.list.length == 0) {
+          if (this.message.list == null || this.message.list.length == 0) {
             this.isEmpty = true;
             return;
+          }
+          for (var i = 0; i < this.message.list.length; i++) {
+            this.message.list[i].sendUserAvatar =
+              this.$store.getters.getUrl + this.message.list[i].sendUserAvatar;
           }
           console.log(this.message);
           this.messageList = this.message.list.slice(0, this.message.pageSize);

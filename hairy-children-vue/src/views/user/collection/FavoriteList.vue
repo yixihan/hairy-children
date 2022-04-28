@@ -84,9 +84,9 @@ export default {
 
         for (let i = 0; i < this.page.list.length; i++) {
           this.page.list[i].titleAvatar =
-            "http://175.24.229.41:9421/" + this.page.list[i].titleAvatar;
+            this.$store.getters.getUrl + this.page.list[i].titleAvatar;
           this.page.list[i].titleAuthorAvatar =
-            "http://175.24.229.41:9421/" + this.page.list[i].titleAuthorAvatar;
+          this.$store.getters.getUrl + this.page.list[i].titleAuthorAvatar;
         }
 
         this.list = this.page.list.slice(0, this.page.pageSize);

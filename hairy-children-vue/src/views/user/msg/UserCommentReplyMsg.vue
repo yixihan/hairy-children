@@ -12,10 +12,7 @@
       <ul>
         <li v-for="(item, index) in messageList" :key="index">
           <a href="javascript:;">
-            <img
-              :src="'http://175.24.229.41:9421/' + item.sendUserAvatar"
-              alt="正在加载中"
-            />
+            <img :src="item.sendUserAvatar" alt="正在加载中" />
             <div class="article">
               <h3 class="title">来自 {{ item.sendUserName }} 的回复</h3>
               <p>
@@ -135,15 +132,13 @@ export default {
       this.userId = this.$route.params.userId;
       this.getUserMessage().then(({ data }) => {
         this.message = data.data.page;
-        if (this.message.list.length == 0) {
+        if (this.message.list == null || this.message.list.length == 0) {
           this.isEmpty = true;
           return;
         }
         for (var i = 0; i < this.message.list.length; i++) {
-          if (this.message.list[i].imgs == null) {
-            this.message.list[i].imgs = [];
-            this.message.list[i].imgs.push("/adopt/default/default.png");
-          }
+          this.message.list[i].sendUserAvatar =
+            this.$store.getters.getUrl + this.message.list[i].sendUserAvatar;
         }
 
         this.messageList = this.message.list.slice(0, this.message.pageSize);

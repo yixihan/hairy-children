@@ -72,7 +72,7 @@
         <el-form-item label="图片上传">
           <el-upload
             class="upload-demo"
-            :action="'http://175.24.229.41:9421/adopt/updateImg/' + adoptId"
+            :action="this.$store.getters.getUrl + '/adopt/updateImg/' + adoptId"
             :headers="JwtToken"
             name="imgs"
             :on-preview="handlePreview"
@@ -124,7 +124,7 @@ export default {
         isFeedback: 1,
         selectedOptions: [""],
       },
-      fileList: [],
+      fileList: [''],
       rules: {
         adoptReason: [
           { required: true, message: "请输入申请理由", trigger: "blur" },
@@ -164,7 +164,7 @@ export default {
           for (let i = 0; i < this.adopt.imgs.length; i++) {
             let item = {
               img: this.adopt.imgs[i],
-              url: "http://175.24.229.41:9421/" + this.adopt.imgs[i],
+              url: this.$store.getters.getUrl + this.adopt.imgs[i],
             };
 
             this.fileList.push(item);
@@ -289,7 +289,7 @@ export default {
         });
         let item = {
           img: data.data.imgList[0],
-          url: "http://175.24.229.41:9421/" + data.data.imgList[0],
+          url: this.$store.getters.getUrl + data.data.imgList[0],
         };
 
         this.fileList.push(item);

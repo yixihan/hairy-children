@@ -25,7 +25,7 @@
         <el-form-item label="图片上传">
           <el-upload
             class="upload-demo"
-            :action="'http://175.24.229.41:9421/clue/updateImg/' + clueId"
+            :action="this.$store.getters.getUrlclue + '/updateImg/' + clueId"
             :headers="JwtToken"
             name="imgs"
             :on-preview="handlePreview"
@@ -99,7 +99,7 @@ export default {
           for (let i = 0; i < this.clue.imgs.length; i++) {
             let item = {
               img: this.clue.imgs[i],
-              url: "http://175.24.229.41:9421/" + this.clue.imgs[i],
+              url: this.$store.getters.getUrl + this.clue.imgs[i],
             };
 
             this.fileList.push(item);
@@ -224,7 +224,7 @@ export default {
         });
         let item = {
           img: data.data.imgList[0],
-          url: "http://175.24.229.41:9421/" + data.data.imgList[0],
+          url: this.$store.getters.getUrl + data.data.imgList[0],
         };
 
         this.fileList.push(item);

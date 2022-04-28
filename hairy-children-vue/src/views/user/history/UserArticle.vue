@@ -7,7 +7,7 @@
       <ul>
         <li v-for="(item, index) in articleList" :key="index">
           <a href="javascript:;" @click="toArticle(item.titleId)">
-            <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
+            <img :src="item.titleImg" alt="" />
             <div class="article">
               <h3 class="title">{{ item.titleName }}</h3>
               <p>
@@ -102,9 +102,14 @@ export default {
       this.userId = this.$route.params.userId;
       this.getUserArticle().then(({ data }) => {
         this.article = data.data.page;
-        if (this.article.list.length == 0) {
+        if (this.article.list == null || this.article.list.length == 0) {
           this.isEmpty = true;
           return;
+        }
+
+        for (var i = 0; i < this.article.list.length; i++) {
+          
+          this.article.list[i].titleImg = this.$store.getters.getUrl + this.article.list[i].titleImg
         }
 
         this.articleList = this.article.list.slice(0, this.article.pageSize);

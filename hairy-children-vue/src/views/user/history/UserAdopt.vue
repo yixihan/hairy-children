@@ -8,7 +8,7 @@
         <li v-for="(item, index) in adoptList" :key="index">
           <a href="javascript:;" @click="toAdopt(item.adoptId)">
             <img
-              :src="'http://175.24.229.41:9421/' + item.imgs[0]"
+              :src="item.imgs[0]"
               alt="正在加载中"
             />
             <div class="article">
@@ -99,7 +99,7 @@ export default {
       this.getUserAdopt().then(({ data }) => {
         console.log(data);
         this.adopt = data.data.page;
-        if (this.adopt.list.length == 0) {
+        if (this.adopt.list == null || this.adopt.list.length == 0) {
           this.isEmpty = true;
           return;
         }
@@ -108,6 +108,7 @@ export default {
             this.adopt.list[i].imgs = [];
             this.adopt.list[i].imgs.push("/adopt/default/default.png");
           }
+          this.adopt.list[i].imgs[0] = this.$store.getters.getUrl + this.adopt.list[i].imgs[0]
         }
 
         this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);

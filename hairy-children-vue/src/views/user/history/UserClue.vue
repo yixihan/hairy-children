@@ -8,7 +8,7 @@
         <li v-for="(item, index) in clueList" :key="index">
           <a href="javascript:;" @click="toArticle(item.titleId)">
             <img
-              :src="'http://175.24.229.41:9421/' + item.imgs[0]"
+              :src="item.imgs[0]"
               alt="正在加载中"
             />
             <div class="article">
@@ -92,15 +92,17 @@ export default {
       this.getUserClue().then(({ data }) => {
         console.log(data);
         this.clue = data.data.page;
-        if (this.clue.list.length == 0) {
+        if (this.clue.list == null || this.clue.list.length == 0) {
           this.isEmpty = true;
           return;
         }
+
         for (var i = 0; i < this.clue.list.length; i++) {
           if (this.clue.list[i].imgs == null) {
             this.clue.list[i].imgs = [];
             this.clue.list[i].imgs.push("/clue/default/default.png");
           }
+          this.clue.list[i].imgs[0] = this.$store.getters.getUrl + this.clue.list[i].imgs[0]
         }
 
         this.clueList = this.clue.list.slice(0, this.clue.pageSize);

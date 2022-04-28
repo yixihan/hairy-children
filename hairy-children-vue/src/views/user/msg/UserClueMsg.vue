@@ -13,7 +13,7 @@
         <li v-for="(item, index) in messageList" :key="index">
           <a href="javascript:;">
             <img
-              :src="'http://175.24.229.41:9421/' + item.sendUserAvatar"
+              :src="item.sendUserAvatar"
               alt="正在加载中"
             />
             <div class="article">
@@ -135,15 +135,12 @@ export default {
       this.getUserMessage().then(({ data }) => {
         console.log(data);
         this.message = data.data.page;
-        if (this.message.list.length == 0) {
+                if (this.message.list == null || this.message.list.length == 0) {
           this.isEmpty = true;
           return;
         }
         for (var i = 0; i < this.message.list.length; i++) {
-          if (this.message.list[i].imgs == null) {
-            this.message.list[i].imgs = [];
-            this.message.list[i].imgs.push("/clue/default/default.png");
-          }
+          this.message.list[i].sendUserAvatar = this.$store.getters.getUrl + this.message.list[i].sendUserAvatar
         }
 
         this.messageList = this.message.list.slice(0, this.message.pageSize);

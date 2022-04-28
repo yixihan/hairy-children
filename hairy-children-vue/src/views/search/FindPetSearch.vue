@@ -63,7 +63,7 @@
         <ul>
           <li v-for="(item, index) in articleList" :key="index">
             <a href="javascript:;" @click="toArticle(item.titleId)">
-              <img :src="'http://175.24.229.41:9421/' + item.titleImg" alt="" />
+              <img :src="item.titleImg" alt="" />
               <div class="article">
                 <h3 class="title">
                   {{ item.titleName }}
@@ -183,8 +183,12 @@ export default {
           this.getArticles().then(({ data }) => {
             console.log(data);
             this.articles = data.data.page;
-            if (this.articles.list.length == 0) {
+            if (this.articles.list == null || this.articles.list.length == 0) {
               this.isEmpty = true;
+            }
+            for (let i = 0; i < this.articles.list.length; i++) {
+              this.articles.list[i].titleImg =
+                this.$store.getters.getUrl + this.articles.list[i].titleImg;
             }
             this.articleList = this.articles.list.slice(
               0,

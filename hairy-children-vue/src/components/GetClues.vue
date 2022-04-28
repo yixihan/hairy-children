@@ -115,11 +115,11 @@ export default {
           }
           for (let j = 0; j < this.clue.list[i].imgs.length; j++) {
             this.clue.list[i].imgs[j] =
-            "http://175.24.229.41:9421/" + this.clue.list[i].imgs[j];
+            this.$store.getters.getUrl + this.clue.list[i].imgs[j];
           }
 
           this.clue.list[i].userAvatar =
-            "http://175.24.229.41:9421/" + this.clue.list[i].userAvatar;
+            this.$store.getters.getUrl + this.clue.list[i].userAvatar;
         }
 
         this.clueList = this.clue.list.slice(0, this.clue.pageSize);

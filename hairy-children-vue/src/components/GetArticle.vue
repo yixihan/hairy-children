@@ -142,7 +142,7 @@ export default {
       this.getArticle().then(({ data }) => {
         this.title = data.data.title;
         this.title.userAvatar =
-          "http://175.24.229.41:9421/" + this.title.userAvatar;
+          this.$store.getters.getUrl + this.title.userAvatar;
       });
 
       this.getUserCollections().then(({ data }) => {

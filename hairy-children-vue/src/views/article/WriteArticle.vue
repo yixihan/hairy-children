@@ -48,7 +48,7 @@
     <div class="uploadImg" v-if="active == 1">
       <el-upload
         class="avatar-uploader"
-        :action="'http://175.24.229.41:9421/title/uploadImg/' + titleId"
+        :action="this.$store.getters.getUrl + '/title/uploadImg/' + titleId"
         name="img"
         :headers="JwtToken"
         :show-file-list="false"
