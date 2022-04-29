@@ -77,7 +77,7 @@
         <div class="header">
           <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="{ path: `/center/` + userId }"
-              >首页</el-breadcrumb-item
+              >个人中心</el-breadcrumb-item
             >
             <el-breadcrumb-item v-for="(item, index) in navList" :key="index">{{
               item

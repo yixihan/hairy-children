@@ -293,6 +293,10 @@ export default {
       width: 100%;
       right: 0;
       margin: 5px;
+
+      .el-tag {
+        cursor: pointer;
+      }
     }
 
     border: 2px solid #7da5b3;

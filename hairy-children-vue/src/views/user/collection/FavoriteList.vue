@@ -2,7 +2,7 @@
   <div class="meetpets">
     <div class="adoption">
       <div class="head">
-        <el-tag type="primary" @click="goback">返回</el-tag>
+        <el-tag type="primary" @click="goback" style="cursor: pointer;">返回</el-tag>
         <el-tag> 一共收藏了 : {{ page.totalCount }} 篇贴子 </el-tag>
       </div>
       <div v-if="isEmpty">
@@ -11,7 +11,7 @@
 
       <ul>
         <li v-for="(item, index) in list" :key="index">
-          <a href="javascript:;">
+          <a href="javascript:;" @click="toArticle(item.titleId)">
             <img :src="item.titleAvatar" alt="正在加载中" />
             <div class="article">
               <div class="top">
@@ -179,6 +179,9 @@ export default {
     },
     goback() {
       this.$router.push("/center/" + this.userId + "/favorite/");
+    },
+    toArticle(titleId) {
+      this.$router.push("/article/" + titleId);
     },
   },
 };

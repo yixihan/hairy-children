@@ -33,9 +33,7 @@
     <div class="findpets">
       <h2 @click="toFindPetSearch">寻宠</h2>
       <div
-        v-if="
-          findPetsArticles.list == null || findPetsArticles.list.length == 0
-        "
+        v-if="findPetsArticles.list == null || findPetsArticles.list.length == 0"
       >
         <el-empty :image-size="200"></el-empty>
       </div>
@@ -162,6 +160,7 @@ export default {
   background: #fff;
   box-sizing: border-box;
   display: flex;
+  justify-content: center;
   .adoption,
   .findpets {
     border: 2px solid #7da5b3;

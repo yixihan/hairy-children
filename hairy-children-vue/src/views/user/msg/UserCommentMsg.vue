@@ -4,7 +4,7 @@
       <div class="messageTag">
         <el-tag>未读数 : {{ unreadCount }}</el-tag>
         <el-tag>消息总数 : {{ count }}</el-tag>
-        <el-tag @click="readAll" v-if="userId == myUserId">全部阅读</el-tag>
+        <el-tag @click="readAll" v-if="userId == myUserId" style="cursor: pointer;">全部阅读</el-tag>
       </div>
       <div class="null" v-if="isEmpty">
         <el-empty :image-size="200"></el-empty>
