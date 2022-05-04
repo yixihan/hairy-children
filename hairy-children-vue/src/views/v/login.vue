@@ -183,7 +183,9 @@ export default {
         // 发送验证码
         this.axios({
           url: "/code/sendCodeByPhone",
-          data: this.user.phone,
+          data: {
+            phone: this.user.phone
+          },
           method: "post",
         }).then(({ data }) => {
           console.log(data);
@@ -207,7 +209,9 @@ export default {
         // 发送验证码
         this.axios({
           url: "/code/sendCodeByEmail",
-          data: this.user.email,
+          data: {
+            email: this.user.email
+          },
           method: "post",
         }).then(({ data }) => {
           console.log(data);
@@ -264,7 +268,9 @@ export default {
           // 登录
           this.axios({
             url: "/v/loginByEmail",
-            data: this.user.email,
+            data: {
+              email: this.user.email
+            },
             method: "post",
           }).then(({ data }) => {
             this.setInfo(data);
@@ -303,7 +309,9 @@ export default {
           // 登录
           this.axios({
             url: "/v/loginByPhone",
-            data: this.user.phone,
+            data: {
+              phone: this.user.phone
+            },
             method: "post",
           }).then(({ data }) => {
             this.setInfo(data);
