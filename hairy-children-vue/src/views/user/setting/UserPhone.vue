@@ -88,6 +88,7 @@ export default {
                 type: "error",
               });
             }
+            this.reloadUserMsg();
             this.reload();
           });
         } else {
@@ -124,6 +125,7 @@ export default {
             type: "error",
           });
         }
+        this.reloadUserMsg();
         this.reload();
       });
     },
@@ -142,6 +144,21 @@ export default {
     },
     isPhone(s) {
       return /^1[0-9]{10}$/.test(s);
+    },
+    reloadUserMsg() {
+      this.axios({
+        url: "/user/getUserInfo",
+        method: "post",
+        data: {
+          userId: this.$store.getters.getUserId,
+        },
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+      }).then(({ data }) => {
+        const userInfo = data.data;
+        this.$store.commit("SET_USERINFO", userInfo);
+      });
     },
   },
   created() {

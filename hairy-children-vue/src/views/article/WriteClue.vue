@@ -25,7 +25,7 @@
         <el-form-item label="图片上传">
           <el-upload
             class="upload-demo"
-            :action="this.$store.getters.getUrlclue + '/updateImg/' + clueId"
+            :action="this.$store.getters.getUrl + '/clue/updateImg/' + clueId"
             :headers="JwtToken"
             name="imgs"
             :on-preview="handlePreview"
@@ -42,7 +42,6 @@
         </el-form-item>
         <el-form-item>
           <el-button type="success" @click="toArticle">返回贴子</el-button>
-          <el-button type="success" @click="toClue">查看线索内容</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -271,9 +270,6 @@ export default {
     toArticle() {
       this.$router.push("/article/" + this.clue.titleId);
     },
-    toClue() {
-      this.$router.push("/clue/" + this.clueId);
-    },
   },
 };
 </script>
@@ -294,4 +290,4 @@ export default {
 .el-form-item__content {
   margin-left: 150px !important;
 }
-</style>>
+</style>

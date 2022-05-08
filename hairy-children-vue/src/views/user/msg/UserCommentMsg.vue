@@ -11,7 +11,7 @@
       </div>
       <ul>
         <li v-for="(item, index) in messageList" :key="index">
-          <a href="javascript:;" @click="toArticle(item.answerId)">
+          <a href="javascript:;" @click="toArticle(item.titleId)">
             <img :src="item.sendUserAvatar" alt="正在加载中" />
             <div class="article">
               <h3 class="title">来自 {{ item.sendUserName }} 的评论</h3>
@@ -216,6 +216,7 @@ export default {
       return data;
     },
     toArticle(titleId) {
+      console.log(titleId);
       this.$router.push("/article/" + titleId);
     },
   },

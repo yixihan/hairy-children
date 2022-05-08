@@ -162,28 +162,6 @@ public class LoginController {
             return Result.fail (555, "该用户名已被注册");
         }
 
-        if (!StringUtils.isEmpty (user.getUserEmail ())) {
-
-            if (!VerifyUtils.isEmail (user.getUserEmail ())) {
-                return Result.fail (555, "邮箱格式错误");
-            }
-
-            if (!codeService.verifyUserEmail (user.getUserEmail ())) {
-                return Result.fail (555, "该邮箱已被注册");
-            }
-        }
-
-        if (!StringUtils.isEmpty (user.getUserPhone ())) {
-
-            if (!VerifyUtils.isModel (user.getUserPhone ())) {
-                return Result.fail (555, "电话格式错误");
-            }
-
-            if (!codeService.verifyUserPhone (user.getUserPhone ())) {
-                return Result.fail (555, "该电话已被注册");
-            }
-        }
-
         Boolean register = userService.register (user);
 
         return register ? Result.success ("注册 成功 !") : Result.fail ("注册 失败 !");

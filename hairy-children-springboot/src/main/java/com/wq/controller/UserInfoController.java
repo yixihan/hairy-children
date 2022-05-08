@@ -67,8 +67,10 @@ public class UserInfoController {
         wrapper.eq ("user_id", ShiroUtils.getUserId ());
 
         boolean b = userInfoService.update (userInfo, wrapper);
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("url", avatarUrl);
 
-        return b ? Result.success("头像上传成功") : Result.fail("头像上传失败");
+        return b ? Result.success("头像上传成功", map) : Result.fail("头像上传失败");
     }
 
     @PostMapping("/getUserAddress")
@@ -87,6 +89,7 @@ public class UserInfoController {
         String identityCard = String.valueOf (params.get ("identityCard"));
 
 
+        // 第三方自带的
         String url = "https://puhui.shumaidata.com/id_card/check/puhui";
 
         Map<String, String> args = new HashMap<>(16);

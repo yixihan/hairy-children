@@ -33,6 +33,9 @@
                     @click="examine(item.clueId)"
                   ></span>
                 </el-tag>
+                <el-tag v-if="userId == item.userId || authorId == userId">
+                  <i class="el-icon-delete" @click="delClue(item.clueId)"> </i>
+                </el-tag>
               </div>
             </div>
           </a>
@@ -72,6 +75,7 @@ export default {
       },
       userId: "",
       isEmpty: false,
+      canDel: false,
     };
   },
   methods: {
@@ -100,7 +104,6 @@ export default {
       return data;
     },
     setInfo() {
-      this.userId = this.$route.params.userId;
       this.getUserClue().then(({ data }) => {
         console.log(data);
         this.clue = data.data.page;
@@ -115,7 +118,7 @@ export default {
           }
           for (let j = 0; j < this.clue.list[i].imgs.length; j++) {
             this.clue.list[i].imgs[j] =
-            this.$store.getters.getUrl + this.clue.list[i].imgs[j];
+              this.$store.getters.getUrl + this.clue.list[i].imgs[j];
           }
 
           this.clue.list[i].userAvatar =
@@ -123,6 +126,7 @@ export default {
         }
 
         this.clueList = this.clue.list.slice(0, this.clue.pageSize);
+        this.userId = this.$store.getters.getUserId;
       });
     },
     examine(clueId) {
@@ -183,6 +187,61 @@ export default {
       }
 
       return clue;
+    },
+    delClue(clueId) {
+      this.$confirm("此操作将永久删除该线索, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.deleteClue(clueId).then(({ data }) => {
+            if (data.code == 200) {
+              this.$message({
+                message: data.msg,
+                type: "success",
+              });
+              this.dealFormInDel(clueId);
+            } else {
+              this.$message({
+                message: data.msg,
+                type: "error",
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    async deleteClue(clueId) {
+      const data = await this.$axios({
+        url: "/clue/deleteClue",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          clueId: clueId,
+        },
+      });
+
+      return data;
+    },
+    dealFormInDel(clueId) {
+      for (let i = 0; i < this.clue.list.length; i++) {
+        if (this.clue.list[i].clueId == clueId) {
+          this.clue.list.splice(i, 1);
+        }
+      }
+      for (let i = 0; i < this.clueList.length; i++) {
+        if (this.clueList[i].clueId == clueId) {
+          this.clueList.splice(i, 1);
+        }
+      }
     },
   },
 

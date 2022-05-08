@@ -59,13 +59,13 @@ public class CustomRealm extends AuthorizingRealm {
             throw new UnknownAccountException();
         }
 
-        // token 过期
+        // token 过期 （时间过长）
         if (JwtUtils.isExpired(jwtToken)) {
             throw new ExpiredCredentialsException ();
         }
 
 
-        // 密码错误
+        // 密码错误 （更改密码时）
         if (! JwtUtils.verifyToken(jwtToken,user.getUserPassword())) {
             throw new IncorrectCredentialsException ();
         }

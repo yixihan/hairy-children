@@ -347,6 +347,7 @@ public class TitleController {
 
         boolean save = titleLikeMailboxService.save (titleLikeMailbox);
 
+        // 无用
         if (!save) {
             log.error ("消息持久化失败");
             throw new RuntimeException ("点赞失败");
@@ -358,7 +359,6 @@ public class TitleController {
         columns.put ("receive_user_id", titleLikeMailbox.getReceiveUserId ());
         columns.put ("gmt_create", titleLikeMailbox.getGmtCreate ());
         wrapper.allEq (true, columns, true);
-        wrapper.allEq (true, columns, true);
 
         TitleLikeMailbox one = titleLikeMailboxService.getOne (wrapper);
 
@@ -368,6 +368,7 @@ public class TitleController {
         }
 
         titleLikeMailboxService.sendMailbox (one);
+        //
 
         return Result.success ("点赞成功");
     }

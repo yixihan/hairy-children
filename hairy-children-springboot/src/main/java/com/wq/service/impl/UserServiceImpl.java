@@ -85,7 +85,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (insertInfo == 0) {
             log.error ("用户注册失败 --- user_info 表插入失败",
                     new RuntimeException ("用户注册失败 --- user_info 表插入失败"));
-        } else if (insertCollection == 0){
+        }
+        if (insertCollection == 0){
             log.error ("用户注册失败 --- user_collection 表插入失败",
                     new RuntimeException ("用户注册失败 --- user_collection 表插入失败"));
         }

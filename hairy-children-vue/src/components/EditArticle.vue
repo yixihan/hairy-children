@@ -104,9 +104,12 @@ export default {
          * 2. 通过$refs获取: html声明ref : `<mavon-editor ref=md ></mavon-editor>，`$vm`为 `this.$refs.md`
          */
         console.log(res);
+        let url = res.data.data.imgDir;
+        url = url.replace(/\\/g, '/')
+        console.log(url);
         this.$refs.md.$img2Url(
           pos,
-          this.$store.getters.getUrl + res.data.data.imgDir
+          this.$store.getters.getUrl + url
         );
       });
     },

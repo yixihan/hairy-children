@@ -37,7 +37,7 @@
           <el-button type="success" class="submit" @click="submitForm('form')">
             认证
           </el-button>
-          <el-button type="primary" @click="unSubmit">取消</el-button>
+          <el-button type="primary" class="cancel" @click="unSubmit">取消</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -93,6 +93,7 @@ export default {
                 type: "success",
               });
               this.reload();
+              this.reloadUserMsg();
             } else {
               this.$message({
                 message: "实名认证失败, 请重试",
@@ -134,6 +135,21 @@ export default {
       var pattern = /\d{17}[0-9Xx]|\d{15}/g;
       return pattern.test(identityCard);
     },
+    reloadUserMsg() {
+      this.axios({
+        url: "/user/getUserInfo",
+        method: "post",
+        data: {
+          userId: this.$store.getters.getUserId,
+        },
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+      }).then(({ data }) => {
+        const userInfo = data.data;
+        this.$store.commit("SET_USERINFO", userInfo);
+      });
+    },
   },
   created() {
     this.userId = this.$route.params.userId;
@@ -172,9 +188,21 @@ export default {
     float: left;
   }
 
+  .cancel {
+    float: right;
+  }
+
   .el-form-item {
     margin: 10px !important;
     padding: 10px !important;
   }
+}
+
+.el-form {
+  width: 30% !important;
+  margin: 0 auto !important;
+}
+.el-form-item__content {
+  display: flex !important;
 }
 </style>

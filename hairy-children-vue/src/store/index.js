@@ -9,7 +9,7 @@ export default new Vuex.Store({
     //反序列化获取session会话中的 userInfo对象
     userInfo: JSON.parse(sessionStorage.getItem("userInfo")),
     userId: localStorage.getItem("userId"),
-    url: 'http://175.24.229.41:9421/'
+    url: 'http://localhost:9421/'
   },
   mutations: {
     //相当于实体类的set

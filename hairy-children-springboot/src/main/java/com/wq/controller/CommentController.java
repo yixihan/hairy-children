@@ -13,6 +13,7 @@ import com.wq.service.redis.RedisService;
 import com.wq.util.PageUtils;
 import com.wq.util.shiro.ShiroUtils;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -134,7 +135,15 @@ public class CommentController {
         mailbox.setReplyId (one.getReplyId ());
         mailbox.setReplyContent (one.getContent ());
         mailbox.setSendUserId (one.getUserId ());
-        mailbox.setReceiveUserId (title.getUserId ());
+
+        // 设置被回复用户id
+        if (commentReply.getReplyCommentId() != null) {
+            CommentReply reply = commentReplyService.getById(commentReply.getReplyCommentId());
+            mailbox.setReceiveUserId (reply.getUserId ());
+        } else {
+            CommentRoot root = commentRootService.getById(commentReply.getRootId());
+            mailbox.setReceiveUserId (root.getUserId ());
+        }
         // 给被评论者发送信息
         sendCommentReplyMailBox (mailbox);
         Map<String, Object> map = new HashMap<> (16);

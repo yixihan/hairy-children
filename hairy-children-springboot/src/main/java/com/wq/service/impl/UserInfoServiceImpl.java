@@ -48,13 +48,12 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         FileUtils.isEmpty (file);
 
         // 生成文件名, 以用户 id 为文件名
-        String fileName = String.format (FileUtils.IMG_NAME, "userAvatar-" + userId);
+        String fileName = String.format (FileUtils.IMG_NAME, "userAvatar-" + userId + "-" + System.currentTimeMillis());
 
         // 生成文件路径
         File filePath = new File (photoProperties.getPaths () + "/" + photoProperties.getAvatarPaths ());
         try {
             // 上传文件
-
             FileUtils.uploadFile (file, fileName, filePath);
 
             return photoProperties.getAvatarPaths () + "/" + fileName;

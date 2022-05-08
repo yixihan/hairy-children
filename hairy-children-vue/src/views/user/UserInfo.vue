@@ -9,11 +9,16 @@
       </template>
       <el-descriptions-item label="用户头像">
         <template>
-          <el-avatar v-if="!checked" class="avatar" :src="userInfo.userAvatar">
+          <el-avatar
+            v-if="!checked"
+            class="avatar"
+            :src="userInfo.userAvatar"
+            :key="userInfo.userAvatar"
+          >
           </el-avatar>
           <el-upload
             class="avatar-uploader"
-            action="http://175.24.229.41:9421/user-info/uploadAvatar"
+            action="http://localhost:9421/user-info/uploadAvatar"
             name="avatar"
             :headers="JwtToken"
             :show-file-list="false"
@@ -25,6 +30,7 @@
               v-if="userInfo.userAvatar"
               :src="userInfo.userAvatar"
               class="avatar"
+              :key="userInfo.userAvatar"
             />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
@@ -172,6 +178,22 @@ export default {
 
       return ans;
     },
+    init() {
+      this.userId = this.$route.params.userId;
+      this.getUserInfo(this.userId).then(({ data }) => {
+        this.userInfo = data.data;
+        this.userInfo.userAvatar =
+          "http://localhost:9421/" + this.userInfo.userAvatar;
+        if (this.userInfo.userBirth != null) {
+          this.userInfo.userAge =
+            new Date(Date.now()).getFullYear() -
+            new Date(this.userInfo.userBirth).getFullYear();
+        }
+      });
+      this.JwtToken = JSON.parse(
+        `{"Jwt-Token": "` + this.$store.getters.getToken + `"}`
+      );
+    },
     updated() {
       this.checked = !this.checked;
       if (!this.checked) {
@@ -188,17 +210,7 @@ export default {
               type: "error",
             });
           }
-          this.getUserInfo(this.userId).then(({ data }) => {
-            this.userInfo = data.data;
-            this.userInfo.userAvatar =
-              "http://175.24.229.41:9421/" + this.userInfo.userAvatar;
-            if (this.userInfo.userBirth != null) {
-              this.userInfo.userAge =
-                new Date(Date.now()).getFullYear() -
-                new Date(this.userInfo.userBirth).getFullYear();
-            }
-          });
-          this.reload();
+          location.reload();
         });
       }
     },
@@ -223,11 +235,15 @@ export default {
 
       return ans;
     },
-    handleAvatarSuccess() {
+    handleAvatarSuccess(res) {
+      console.log(res);
       this.$message({
-        message: "头像更新成功, 点击更新按钮刷新页面",
+        message: "头像更新成功",
         type: "success",
       });
+      let url = res.data.data.url;
+      console.log(url);
+      this.userInfo.userAvatar = url;
     },
     handleChange(value) {
       let data = "";
@@ -250,20 +266,7 @@ export default {
     },
   },
   created() {
-    this.userId = this.$route.params.userId;
-    this.getUserInfo(this.userId).then(({ data }) => {
-      this.userInfo = data.data;
-      this.userInfo.userAvatar =
-        "http://175.24.229.41:9421/" + this.userInfo.userAvatar;
-      if (this.userInfo.userBirth != null) {
-        this.userInfo.userAge =
-          new Date(Date.now()).getFullYear() -
-          new Date(this.userInfo.userBirth).getFullYear();
-      }
-    });
-    this.JwtToken = JSON.parse(
-      `{"Jwt-Token": "` + this.$store.getters.getToken + `"}`
-    );
+    this.init();
   },
   mounted() {},
 };

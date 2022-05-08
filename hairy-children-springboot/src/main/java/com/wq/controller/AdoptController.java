@@ -64,7 +64,14 @@ public class AdoptController {
         }
 
         if (!adoptService.isExists (adopt.getTitleId (), adopt.getUserId ())) {
-            return Result.fail ("请勿重复申请领养贴");
+            QueryWrapper<Adopt> wrapper = new QueryWrapper<> ();
+            wrapper.eq ("user_id", adopt.getUserId ())
+                    .eq ("title_id", adopt.getTitleId ())
+                    .select ("adopt_id");
+            Adopt one = adoptService.getOne (wrapper);
+            HashMap<String, Object> map = new HashMap<> (16);
+            map.put ("adoptId", one.getAdoptId ());
+            return Result.success (map);
         }
 
         Boolean create = adoptService.createAdopt (adopt);
@@ -117,7 +124,9 @@ public class AdoptController {
         }
 
         Adopt adopt = adoptService.getById (adoptId);
-        adopt.setImgsDir (adopt.getImgsDir () + adoptImgs.toString ());
+        adopt.setImgsDir (adopt.getImgsDir () != null ? adopt.getImgsDir () + adoptImgs.toString () : "" + adoptImgs.toString ());
+        log.info("adoptImgs : " + adoptImgs);
+        log.info(adopt.getImgsDir());
         adoptService.updateById (adopt);
         Map<String, Object> map= new HashMap<> (16);
         map.put ("imgList", imgList);

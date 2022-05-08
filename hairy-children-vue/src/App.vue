@@ -29,7 +29,7 @@ export default {
         this.isRouterAlive = true;
       });
     },
-    async getUserInfo () {
+    async getUserInfo() {
       const data = await this.axios({
         url: "/user/getUserInfo",
         method: "post",
@@ -43,11 +43,13 @@ export default {
 
       return data;
     },
-    init () {
-      this.getUserInfo().then(({ data }) => {
-        const userInfo = data.data;
-        this.$store.commit("SET_USERINFO", userInfo);
-      });
+    init() {
+      if (this.$store.getters.getUserId != null && this.$store.getters.getUserId != "") {
+        this.getUserInfo().then(({ data }) => {
+          const userInfo = data.data;
+          this.$store.commit("SET_USERINFO", userInfo);
+        });
+      }
     },
   },
 };
@@ -61,6 +63,7 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
+
 ::v-deep .el-button--primary {
   position: sticky !important;
   width: 100px !important;

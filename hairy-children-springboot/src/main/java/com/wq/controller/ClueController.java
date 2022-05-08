@@ -64,7 +64,15 @@ public class ClueController {
         }
 
         if (!clueService.isExists (clue.getTitleId (), clue.getUserId ())) {
-            return Result.fail ("请勿重复创建线索贴");
+
+            QueryWrapper<Clue> wrapper = new QueryWrapper<> ();
+            wrapper.eq ("user_id", clue.getUserId ())
+                    .eq ("title_id", clue.getTitleId ())
+                    .select ("clue_id");
+            Clue one = clueService.getOne (wrapper);
+            HashMap<String, Object> map = new HashMap<> (16);
+            map.put ("clueId", one.getClueId ());
+            return Result.success (map);
         }
 
         Boolean create = clueService.createClue (clue);
@@ -117,7 +125,7 @@ public class ClueController {
 
 
         Clue clue = clueService.getById (clueId);
-        clue.setImgsDir (clue.getImgsDir () + clueImgs.toString ());
+        clue.setImgsDir (clue.getImgsDir () != null ? clue.getImgsDir () + clueImgs.toString () : "" + clueImgs.toString ());
         clueService.updateById (clue);
         Map<String, Object> map= new HashMap<> (16);
         map.put ("imgList", imgList);

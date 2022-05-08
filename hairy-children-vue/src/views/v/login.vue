@@ -8,52 +8,21 @@
       <span @click="changeLoginWay(3)">电话登录</span>
     </div>
 
-    <el-form
-      ref="user"
-      :model="user"
-      label-width="80px"
-      label-position="left"
-      :rules="rules"
-    >
-      <el-form-item
-        label="用户名"
-        v-if="msg1 == '用户名'"
-        prop="userName"
-        placeholder="请输入用户名"
-      >
+    <el-form ref="user" :model="user" label-width="80px" label-position="left" :rules="rules">
+      <el-form-item label="用户名" v-if="msg1 == '用户名'" prop="userName" placeholder="请输入用户名">
         <el-input v-model="user.userName"></el-input>
       </el-form-item>
-      <el-form-item
-        label="邮箱"
-        v-if="msg1 == '邮箱'"
-        prop="email"
-        placeholder="请输入邮箱"
-      >
+      <el-form-item label="邮箱" v-if="msg1 == '邮箱'" prop="email" placeholder="请输入邮箱">
         <el-input v-show="msg1 == '邮箱'" v-model="user.email"></el-input>
       </el-form-item>
-      <el-form-item
-        label="电话"
-        v-if="msg1 == '电话'"
-        prop="phone"
-        placeholder="请输入电话"
-      >
+      <el-form-item label="电话" v-if="msg1 == '电话'" prop="phone" placeholder="请输入电话">
         <el-input v-show="msg1 == '电话'" v-model="user.phone"></el-input>
       </el-form-item>
 
-      <el-form-item
-        label="密码"
-        v-if="msg2 == '密码'"
-        prop="password"
-        placeholder="请输入密码 (8-16位)"
-      >
+      <el-form-item label="密码" v-if="msg2 == '密码'" prop="password" placeholder="请输入密码 (8-16位)">
         <el-input v-model="user.password" type="password"></el-input>
       </el-form-item>
-      <el-form-item
-        label="验证码"
-        v-if="msg2 != '密码'"
-        prop="code"
-        placeholder="请输入验证码"
-      >
+      <el-form-item label="验证码" v-if="msg2 != '密码'" prop="code" placeholder="请输入验证码">
         <el-input v-model="user.code" class="verify"></el-input>
         <el-button type="primary" @click="sendCode">发送验证码</el-button>
       </el-form-item>
@@ -276,7 +245,7 @@ export default {
             this.setInfo(data);
           });
         } else {
-          this.$messgae({
+          this.$message({
             message: "验证码有误, 请仔细检查",
             type: "error",
           });
@@ -317,7 +286,7 @@ export default {
             this.setInfo(data);
           });
         } else {
-          this.$messgae({
+          this.$message({
             message: "验证码有误, 请仔细检查",
             type: "error",
           });
@@ -378,49 +347,60 @@ export default {
   padding-top: 60px;
   margin: 0 auto;
 }
+
 .el-form-item__content ::deep {
   margin-left: 80px;
   position: relative;
 }
+
 .verify {
   position: absolute !important;
   left: 0 !important;
   width: 150px !important;
   display: inline-block !important;
 }
+
 .pa {
   height: 40px;
   line-height: 40px;
 }
-.submit > .el-form-item__content {
+
+.submit>.el-form-item__content {
   margin: 0 !important;
 }
+
 .el-form-item__content {
   width: auto;
   height: 100%;
   position: relative;
 }
+
 .el-form {
   width: 25%;
   margin: 0 auto;
 }
-.el-form-item__content > a {
+
+.el-form-item__content>a {
   position: absolute;
   right: 0;
 }
+
 .el-button--primary {
   position: absolute !important;
   right: 0;
   display: inline-block;
 }
+
 .way {
   margin: 0 auto;
   padding: 10px;
   padding-bottom: 20px;
 }
+
 #code {
   display: none;
 }
+
 .resetPassword {
   position: absolute !important;
   flex: right !important;

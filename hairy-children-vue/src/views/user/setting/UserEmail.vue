@@ -88,6 +88,7 @@ export default {
                 type: "error",
               });
             }
+            this.reloadUserMsg();
             this.reload();
           });
         } else {
@@ -124,6 +125,7 @@ export default {
             type: "error",
           });
         }
+        this.reloadUserMsg();
         this.reload();
       });
     },
@@ -144,6 +146,21 @@ export default {
       return /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(
         s
       );
+    },
+    reloadUserMsg() {
+      this.axios({
+        url: "/user/getUserInfo",
+        method: "post",
+        data: {
+          userId: this.$store.getters.getUserId,
+        },
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+      }).then(({ data }) => {
+        const userInfo = data.data;
+        this.$store.commit("SET_USERINFO", userInfo);
+      });
     },
   },
   created() {

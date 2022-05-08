@@ -125,6 +125,7 @@ public class ShiroConfig {
         ruleMap.put("/captcha/captchaImage**", "anon");
 
         // /**，一般放在最下，表示对所有资源起作用，使用 JwtFilter
+        ruleMap.put("/title/getAllTitles", "anon");
         ruleMap.put("/**", "jwt");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(ruleMap);
 

@@ -124,7 +124,7 @@ export default {
         isFeedback: 1,
         selectedOptions: [""],
       },
-      fileList: [''],
+      fileList: [],
       rules: {
         adoptReason: [
           { required: true, message: "请输入申请理由", trigger: "blur" },
@@ -179,27 +179,22 @@ export default {
         this.form.adoptUserAge = this.adopt.adoptUserAge;
         this.form.isReturnVisit = this.adopt.isReturnVisit;
         this.form.isFeedback = this.adopt.isFeedback;
+        
+        if (this.form.adoptUserPhone == "") {
+          console.log(111);
+          console.log(this.$store.getters.getUser.userPhone);
+          this.form.adoptUserPhone = this.$store.getters.getUser.userPhone;
+        }
+        if (
+          (this.form.adoptUserAge == 0 || this.form.adoptUserAge == null) &&
+          (this.$store.getters.getUser.userBirth != null ||
+            this.$store.getters.getUser.userBirth != "")
+        ) {
+          this.form.adoptUserAge =
+            new Date(Date.now()).getFullYear() -
+            new Date(this.$store.getters.getUser.userBirth).getFullYear();
+        }
       });
-
-      // 获取用户信息
-      if (this.form.adoptUserPhone == null || this.form.adoptUserPhone == "") {
-        this.form.adoptUserPhone = this.$store.getters.getUser.userPhone;
-      }
-      if (
-        (this.form.adoptUserAge == null || this.form.adoptUserAge == "") &&
-        (this.$store.getters.getUser.userBirth != null ||
-          this.$store.getters.getUser.userBirth != "")
-      ) {
-        this.form.adoptUserAge =
-          new Date(Date.now()).getFullYear() -
-          new Date(this.$store.getters.getUser.userBirth).getFullYear();
-      }
-      if (this.form.isReturnVisit == null || this.form.isReturnVisit == "") {
-        this.form.isReturnVisit = 1;
-      }
-      if (this.form.isFeedback == null || this.form.isFeedback == "") {
-        this.form.isFeedback = 1;
-      }
     },
     async getAdopt() {
       const data = await this.$axios({
@@ -359,4 +354,4 @@ export default {
 .el-form-item__content {
   margin-left: 150px !important;
 }
-</style>>
+</style>
