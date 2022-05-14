@@ -63,7 +63,7 @@ import format from "@/utils/DateFormat.js";
 export default {
   name: "GetAdopts",
   format,
-  props: ["titleId", "authorId"],
+  props: ["titleId", "authorId", "flag"],
   data() {
     return {
       adoptList: [],
@@ -89,7 +89,7 @@ export default {
         val * this.adopt.pageSize
       );
     },
-    async getUserAdopt() {
+    async getTitleAdopt() {
       const data = await this.$axios({
         url: "/adopt/getAllTitleAdopts",
         method: "post",
@@ -103,32 +103,70 @@ export default {
 
       return data;
     },
+    async getUserAdopt() {
+      const data = await this.$axios({
+        url: "/adopt/getAdopts",
+        method: "post",
+        headers: {
+          "Jwt-Token": this.$store.getters.getToken,
+        },
+        data: {
+          titleId: this.titleId,
+          userId: this.$store.getters.getUserId,
+        },
+      });
+
+      return data;
+    },
     setInfo() {
       this.userId = this.$route.params.userId;
-      this.getUserAdopt().then(({ data }) => {
-        console.log(data);
-        this.adopt = data.data.page;
-        if (this.adopt.list.length == 0) {
-          this.isEmpty = true;
-          return;
-        }
-        for (var i = 0; i < this.adopt.list.length; i++) {
-          if (this.adopt.list[i].imgs == null) {
-            this.adopt.list[i].imgs = [];
-            this.adopt.list[i].imgs.push("/adopt/default/default.png");
+      if (this.flag == 1) {
+        this.getTitleAdopt().then(({ data }) => {
+          console.log(data);
+          this.adopt = data.data.page;
+          if (this.adopt.list.length == 0) {
+            this.isEmpty = true;
+            return;
           }
-          this.adopt.list[i].imgs[0] =
-            this.$store.getters.getUrl + this.adopt.list[i].imgs[0];
-          this.adopt.list[i].userAvatar =
-            this.$store.getters.getUrl + this.adopt.list[i].userAvatar;
-        }
+          for (var i = 0; i < this.adopt.list.length; i++) {
+            if (this.adopt.list[i].imgs == null) {
+              this.adopt.list[i].imgs = [];
+              this.adopt.list[i].imgs.push("/adopt/default/default.png");
+            }
+            this.adopt.list[i].imgs[0] =
+              this.$store.getters.getUrl + this.adopt.list[i].imgs[0];
+            this.adopt.list[i].userAvatar =
+              this.$store.getters.getUrl + this.adopt.list[i].userAvatar;
+          }
 
-        this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);
-      });
+          this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);
+        });
+      } else {
+        this.getUserAdopt().then(({ data }) => {
+          console.log(data);
+          this.adopt = data.data.page;
+          if (this.adopt.list.length == 0) {
+            this.isEmpty = true;
+            return;
+          }
+          for (var i = 0; i < this.adopt.list.length; i++) {
+            if (this.adopt.list[i].imgs == null) {
+              this.adopt.list[i].imgs = [];
+              this.adopt.list[i].imgs.push("/adopt/default/default.png");
+            }
+            this.adopt.list[i].imgs[0] =
+              this.$store.getters.getUrl + this.adopt.list[i].imgs[0];
+            this.adopt.list[i].userAvatar =
+              this.$store.getters.getUrl + this.adopt.list[i].userAvatar;
+          }
+
+          this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);
+        });
+      }
     },
     examine(adoptId) {
       if (this.authorId != this.$store.getters.getUserId) {
-        return
+        return;
       }
       this.$confirm("是否同意该用户的领养申请?", "提示", {
         confirmButtonText: "同意",
@@ -195,11 +233,11 @@ export default {
 
       return data;
     },
-    selectAdoptByadoptId (adoptId) {
+    selectAdoptByadoptId(adoptId) {
       let adopt;
       for (var i = 0; i < this.adopt.list.length; i++) {
         if (this.adopt.list[i].adoptId == adoptId) {
-          adopt =  this.adopt.list[i];
+          adopt = this.adopt.list[i];
         }
       }
 

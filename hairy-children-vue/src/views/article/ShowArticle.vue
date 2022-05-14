@@ -8,7 +8,8 @@
       <div v-if="titleType == 1">
         <h2>领养申请列表</h2>
         <el-button type="primary" @click="toCreatAdopt"> 申请领养 </el-button>
-        <Adopt :titleId="titleId" :authorId="title.userId"></Adopt>
+        <Adopt :titleId="titleId" :authorId="title.userId" :flag="1" v-if="title.userId == this.$store.getters.getUser.userId"></Adopt>
+        <Adopt :titleId="titleId" :authorId="title.userId" :flag="0" v-else></Adopt>
       </div>
       <div v-if="titleType == 2">
         <h2>线索列表</h2>
@@ -94,8 +95,13 @@ export default {
       });
     },
     toCreatAdopt() {
-      if (this.verify()) {
-        this.open();
+      if (this.verifyAu()) {
+        this.openAu();
+        return;
+      }
+
+      if (this.verifyAge()) {
+        this.openAge();
         return;
       }
       this.creatAdopt().then(({ data }) => {
@@ -129,8 +135,8 @@ export default {
       return data;
     },
     toCreatClue() {
-      if (this.verify()) {
-        this.open();
+      if (this.verifyAu()) {
+        this.openAu();
         return;
       }
       this.creatClue().then(({ data }) => {
@@ -163,13 +169,13 @@ export default {
 
       return data;
     },
-    verify() {
+    verifyAu() {
       return (
         this.$store.getters.getUser.userIdentityCard == null ||
         this.$store.getters.getUser.userIdentityCard == ""
       );
     },
-    open() {
+    openAu() {
       this.$confirm("您还没实名认证, 请先实名认证?", "提示", {
         confirmButtonText: "实名认证",
         cancelButtonText: "取消",
@@ -183,6 +189,22 @@ export default {
               "/setting/authentication"
           );
         })
+        .catch(() => {});
+    },
+    verifyAge() {
+      let age =
+        new Date(Date.now()).getFullYear() -
+        new Date(this.$store.getters.getUser.userBirth).getFullYear();
+      console.log(age);
+      return age < 18;
+    },
+    openAge() {
+      this.$alert("您还未成年，无法申请领养申请", "提示", {
+        confirmButtonText: "确定",
+        type: "warning",
+        center: true,
+      })
+        .then(() => {})
         .catch(() => {});
     },
   },

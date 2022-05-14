@@ -83,7 +83,7 @@ public class TitleServiceImpl extends ServiceImpl<TitleMapper, Title> implements
     @Override
     public List<Title> getTitleByUserId(Long userId) {
         QueryWrapper<Title> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("user_id", userId);
+        wrapper.eq ("user_id", userId).orderByDesc("gmt_create");
         return titleMapper.selectList (wrapper);
     }
 

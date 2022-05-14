@@ -55,6 +55,7 @@
           @change="handleChange"
         >
         </el-cascader>
+        <br>
         <el-switch
           v-model="userInfo.addressShow"
           active-text="展示"
@@ -94,14 +95,8 @@
         </el-switch>
       </el-descriptions-item>
       <el-descriptions-item label="年龄" v-if="userInfo.userAge != null">
-        <span v-text="userInfo.userAge" v-if="!checked"></span>
-        <el-date-picker
-          type="date"
-          v-model="userInfo.userBirth"
-          v-if="checked"
-          style="width: 100%"
-        >
-        </el-date-picker>
+        <span v-text="userInfo.userAge"></span>
+        <br>
         <el-switch
           v-model="userInfo.birthShow"
           active-text="展示"

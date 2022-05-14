@@ -55,180 +55,213 @@ public class AdoptController {
     @PostMapping("/creatAdopt")
     public Result createAdopt(@RequestBody Adopt adopt) {
 
-        if (userService.count (new QueryWrapper<User> ().eq ("user_id", adopt.getUserId ())) <= 0) {
-            return Result.fail (555, "没有该用户");
+        if (userService.count(new QueryWrapper<User>().eq("user_id", adopt.getUserId())) <= 0) {
+            return Result.fail(555, "没有该用户");
         }
 
-        if (titleService.count (new QueryWrapper<Title> ().eq ("title_id", adopt.getTitleId ())) <= 0) {
-            return Result.fail (555, "没有该文章");
+        if (titleService.count(new QueryWrapper<Title>().eq("title_id", adopt.getTitleId())) <= 0) {
+            return Result.fail(555, "没有该文章");
         }
 
-        if (!adoptService.isExists (adopt.getTitleId (), adopt.getUserId ())) {
-            QueryWrapper<Adopt> wrapper = new QueryWrapper<> ();
-            wrapper.eq ("user_id", adopt.getUserId ())
-                    .eq ("title_id", adopt.getTitleId ())
-                    .select ("adopt_id");
-            Adopt one = adoptService.getOne (wrapper);
-            HashMap<String, Object> map = new HashMap<> (16);
-            map.put ("adoptId", one.getAdoptId ());
-            return Result.success (map);
+        if (!adoptService.isExists(adopt.getTitleId(), adopt.getUserId())) {
+            QueryWrapper<Adopt> wrapper = new QueryWrapper<>();
+            wrapper.eq("user_id", adopt.getUserId())
+                    .eq("title_id", adopt.getTitleId())
+                    .select("adopt_id");
+            Adopt one = adoptService.getOne(wrapper);
+            HashMap<String, Object> map = new HashMap<>(16);
+            map.put("adoptId", one.getAdoptId());
+            return Result.success(map);
         }
 
-        Boolean create = adoptService.createAdopt (adopt);
+        Boolean create = adoptService.createAdopt(adopt);
 
         if (create) {
-            Map<String, Object> map = new HashMap<> (16);
-            map.put ("adoptId", adopt.getAdoptId ());
-            return Result.success ("创建成功", map);
+            Map<String, Object> map = new HashMap<>(16);
+            map.put("adoptId", adopt.getAdoptId());
+            return Result.success("创建成功", map);
         }
 
-        return Result.fail ("创建失败");
+        return Result.fail("创建失败");
     }
 
     @PostMapping("/updateAdopt")
     public Result updateAdopt(@RequestBody Adopt adopt) {
-        boolean update = adoptService.updateById (adopt);
-        adopt = adoptService.getById (adopt.getAdoptId ());
+        boolean update = adoptService.updateById(adopt);
+        adopt = adoptService.getById(adopt.getAdoptId());
 
-        Title title = titleService.getById (adopt.getTitleId ());
+        Title title = titleService.getById(adopt.getTitleId());
 
-        AdoptMailbox mailbox = new AdoptMailbox ();
-        mailbox.setAdoptId (adopt.getAdoptId ());
-        mailbox.setTitleId (adopt.getTitleId ());
-        mailbox.setSendUserId (adopt.getUserId ());
-        mailbox.setReceiveUserId (title.getUserId ());
+        AdoptMailbox mailbox = new AdoptMailbox();
+        mailbox.setAdoptId(adopt.getAdoptId());
+        mailbox.setTitleId(adopt.getTitleId());
+        mailbox.setSendUserId(adopt.getUserId());
+        mailbox.setReceiveUserId(title.getUserId());
 
-        sendAdoptMailBox (mailbox);
+        sendAdoptMailBox(mailbox);
 
-        return update ? Result.success ("更新成功") : Result.fail ("更新失败");
+        return update ? Result.success("更新成功") : Result.fail("更新失败");
     }
 
     @PostMapping("/deleteAdopt")
     public Result deleteAdopt(@RequestBody Map<String, Object> params) {
-        long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
+        long adoptId = Long.parseLong(String.valueOf(params.get("adoptId")));
 
-        boolean remove = adoptService.removeById (adoptId);
+        boolean remove = adoptService.removeById(adoptId);
 
-        return remove ? Result.success ("删除成功") : Result.fail ("删除失败");
+        return remove ? Result.success("删除成功") : Result.fail("删除失败");
     }
 
     @PostMapping("/updateImg/{adoptId}")
     public Result updateImg(@PathVariable Long adoptId, @RequestParam("imgs") MultipartFile[] imgs) {
-        StringBuilder adoptImgs = new StringBuilder ();
-        List<String> imgList = new ArrayList<> ();
+        StringBuilder adoptImgs = new StringBuilder();
+        List<String> imgList = new ArrayList<>();
 
         for (MultipartFile img : imgs) {
-            String adoptImg = adoptService.uploadImg (adoptId, img);
-            imgList.add (adoptImg);
-            adoptImgs.append (adoptImg).append ("::");
+            String adoptImg = adoptService.uploadImg(adoptId, img);
+            imgList.add(adoptImg);
+            adoptImgs.append(adoptImg).append("::");
         }
 
-        Adopt adopt = adoptService.getById (adoptId);
-        adopt.setImgsDir (adopt.getImgsDir () != null ? adopt.getImgsDir () + adoptImgs.toString () : "" + adoptImgs.toString ());
+        Adopt adopt = adoptService.getById(adoptId);
+        adopt.setImgsDir(adopt.getImgsDir() != null ? adopt.getImgsDir() + adoptImgs.toString() : "" + adoptImgs.toString());
         log.info("adoptImgs : " + adoptImgs);
         log.info(adopt.getImgsDir());
-        adoptService.updateById (adopt);
-        Map<String, Object> map= new HashMap<> (16);
-        map.put ("imgList", imgList);
+        adoptService.updateById(adopt);
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("imgList", imgList);
 
-        return Result.success ("图片上传成功", map);
+        return Result.success("图片上传成功", map);
     }
 
     @PostMapping("/deleteImg")
     public Result deleteImg(@RequestBody Map<String, Object> params) {
-        long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
-        String imgUrl = String.valueOf (params.get ("imgUrl"));
+        long adoptId = Long.parseLong(String.valueOf(params.get("adoptId")));
+        String imgUrl = String.valueOf(params.get("imgUrl"));
 
-        if (adoptService.count (new QueryWrapper<Adopt> ().eq ("adopt_id", adoptId)) <= 0) {
-            return Result.fail (555, "没有该领养申请");
+        if (adoptService.count(new QueryWrapper<Adopt>().eq("adopt_id", adoptId)) <= 0) {
+            return Result.fail(555, "没有该领养申请");
         }
 
-        Adopt adopt = adoptService.getById (adoptId);
+        Adopt adopt = adoptService.getById(adoptId);
 
-        String imgsDir = adopt.getImgsDir ();
-        adopt.setImgsDir (imgsDir.replaceAll (imgUrl + "::", ""));
-        boolean update = adoptService.updateById (adopt);
+        String imgsDir = adopt.getImgsDir();
+        adopt.setImgsDir(imgsDir.replaceAll(imgUrl + "::", ""));
+        boolean update = adoptService.updateById(adopt);
 
-        return update ? Result.success ("删除成功") : Result.fail ("删除失败");
+        return update ? Result.success("删除成功") : Result.fail("删除失败");
     }
 
     @PostMapping("/getAdopt")
     public Result getAdopt(@RequestBody Map<String, Object> params) {
-        long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
-        Adopt adopt = adoptService.getById (adoptId);
+        long adoptId = Long.parseLong(String.valueOf(params.get("adoptId")));
+        Adopt adopt = adoptService.getById(adoptId);
 
-        if (!StringUtils.isEmpty (adopt.getImgsDir ())) {
-            adopt.setImgs (adopt.getImgsDir ().split ("::"));
+        if (!StringUtils.isEmpty(adopt.getImgsDir())) {
+            adopt.setImgs(adopt.getImgsDir().split("::"));
         }
-        setUserInfo (adopt);
-        setTitleInfo (adopt);
+        setUserInfo(adopt);
+        setTitleInfo(adopt);
 
-        Map<String, Object> map = new HashMap<> (16);
-        map.put ("adopt", adopt);
-        return Result.success ("获取成功", map);
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("adopt", adopt);
+        return Result.success("获取成功", map);
     }
 
     @PostMapping("/success")
     public Result finish(@RequestBody Map<String, Object> params) {
-        long adoptId = Long.parseLong (String.valueOf (params.get ("adoptId")));
-        boolean isSuccess = Boolean.parseBoolean (String.valueOf (params.get ("isSuccess")));
-        Adopt adopt = adoptService.getById (adoptId);
+        long adoptId = Long.parseLong(String.valueOf(params.get("adoptId")));
+        boolean isSuccess = Boolean.parseBoolean(String.valueOf(params.get("isSuccess")));
+        Adopt adopt = adoptService.getById(adoptId);
 
-        adopt.setIsSuccess (isSuccess ? 1 : 2);
-        boolean update1 = adoptService.updateById (adopt);
-        return update1 ? Result.success ("更新成功") : Result.fail ("更新失败");
+        adopt.setIsSuccess(isSuccess ? 1 : 2);
+        boolean update1 = adoptService.updateById(adopt);
+        return update1 ? Result.success("更新成功") : Result.fail("更新失败");
 
     }
 
     @PostMapping("/getAllUserAdopts")
     public Result getAllUserAdopts(@RequestBody Map<String, Object> params) {
-        long userId = Long.parseLong (String.valueOf (params.get ("userId")));
+        long userId = Long.parseLong(String.valueOf(params.get("userId")));
 
-        if (userService.count (new QueryWrapper<User> ().eq ("user_id", userId)) <= 0) {
-            return Result.fail (555, "没有该用户");
+        if (userService.count(new QueryWrapper<User>().eq("user_id", userId)) <= 0) {
+            return Result.fail(555, "没有该用户");
         }
 
-        List<Adopt> adoptList = adoptService.getAdoptsByUserId (userId);
+        List<Adopt> adoptList = adoptService.getAdoptsByUserId(userId);
 
         for (Adopt adopt : adoptList) {
-            if (!StringUtils.isEmpty (adopt.getImgsDir ())) {
-                adopt.setImgs (adopt.getImgsDir ().split ("::"));
+            if (!StringUtils.isEmpty(adopt.getImgsDir())) {
+                adopt.setImgs(adopt.getImgsDir().split("::"));
             }
-            setUserInfo (adopt);
-            setTitleInfo (adopt);
+            setUserInfo(adopt);
+            setTitleInfo(adopt);
         }
 
-        PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 5, 0);
+        PageUtils adoptPage = new PageUtils(adoptList, adoptList.size(), 5, 0);
 
-        Map<String, Object> map = new HashMap<> (16);
-        map.put ("page", adoptPage);
-        return Result.success ("获取成功", map);
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("page", adoptPage);
+        return Result.success("获取成功", map);
     }
 
     @PostMapping("/getAllTitleAdopts")
     public Result getAllTitleAdopts(@RequestBody Map<String, Object> params) {
-        long titleId = Long.parseLong (String.valueOf (params.get ("titleId")));
+        long titleId = Long.parseLong(String.valueOf(params.get("titleId")));
 
-        if (titleService.count (new QueryWrapper<Title> ().eq ("title_id", titleId)) <= 0) {
-            return Result.fail (555, "没有该文章");
+        if (titleService.count(new QueryWrapper<Title>().eq("title_id", titleId)) <= 0) {
+            return Result.fail(555, "没有该文章");
         }
 
-        List<Adopt> adoptList = adoptService.getAllAdoptsByTitleId (titleId);
+        List<Adopt> adoptList = adoptService.getAllAdoptsByTitleId(titleId);
 
         for (Adopt adopt : adoptList) {
-            if (!StringUtils.isEmpty (adopt.getImgsDir ())) {
-                adopt.setImgs (adopt.getImgsDir ().split ("::"));
+            if (!StringUtils.isEmpty(adopt.getImgsDir())) {
+                adopt.setImgs(adopt.getImgsDir().split("::"));
             }
-            setUserInfo (adopt);
-            setTitleInfo (adopt);
+            setUserInfo(adopt);
+            setTitleInfo(adopt);
 
         }
 
-        PageUtils adoptPage = new PageUtils (adoptList, adoptList.size (), 5, 0);
+        PageUtils adoptPage = new PageUtils(adoptList, adoptList.size(), 5, 0);
 
-        Map<String, Object> map = new HashMap<> (16);
-        map.put ("page", adoptPage);
-        return Result.success ("获取成功", map);
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("page", adoptPage);
+        return Result.success("获取成功", map);
+    }
+
+    @PostMapping("/getAdopts")
+    public Result getAdopts(@RequestBody Map<String, Object> params) {
+        long titleId = Long.parseLong(String.valueOf(params.get("titleId")));
+        long userId = Long.parseLong(String.valueOf(params.get("userId")));
+
+        if (titleService.count(new QueryWrapper<Title>().eq("title_id", titleId)) <= 0) {
+            return Result.fail(555, "没有该文章");
+        }
+
+        if (userService.count(new QueryWrapper<User>().eq("user_id", userId)) <= 0) {
+            return Result.fail(555, "没有该用户");
+        }
+
+        QueryWrapper<Adopt> wrapper = new QueryWrapper<>();
+        wrapper.eq("title_id", titleId).eq("user_id", userId);
+        List<Adopt> adoptList = adoptService.list(wrapper);
+
+        for (Adopt adopt : adoptList) {
+            if (!StringUtils.isEmpty(adopt.getImgsDir())) {
+                adopt.setImgs(adopt.getImgsDir().split("::"));
+            }
+            setUserInfo(adopt);
+            setTitleInfo(adopt);
+
+        }
+
+        PageUtils adoptPage = new PageUtils(adoptList, adoptList.size(), 5, 0);
+
+        Map<String, Object> map = new HashMap<>(16);
+        map.put("page", adoptPage);
+        return Result.success("获取成功", map);
     }
 
     /**
@@ -239,30 +272,30 @@ public class AdoptController {
     @Async
     @Transactional(rollbackFor = RuntimeException.class)
     public void sendAdoptMailBox(AdoptMailbox mailbox) {
-        boolean save = adoptMailboxService.save (mailbox);
+        boolean save = adoptMailboxService.save(mailbox);
 
         if (!save) {
-            log.warn ("消息持久化失败");
-            throw new RuntimeException ("消息持久化失败");
+            log.warn("消息持久化失败");
+            throw new RuntimeException("消息持久化失败");
         }
 
-        adoptMailboxService.sendMailbox (mailbox);
+        adoptMailboxService.sendMailbox(mailbox);
     }
 
     private void setUserInfo(Adopt adopt) {
-        UserInfo info = userInfoService.getUserInfoById (adopt.getUserId ());
-        User user = userService.getById (adopt.getUserId ());
+        UserInfo info = userInfoService.getUserInfoById(adopt.getUserId());
+        User user = userService.getById(adopt.getUserId());
 
-        adopt.setUserAvatar (info.getUserAvatar ());
-        adopt.setUserName (user.getUserName ());
+        adopt.setUserAvatar(info.getUserAvatar());
+        adopt.setUserName(user.getUserName());
     }
 
     private void setTitleInfo(Adopt adopt) {
-        Title title = titleService.getById (adopt.getTitleId ());
-        User author = userService.getById (title.getUserId ());
+        Title title = titleService.getById(adopt.getTitleId());
+        User author = userService.getById(title.getUserId());
 
-        adopt.setTitleAuthorId (title.getUserId ());
-        adopt.setTitleAuthorName (author.getUserName ());
-        adopt.setTitleName (title.getTitleName ());
+        adopt.setTitleAuthorId(title.getUserId());
+        adopt.setTitleAuthorName(author.getUserName());
+        adopt.setTitleName(title.getTitleName());
     }
 }

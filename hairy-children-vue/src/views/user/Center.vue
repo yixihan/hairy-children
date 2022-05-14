@@ -31,7 +31,10 @@
               <el-menu-item index="更改密码">更改密码</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="历史信息">
+          <el-submenu
+            index="历史信息"
+            v-if="userId == this.$store.getters.getUser.userId"
+          >
             <template slot="title">
               <i class="el-icon-chat-line-round"></i>
               <span>历史信息</span>
@@ -43,7 +46,10 @@
               <el-menu-item index="申请的领养">申请的领养</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="个人信箱">
+          <el-submenu
+            index="个人信箱"
+            v-if="userId == this.$store.getters.getUser.userId"
+          >
             <template slot="title">
               <el-badge :value="unreadCount" class="item">
                 <i class="el-icon-chat-line-square"></i>

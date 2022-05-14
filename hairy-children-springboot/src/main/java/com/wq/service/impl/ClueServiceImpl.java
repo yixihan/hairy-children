@@ -75,14 +75,14 @@ public class ClueServiceImpl extends ServiceImpl<ClueMapper, Clue> implements Cl
     @Override
     public List<Clue> getCluesByUserId(Long userId) {
         QueryWrapper<Clue> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("user_id", userId).notIn ("is_success", -1);
+        wrapper.eq ("user_id", userId).notIn ("is_success", -1).orderByDesc("gmt_create");
         return clueMapper.selectList (wrapper);
     }
 
     @Override
     public List<Clue> getCluesByTitleId(Long titleId) {
         QueryWrapper<Clue> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("title_id", titleId).notIn ("is_success", -1);
+        wrapper.eq ("title_id", titleId).notIn ("is_success", -1).orderByDesc("is_success", "gmt_create");
         return clueMapper.selectList (wrapper);
     }
 
