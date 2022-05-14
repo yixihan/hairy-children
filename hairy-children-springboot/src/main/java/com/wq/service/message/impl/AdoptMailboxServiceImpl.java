@@ -65,7 +65,7 @@ public class AdoptMailboxServiceImpl extends ServiceImpl<AdoptMailboxMapper, Ado
     @Override
     public List<AdoptMailbox> getMessages(Long userId) {
         QueryWrapper<AdoptMailbox> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("receive_user_id", userId);
+        wrapper.eq ("receive_user_id", userId).orderByDesc("gmt_create");
         return adoptMailboxMapper.selectList (wrapper);
     }
 

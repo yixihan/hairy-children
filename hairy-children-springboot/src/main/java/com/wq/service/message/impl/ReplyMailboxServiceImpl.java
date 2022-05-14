@@ -74,7 +74,7 @@ public class ReplyMailboxServiceImpl extends ServiceImpl<ReplyMailboxMapper, Rep
     @Override
     public List<ReplyMailbox> getMessages(Long userId) {
         QueryWrapper<ReplyMailbox> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("receive_user_id", userId);
+        wrapper.eq ("receive_user_id", userId).orderByDesc("gmt_create");;
         return replyMailboxMapper.selectList (wrapper);
     }
 

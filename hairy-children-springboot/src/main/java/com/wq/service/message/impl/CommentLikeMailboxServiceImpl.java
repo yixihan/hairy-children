@@ -71,7 +71,7 @@ public class CommentLikeMailboxServiceImpl extends ServiceImpl<CommentLikeMailbo
     @Override
     public List<CommentLikeMailbox> getMessages(Long userId) {
         QueryWrapper<CommentLikeMailbox> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("receive_user_id", userId);
+        wrapper.eq ("receive_user_id", userId).orderByDesc("gmt_create");;
         return commentLikeMailboxMapper.selectList (wrapper);
     }
 

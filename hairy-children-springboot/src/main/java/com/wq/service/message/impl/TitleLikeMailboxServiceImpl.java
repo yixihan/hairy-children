@@ -72,7 +72,7 @@ public class TitleLikeMailboxServiceImpl extends ServiceImpl<TitleLikeMailboxMap
     @Override
     public List<TitleLikeMailbox> getMessages(Long userId) {
         QueryWrapper<TitleLikeMailbox> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("receive_user_id", userId);
+        wrapper.eq ("receive_user_id", userId).orderByDesc("gmt_create");;
         return titleLikeMailboxMapper.selectList (wrapper);
     }
 

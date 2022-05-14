@@ -71,7 +71,7 @@ public class ClueMailboxServiceImpl extends ServiceImpl<ClueMailboxMapper, ClueM
     @Override
     public List<ClueMailbox> getMessages(Long userId) {
         QueryWrapper<ClueMailbox> wrapper = new QueryWrapper<> ();
-        wrapper.eq ("receive_user_id", userId);
+        wrapper.eq ("receive_user_id", userId).orderByDesc("gmt_create");;
         return clueMailboxMapper.selectList (wrapper);
     }
 
