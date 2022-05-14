@@ -9,7 +9,7 @@
           <a href="javascript:;">
             <img :src="item.imgs[0]" alt="正在加载中" />
             <div class="article">
-              <div @click="toAdopt(item.adoptId)">
+              <div @click="toAdopt(item)">
                 <h3 class="title">
                   申请人 :
                   <el-avatar size="small" :src="item.userAvatar"> </el-avatar>
@@ -63,7 +63,7 @@ import format from "@/utils/DateFormat.js";
 export default {
   name: "GetAdopts",
   format,
-  props: ["titleId", "authorId", "flag"],
+  props: ["titleId", "authorId"],
   data() {
     return {
       adoptList: [],
@@ -103,66 +103,29 @@ export default {
 
       return data;
     },
-    async getUserAdopt() {
-      const data = await this.$axios({
-        url: "/adopt/getAdopts",
-        method: "post",
-        headers: {
-          "Jwt-Token": this.$store.getters.getToken,
-        },
-        data: {
-          titleId: this.titleId,
-          userId: this.$store.getters.getUserId,
-        },
-      });
-
-      return data;
-    },
     setInfo() {
       this.userId = this.$route.params.userId;
-      if (this.flag == 1) {
-        this.getTitleAdopt().then(({ data }) => {
-          console.log(data);
-          this.adopt = data.data.page;
-          if (this.adopt.list.length == 0) {
-            this.isEmpty = true;
-            return;
-          }
-          for (var i = 0; i < this.adopt.list.length; i++) {
-            if (this.adopt.list[i].imgs == null) {
-              this.adopt.list[i].imgs = [];
-              this.adopt.list[i].imgs.push("/adopt/default/default.png");
-            }
-            this.adopt.list[i].imgs[0] =
-              this.$store.getters.getUrl + this.adopt.list[i].imgs[0];
-            this.adopt.list[i].userAvatar =
-              this.$store.getters.getUrl + this.adopt.list[i].userAvatar;
-          }
 
-          this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);
-        });
-      } else {
-        this.getUserAdopt().then(({ data }) => {
-          console.log(data);
-          this.adopt = data.data.page;
-          if (this.adopt.list.length == 0) {
-            this.isEmpty = true;
-            return;
+      this.getTitleAdopt().then(({ data }) => {
+        console.log(data);
+        this.adopt = data.data.page;
+        if (this.adopt.list.length == 0) {
+          this.isEmpty = true;
+          return;
+        }
+        for (var i = 0; i < this.adopt.list.length; i++) {
+          if (this.adopt.list[i].imgs == null) {
+            this.adopt.list[i].imgs = [];
+            this.adopt.list[i].imgs.push("/adopt/default/default.png");
           }
-          for (var i = 0; i < this.adopt.list.length; i++) {
-            if (this.adopt.list[i].imgs == null) {
-              this.adopt.list[i].imgs = [];
-              this.adopt.list[i].imgs.push("/adopt/default/default.png");
-            }
-            this.adopt.list[i].imgs[0] =
-              this.$store.getters.getUrl + this.adopt.list[i].imgs[0];
-            this.adopt.list[i].userAvatar =
-              this.$store.getters.getUrl + this.adopt.list[i].userAvatar;
-          }
+          this.adopt.list[i].imgs[0] =
+            this.$store.getters.getUrl + this.adopt.list[i].imgs[0];
+          this.adopt.list[i].userAvatar =
+            this.$store.getters.getUrl + this.adopt.list[i].userAvatar;
+        }
 
-          this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);
-        });
-      }
+        this.adoptList = this.adopt.list.slice(0, this.adopt.pageSize);
+      });
     },
     examine(adoptId) {
       if (this.authorId != this.$store.getters.getUserId) {
@@ -243,8 +206,13 @@ export default {
 
       return adopt;
     },
-    toAdopt(adoptId) {
-      this.$router.push("/adopt/" + adoptId);
+    toAdopt(adopt) {
+      if (
+        this.authorId == this.$store.getters.getUserId ||
+        adopt.userId == this.$store.getters.getUserId
+      ) {
+        this.$router.push("/adopt/" + adopt.adoptId);
+      }
     },
   },
 

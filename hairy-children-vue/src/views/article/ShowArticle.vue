@@ -8,8 +8,7 @@
       <div v-if="titleType == 1">
         <h2>领养申请列表</h2>
         <el-button type="primary" @click="toCreatAdopt"> 申请领养 </el-button>
-        <Adopt :titleId="titleId" :authorId="title.userId" :flag="1" v-if="title.userId == this.$store.getters.getUser.userId"></Adopt>
-        <Adopt :titleId="titleId" :authorId="title.userId" :flag="0" v-else></Adopt>
+        <Adopt :titleId="titleId" :authorId="title.userId"></Adopt>
       </div>
       <div v-if="titleType == 2">
         <h2>线索列表</h2>
